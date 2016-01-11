@@ -1,0 +1,86 @@
+@font-face {
+    font-family: 'wchat';
+    src:
+        url('fonts/wchat.ttf?b5ikya') format('truetype'),
+        url('fonts/wchat.woff?b5ikya') format('woff'),
+        url('fonts/wchat.svg?b5ikya#wchat') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+[class^="swc-btn-icon"], [class^="swc-icon-"], [class*=" swc-icon-"] {
+    /* use !important to prevent issues with browser extensions that change fonts */
+    font-family: 'wchat' !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.swc-icon-check:before {
+    content: "\f00c";
+}
+.swc-icon-close:before {
+    content: "\f00d";
+}
+.swc-icon-remove:before {
+    content: "\f00d";
+}
+.swc-icon-times:before {
+    content: "\f00d";
+}
+.swc-icon-cog:before {
+    content: "\f013";
+}
+.swc-icon-gear:before {
+    content: "\f013";
+}
+.swc-icon-upload:before {
+    content: "\f093";
+}
+.swc-icon-bell:before {
+    content: "\f0f3";
+}
+.swc-icon-spinner:before {
+    content: "\f110";
+}
+.swc-icon-paper-plane:before {
+    content: "\f1d8";
+}
+.swc-icon-send:before {
+    content: "\f1d8";
+}
+.swc-icon-bell-slash:before {
+    content: "\f1f6";
+}
+.swc-icon-trash:before {
+    content: "\f1f8";
+}
+.swc-icon-mouse-pointer:before {
+    content: "\f245";
+}
+.swc-icon-livechat-email:before {
+    content: "\e900";
+}
+.swc-icon-livechat-newmessage:before {
+    content: "\e901";
+}
+.swc-icon-livechat-chat:before {
+    content: "\e902";
+}
+.swc-icon-livechat-ongoing:before {
+    content: "\e903";
+}
+.swc-icon-livechat-call:before {
+    content: "\e904";
+}
+.swc-icon-arrow-up-left2:before {
+    content: "\e905";
+}
+

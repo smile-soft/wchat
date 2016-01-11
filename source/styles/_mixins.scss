@@ -1,0 +1,94 @@
+/**
+ * Clearfix
+ */
+%clearfix {
+  *zoom: 1;
+  &:before, &:after {
+    content: " ";
+    display: table;
+  }
+  &:after {
+    clear: both;
+  }
+}
+
+/**
+ * Font-size
+ */
+@mixin font-size($size) {
+  font-size: $size;
+  font-size: calculateRem($size);
+}
+
+/**
+ * Transition
+ */
+@mixin transition($args...) {
+	-webkit-transition: $args;
+	-moz-transition: $args;
+	-ms-transition: $args;
+	-o-transition: $args;
+	transition: $args;
+}
+
+/**
+ * Transform
+ */
+@mixin transform($args) {
+	-webkit-transform: $args;
+	-moz-transform: $args;
+	-ms-transform: $args;
+	-o-transform: $args;
+	transform: $args;
+}
+
+/**
+ * Animation
+ */
+@mixin keyframes($animation-name) {
+    @-webkit-keyframes #{$animation-name} {
+        @content;
+    }
+    @-moz-keyframes #{$animation-name} {
+        @content;
+    }  
+    @-ms-keyframes #{$animation-name} {
+        @content;
+    }
+    @-o-keyframes #{$animation-name} {
+        @content;
+    }  
+    @keyframes #{$animation-name} {
+        @content;
+    }
+}
+@mixin animation($str) {
+  -webkit-animation: #{$str};
+  -moz-animation: #{$str};
+  -ms-animation: #{$str};
+  -o-animation: #{$str};
+  animation: #{$str};      
+}
+
+/**
+ * Layout
+ */
+@mixin bp-large {
+  @media only screen and (min-width: 751px) {
+    @content;
+  }
+}
+
+/* Larger than tablet */
+@mixin bp-medium {
+  @media only screen and (min-width: 750px) {
+    @content;
+  }
+}
+
+/* Larger than mobile */
+@mixin bp-small {
+  @media only screen and (max-width: 750px) {
+    @content;
+  }
+}

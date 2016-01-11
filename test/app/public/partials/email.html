@@ -1,0 +1,153 @@
+<% var prefix = defaults.prefix; %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=windows-1251" />
+        <!--[if !mso]><!-->
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <!--<![endif]-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title></title>
+        <!--[if (gte mso 9)|(IE)]>
+        <style type="text/css">
+            table {border-collapse: collapse;}
+        </style>
+        <![endif]-->
+        <style type="text/css">
+            /* Basics */
+            body {
+            Margin: 0;
+                padding: 0;
+                min-width: 100%;
+                background-color: #ffffff;
+            }
+            table {
+                border-spacing: 0;
+                font-family: sans-serif;
+                color: #333333;
+            }
+            td {
+                padding: 0;
+            }
+            img {
+                border: 0;
+            }
+            .wrapper {
+                width: 100%;
+                table-layout: fixed;
+                -webkit-text-size-adjust: 100%;
+                -ms-text-size-adjust: 100%;
+                background-color: #F1F1F1;
+            }
+            .webkit {
+                max-width: 500px;
+            }
+            .outer {
+            Margin: 0 auto;
+                height: 100%;
+                width: 95%;
+                max-width: 500px;
+                padding: 10px;
+            }
+            p {
+                Margin: 0;
+            }
+            a {
+                color: #ee6a56;
+                text-decoration: underline;
+            }
+            .h1 {
+                font-size: 21px;
+                font-weight: bold;
+                Margin-bottom: 18px;
+            }
+            .h2 {
+                font-size: 18px;
+                font-weight: bold;
+                Margin-bottom: 12px;
+            }
+             
+            /* One column layout */
+            .one-column .contents {
+                text-align: left;
+                color:#505050;
+                font-family:Arial;
+                font-size:14px;
+                line-height:150%;
+            }
+            .one-column p {
+                font-size: 14px;
+                Margin-bottom: 10px;
+            }
+            .<%- prefix %>-message {
+                display: block;
+                margin-bottom: 10px;
+                padding: 10px;
+                background-color: #FFFFFF;
+                border-bottom: 4px solid #CCCCCC;
+            }
+            .<%- prefix %>-message img {
+                width: 100%;
+                max-width: 500px;
+                height: auto;
+            }
+            .<%- prefix %>-message span {
+                font-weight: bold;
+                color: #999999;
+            }
+            .<%- prefix %>-agent-msg .<%- prefix %>-message-from {
+                color: #555555;
+            }
+            .<%- prefix %>-user-msg .<%- prefix %>-message-from {
+                color: #F75B5D;
+            }
+
+            .<%- prefix %>-message .<%- prefix %>-message-time {
+                position: relative;
+                float: right;
+            }
+            .copyright {
+                margin-top: 5px;
+                font-size: 12px;
+                font-style: italic;
+                color: #CCCCCC;
+                text-align: right;
+            }
+
+        </style>
+    </head>
+    <body>
+        <center class="wrapper">
+            <div class="webkit">
+                <!--[if (gte mso 9)|(IE)]>
+                <table width="500" align="center" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                <td>
+                <![endif]-->
+                <table class="outer" align="center" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                        <td class="one-column">
+                            <table width="100%">
+                                <tr>
+                                    <td class="inner contents">
+                                        <%= content %>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p class="copyright">Copyright (c) 2016 SmileSoft</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+                <!--[if (gte mso 9)|(IE)]>
+                </td>
+                </tr>
+                </table>
+                <![endif]-->
+            </div>
+        </center>
+    </body>
+</html>

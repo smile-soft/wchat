@@ -1,0 +1,41 @@
+@include keyframes(show) {
+  0% {
+  	opacity: 0;
+    @include transform(scale(0))
+  },
+  100% {
+  	opacity: 1;
+    @include transform(scale(1))
+  }
+}
+
+@include keyframes(newMessageNoify) {
+  0% {
+  	opacity: 0;
+    // @include transform(tranlateY(100px))
+  },
+  80% {
+  	opacity: 0.1
+  },
+  100% {
+  	opacity: 1;
+    // @include transform(tranlateY(0))
+  }
+}
+
+@include keyframes(newMessage) {
+  0% {
+  	opacity: 0;
+    @include transform(tranlateY(100px))
+  },
+  100% {
+    opacity: 1;
+    @include transform(tranlateY(0))
+  }
+}
+
+@include keyframes(loading) {
+	0 {transform: translate(0,0);}
+	50% {transform: translate(0,10px);}
+	100% {transform: translate(0,0);}
+}

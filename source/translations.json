@@ -1,0 +1,128 @@
+{
+    "en": {
+		"lang": "English",
+		"greets": "Greetings!",
+		"cancel": "Cancel",
+		"close": "Close",
+		"finish": "Finish",
+		"back": "Back",
+		"send": "Send",
+		"send_message_button": "Send message",
+		"start_dialog_button": "Start dialog",
+		"finish_dialog_button": "Finish dialog",
+		"choose_dialog_lang": "Choose dialog language",
+		"intro_message": "Please, introduce yourself",
+		"offline_message": "We are offline now, please leave us a message, we'll contact you shortly",
+		"send_message_header": "Send a message",
+		"close_chat_header": "Thank you for reaching us!",
+		"send_dialog_label": "Send dialog to your email?",
+		"rate_agent": "Rate agent service",
+		"rates": {
+			"excellent": "Excellent",
+			"good": "Good",
+			"fair": "Fair",
+			"bad": "Bad"
+		},
+		"name_pholder": "Your name",
+		"email_pholder": "Your email",
+		"phone_pholder": "Your phone",
+		"dialog_topic_pholder": "Dialog's topic",
+		"message_pholder": "Your message here...",
+		"comment_pholder": "Please, leave your comment here...",
+		"offer": "Welcome, need some help?",
+		"email_subjects": {
+			"dialog": "Your dialog on",
+			"complain": "Dialog comment from",
+			"request": "New message from"
+		},
+		"required_error": {
+			"fields": "Please fill in all required fields",
+			"email": "Please fill in your email",
+			"tel": "Please fill in your telephone number"
+		}
+    },
+    "uk": {
+    	"lang": "Українська",
+    	"greets": "Вітаємо!",
+		"cancel": "Відміна",
+		"close": "Закрити",
+		"finish": "Завершити",
+		"back": "Назад",
+		"send": "Відправити",
+		"send_message_button": "Відправити",
+    	"start_dialog_button": "Розпочати діалог",
+    	"finish_dialog_button": "Закінчити діалог",
+		"choose_dialog_lang": "Оберіть мову діалогу",
+		"intro_message": "Будь ласка, заповніть необхідні поля",
+		"offline_message": "Наразі ми оффлайн, будь ласка, залиште нам повідомлення, ми зв'яжемося з Вами найближчим часом",
+		"send_message_header": "Відправити повідомлення",
+		"close_chat_header": "Дякуємо, що звернулися до нас!",
+		"send_dialog_label": "Відправити діалог на ваш email?",
+		"rate_agent": "Оцінити роботу оператора",
+		"rates": {
+			"excellent": "Відмінно",
+			"good": "Добре",
+			"fair": "Задовільно",
+			"bad": "Погано"
+		},
+		"name_pholder": "Ваше ім'я",
+		"email_pholder": "Ваша електронна адреса",
+		"phone_pholder": "Ваш телефон",
+		"dialog_topic_pholder": "Тема діалогу",
+		"message_pholder": "Ваше повідомлення тут...",
+		"comment_pholder": "Будь ласка, залиште тут свій коментар...",
+		"offer": "Ласкаво просимо, потрібна допомога?",
+		"email_subjects": {
+			"dialog": "Ваш діалог на",
+			"complain": "Коментар до діалогу від",
+			"request": "Нове повідомлення від"
+		},
+		"required_error": {
+			"fields": "Будь ласка, заповніть всі необхідні поля",
+			"email": "Будь ласка, введіть свою електронну адресу",
+			"tel": "Будь ласка, введіть свій номер телефону"
+		}
+    },
+    "ru": {
+    	"lang": "Русский",
+    	"greets": "Приветствуем!",
+		"cancel": "Отмена",
+		"close": "Закрыть",
+		"finish": "Завершить",
+		"back": "Назад",
+		"send": "Отправить",
+		"send_message_button": "Отправить",
+    	"start_dialog_button": "Начать диалог",
+    	"finish_dialog_button": "Завершить диалог",
+		"choose_dialog_lang": "Выберите язык диалога",
+		"intro_message": "Пожалуйста, звполните необходимые поля",
+		"offline_message": "Сейчас мы оффлайн, пожалуйста, оставьте нам сообщение, мы свяжемся с Вами в ближайшее время",
+		"send_message_header": "Отправить сообщение",
+		"close_chat_header": "Спасибо, что обратились к нам!",
+		"send_dialog_label": "Отправить диалог на ваш email?",
+		"rate_agent": "Оценить работу оператора",
+		"rates": {
+			"excellent": "Отлично",
+			"good": "Хорошо",
+			"fair": "Нормально",
+			"bad": "Плохо"
+		},
+		"name_pholder": "Ваше имя",
+		"email_pholder": "Ваш электронный адрес",
+		"phone_pholder": "Ваш телефон",
+		"dialog_topic_pholder": "Тема диалога",
+		"message_pholder": "Ваше сообщение здесь...",
+		"comment_pholder": "Пожалуйста, оставьте здесь свой комментарий...",
+		"offer": "Добро пожаловать, нужна помощь?",
+		"email_subjects": {
+			"dialog": "Ваш диалог на",
+			"complain": "Комментарий к диалогу от",
+			"request": "Новое сообщение от"
+		},
+		"required_error": {
+			"fields": "Пожалуйста, заполните все необходимые поля",
+			"email": "Пожалуйста, введите свой электронный адрес",
+			"tel": "Пожалуйста, введите свой номер телефона"
+		}
+    }
+};

@@ -1,0 +1,247 @@
+.swc-top-bar {
+	// display: none;
+	position: absolute;
+	width: 100%;
+	top: 0;
+	padding: 5px 10px;
+	background-color: transparent;
+	color: #fff;
+	z-index: 100;
+	@extend %clearfix;
+
+	h3 {
+		margin: 0;
+	}
+
+	.swc-wg-title {
+		float: left;
+	}
+	
+	.swc-wg-minimize {
+		float: right;
+		margin-top: 5px;
+
+		a {
+			text-decoration: none;
+			font-size: 16px;
+			margin-left: 2px;
+			padding: 5px;
+			color: #fff;
+		}
+	}
+}
+
+.swc-wg-panes {
+	display: none;
+	position: relative;
+	bottom: 0;
+	width: $wg-width;
+	height: 100%;
+
+	/* Larger than mobile */
+	@include bp-small {
+		width: 100%;
+	}
+
+	.swc-wg-pane {
+		display: none;
+		height: 100%;
+		overflow-y: auto;
+		// max-height: 100%;
+		// padding-bottom: 20px;
+		// background-color: #f7f7f7;
+		
+		&.active {
+			display: block;
+		}
+
+		h3 {
+			font-weight: 100;
+		}
+
+		.swc-backdrop-cont {
+			position: relative;
+			height: 100%;
+			min-height: 100px;
+			padding: 10px;
+
+			&.swc-dark {
+				background-color: #333;
+				background-color: rgba(0,0,0,.5);
+				box-shadow: 0 -30px 100px -30px #333 inset;
+				color: #fff;
+			}
+			&.swc-white {
+				background-color: #fff;
+				background-color: rgba(255,255,255,.6);
+				color: #333;
+			}
+		}
+
+		.swc-social-list {
+			position: relative;
+			margin-top: 25px;
+		}
+
+		.swc-pane-header {
+			position: relative;
+			min-height: 100px;
+			overflow: hidden;
+			background-size: cover;
+			background-position: center;
+			background-repeat: no-repeat;
+			// background-image: url("images/bgr-01.jpg");
+		}
+
+		.swc-pane-body {
+			padding: 10px;
+		}
+
+		.swc-pane-footer {
+			padding: 10px;
+			border-top: 1px solid #eee;
+		}
+
+		.swc-messages-cont {
+			height: $wg-height;
+			padding: 0 10px 40px;
+			overflow-y: auto;
+
+			@include bp-small {
+				width: 100%;
+				height: 100%;
+				// top: 0;
+				// bottom: 0;
+			}
+
+			li {
+				margin: 15px 0;
+				@extend %clearfix;
+
+				.swc-message {
+
+					@include animation(newMessage 0.2s ease-in-out);
+
+				    span {
+						font-size: 14px;
+				    	color: #555; 
+				    }
+
+				    span:first-child {
+				    	font-weight: 600;
+				    }
+				}
+
+				.swc-message-content {
+					display: inline-block;
+					font-size: 14px;
+					max-width: 90%;
+					margin: 0;
+					padding: 10px;
+					border-radius: 15px;
+					border-width: 1px;
+					border-style: solid;
+					background-color: #fff;
+					overflow: hidden;
+
+					img {
+						max-width: 180px;
+					}
+				}
+
+				.swc-agent-msg {
+					text-align: right;
+					// span {
+					// 	float: right;
+					// }
+					.swc-message-content {
+						// float: right;
+						border-top-right-radius: 0;
+						border-color: $secondary-color;
+					}
+				}
+
+				.swc-user-msg {
+					text-align: left;
+					// span {
+					// 	float: left;
+					// }
+					.swc-message-content {
+
+						// float: left;
+						border-top-left-radius: 0;
+						// border-color: $primary-color; 
+					}
+				}
+			}
+		}
+
+		.swc-write-cont {
+			position: absolute;
+			display: table;
+			bottom: 0;
+			padding: 5px;
+			width: 100%;
+			background-color: #fff;
+			z-index: 100;
+			text-align: center;
+
+			.swc-sendmsg-btn,
+			.swc-sendfile-cont {
+				display: table-cell;
+				padding: 0 10px;
+				vertical-align: middle;
+			}
+
+			.swc-sendfile-cont {
+				position: relative;
+				overflow: hidden;
+				cursor: pointer;
+
+				input[type="file"] {
+					position: absolute;
+					display: none;
+				}
+			}
+
+			.swc-loader {
+				display: none;
+				position: absolute;
+				right: 10px;
+				bottom: 100%;
+				margin-bottom: 10px;
+
+				span:nth-last-child(1) {animation: loading .8s .1s linear infinite;}
+				span:nth-last-child(2) {animation: loading .8s .2s linear infinite;}
+				span:nth-last-child(3) {animation: loading .8s .3s linear infinite;}
+
+				span {
+					display: inline-block;
+					width: 8px;
+					height: 8px;
+					border-radius: 50%;
+					background-color: $secondary-color;
+				}
+			}
+		}
+
+		.swc-msg-textarea,
+		textarea {
+			display: table-cell;
+			width: 100%;
+			height: 30px;
+			min-height: 30px;
+			margin: 0;
+			padding: 5px 0;
+			// padding: 6px 10px;
+			font-size: 14px;
+			text-align: left;
+			background-color: #fff;
+			border: none;
+			// border: 1px solid #D1D1D1;
+			// border-radius: 4px;
+			box-shadow: none;
+			resize: none;
+		}
+	}
+}

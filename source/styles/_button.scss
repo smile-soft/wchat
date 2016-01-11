@@ -1,0 +1,92 @@
+.swc-btn-cont {
+	display: inline-block;
+	position: absolute;
+	bottom: 20px;
+	z-index: 100;
+
+	.swc-wg-btn {
+		display: inline-block;
+		border-radius: 20px;
+		width: $btn-width;
+		height: $btn-height;
+		max-height: 100px;
+		// background-color: #F1F1F1;
+		background-color: $btn-color-offline;
+		z-index: 100;
+		@extend %clearfix;
+		@include transition(background-color 0.4s, width 0.4s ease-in-out, height 0.4s);
+		@include animation(show 0.2s ease-in-out);
+
+		.swc-btn-link {
+			position: relative;
+			width: $btn-width;
+			height: $btn-height;
+			text-align: center;
+			text-decoration: none;
+		}
+
+		.swc-btn-icon {
+			position: absolute;
+			font-size: 36px;
+			left: 7.5px;
+			top: 8.5px;
+			color: #777;
+			// padding: 10px;
+			// width: $btn-width;
+			// height: $btn-height;
+		}
+		.swc-btn-icon:before {
+			content: $btn-icon-offline;
+		}
+	}
+
+	.swc-lastmsg {
+		display: none;
+		position: absolute;
+		width: 0;
+		height: 100%;
+		padding: 10px 0 10px 15px;
+		cursor: pointer;
+		overflow: auto;
+	}
+
+	.swc-message {
+
+	    span {
+	    	margin: 0 0 5px 5px;
+			font-size: 14px;
+	    	color: #555; 
+	    }
+
+	    span:first-child {
+			margin: 0;
+	    	font-weight: 600;
+	    }
+
+	    .swc-message-content {
+	    	margin: 0;
+	    	font-size: 14px;
+	    	color: #222;
+	    	// white-space: nowrap;
+	    	// overflow: hidden;
+	    	// text-overflow: ellipsis;
+	    }
+	}
+
+	.swc-unnotify-btn {
+		// display: none;
+		position: absolute;
+	    bottom: 100%;
+	    margin: 5px;
+	    padding: 5px 10px;
+	    border-radius: 50px;
+	    background-color: #777;
+	    color: #fff;
+	    cursor: pointer;
+	    font-size: 14px;
+	    opacity: 0;
+	    @include transform(translateY(25px));
+		@include transition(opacity 0.4s ease 0.4s);
+		z-index: -1;
+	}
+}

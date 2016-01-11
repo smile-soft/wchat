@@ -1,0 +1,140 @@
+<% var frases = translations[lang]; %>
+<% var positionClass = defaults.button.position === 'right' ? 'position-right' : 'position-left' %>
+<div id="<%- defaults.prefix %>-wg-cont" class="<%- defaults.prefix %>-wg-cont <%- positionClass %>">
+	<div id="<%- defaults.prefix %>-wg-panes" class="<%- defaults.prefix %>-wg-panes">
+		<div class="<%- defaults.prefix %>-top-bar">
+			<h4 class="<%- defaults.prefix %>-wg-title <%- defaults.prefix %>-uppercase"><%- defaults.title %></h4>
+			<div class="<%- defaults.prefix %>-wg-minimize">
+				<a href="#" data-<%- defaults.prefix %>-handler="close">
+					<span style="font-weight: bold">_</span>
+				</a>
+				<!-- <a href="#" data-<%- defaults.prefix %>-handler="openWindow">
+					<span class="swc-icon-arrow-up-left2"></span>
+				</a> -->
+				<a href="#" data-<%- defaults.prefix %>-handler="finish">
+					<span class="swc-icon-remove"></span>
+				</a>
+			</div>
+		</div>
+		<% if(defaults.intro) { %>
+		<div class="<%- defaults.prefix %>-wg-pane" data-<%- defaults.prefix %>-pane="credentials">
+			<div class="<%- defaults.prefix %>-pane-header <%- defaults.prefix %>-dark" <% if(defaults.styles.intro.background) { %> style="background-image: url(<%- defaults.path %><%- defaults.styles.intro.background %>)" <% } %>>
+				<div class="<%- defaults.prefix %>-backdrop-cont <%- defaults.prefix %>-white">
+					<br>
+					<p><%- frases.intro_message %></p>
+				</div>
+			</div>
+			<div class="<%- defaults.prefix %>-pane-body">
+				<h4></h4>
+				<form id="<%- defaults.prefix %>-intro-form" name="<%- defaults.prefix %>IntroForm" data-validate-form="true">
+					<% if(defaults.intro.indexOf('name') !== -1) { %>
+					<input type="text" placeholder="<%- frases.name_pholder %> *" name="uname" value="<%- credentials.uname %>" required>
+					<% } %>
+					<% if(defaults.intro.indexOf('phone') !== -1) { %>
+					<input type="tel" placeholder="<%- frases.phone_pholder %>" name="phone" value="<%- credentials.phone %>">
+					<% } %>
+					<% if(defaults.intro.indexOf('subject') !== -1) { %>
+					<input type="text" placeholder="<%- frases.dialog_topic_pholder %>" name="subject">
+					<% } %>
+					<% if(defaults.intro.indexOf('language') !== -1) { %>
+					<select name="lang">
+						<% _.forEach(languages, function(item) { %>
+							<option value="<%- item %>" <% if(item === lang) { %> selected <% } %> ><%- translations[item].lang %></option>
+						<% }); %>
+					</select>
+					<% } %>
+					<button type="submit" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" style="background-color: <%- defaults.styles.primary.backgroundColor %>; color: <%- defaults.styles.primary.color %>; border: 1px solid <%- defaults.styles.primary.backgroundColor %>;"><%- frases.start_dialog_button %></button>
+					<a href="#" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-block" data-<%- defaults.prefix %>-handler="close"><%- frases.cancel %></a>
+				</form>
+			</div>
+		</div>
+		<% } %>
+		<div class="<%- defaults.prefix %>-wg-pane" data-<%- defaults.prefix %>-pane="messages">
+			<ul id="<%- defaults.prefix %>-messages-cont" class="<%- defaults.prefix %>-messages-cont"></ul>
+			<div class="<%- defaults.prefix %>-write-cont">
+				<div class="swc-loader">
+					<span></span>
+					<span></span>
+					<span></span>
+				</div>
+				<label class="<%- defaults.prefix %>-sendfile-cont" for="<%- defaults.prefix %>-file-select">
+					<input type="file" id="<%- defaults.prefix %>-file-select">
+					<span class="swc-icon-upload" style="color: <%- defaults.styles.primary.backgroundColor %>"><span>
+				</label>
+				<textarea id="<%- defaults.prefix %>-message-text" class="<%- defaults.prefix %>-msg-textarea" placeholder="<%- frases.message_pholder %>" maxlength="1000"></textarea>
+				<a href="#" class="<%- defaults.prefix %>-sendmsg-btn <%- defaults.prefix %>-button" data-<%- defaults.prefix %>-handler="sendMessage">
+					<span class="swc-icon-paper-plane" style="color: <%- defaults.styles.primary.backgroundColor %>"></span>
+				</a>
+			</div>
+		</div>
+		<div class="<%- defaults.prefix %>-wg-pane" data-<%- defaults.prefix %>-pane="sendemail">
+			<div class="<%- defaults.prefix %>-pane-header <%- defaults.prefix %>-dark" <% if(defaults.styles.sendmail.background) { %> style="background-image: url(<%- defaults.path %><%- defaults.styles.sendmail.background %>)" <% } %>>
+				<div class="<%- defaults.prefix %>-backdrop-cont <%- defaults.prefix %>-dark">
+					<br>
+					<p><%- frases.offline_message %></p>
+					<!-- <ul class="<%- defaults.prefix %>-nav-list <%- defaults.prefix %>-social-list">
+						<li>
+							<a href="#">
+								<i>f</i>
+							</a>
+						</li>
+						<li>
+							<a href="#">
+								<i>g</i>
+							</a>
+						</li>
+						<li>
+							<a href="#">
+								<i>t</i>
+							</a>
+						</li>
+					</ul> -->
+				</div>
+			</div>
+			<div class="<%- defaults.prefix %>-pane-body">
+				<h4 class="<%- defaults.prefix %>-uppercase"><%- frases.send_message_header %></h4>
+				<form id="<%- defaults.prefix %>-sendmail-form" data-validate-form="true">
+					<input type="text" name="uname" placeholder="<%- frases.name_pholder %>">
+					<input type="email" name="email" placeholder="<%- frases.email_pholder %> *" required>
+					<textarea name="text" placeholder="<%- frases.message_pholder %>" maxlength="1500"></textarea>
+					<input type="file" name="file">
+					<button type="submit" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" style="background-color: <%- defaults.styles.primary.backgroundColor %>; color: <%- defaults.styles.primary.color %>; border: 1px solid <%- defaults.styles.primary.backgroundColor %>;"><%- frases.send_message_button %></button>
+					<a href="#" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-block" data-<%- defaults.prefix %>-handler="close"><%- frases.close %></a>
+				</form>
+			</div>
+		</div>
+		<div class="<%- defaults.prefix %>-wg-pane" data-<%- defaults.prefix %>-pane="closechat">
+			<div class="<%- defaults.prefix %>-pane-body">
+				<h4><%- frases.close_chat_header %></h4>
+				<br>
+				<form id="<%- defaults.prefix %>-closechat-form" data-validate-form="true">
+					<label for="<%- defaults.prefix %>-send-dialog">
+						<input type="checkbox" name="sendDialog" id="<%- defaults.prefix %>-send-dialog" />
+						<span><%- frases.send_dialog_label %></span>
+					</label>
+					<input type="email" name="email" placeholder="<%- frases.email_pholder %>">
+					<select name="rating">
+						<option value="">--- <%- frases.rate_agent %> ---</option>
+						<option value="5"><%- frases.rates.excellent %></option>
+						<option value="4"><%- frases.rates.good %></option>
+						<option value="3"><%- frases.rates.fair %></option>
+						<option value="2"><%- frases.rates.bad %></option>
+					</select>
+					<textarea placeholder="<%- frases.comment_pholder %>" name="text" maxlength="1500"></textarea>
+					<button type="submit" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" style="background-color: <%- defaults.styles.primary.backgroundColor %>; color: <%- defaults.styles.primary.color %>; border: 1px solid <%- defaults.styles.primary.backgroundColor %>;"><%- frases.finish_dialog_button %></button>
+					<a href="#messages" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-block"><%- frases.back %></a>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div id="<%- defaults.prefix %>-btn-cont" class="<%- defaults.prefix %>-btn-cont">
+		<div class="<%- defaults.prefix %>-wg-btn">
+			<span class="<%- defaults.prefix %>-unnotify-btn" id="<%- defaults.prefix %>-unnotify-btn"><%- frases.close %> x</span>
+			<div id="<%- defaults.prefix %>-lastmsg" class="<%- defaults.prefix %>-lastmsg"></div>
+			<a href="#" class="<%- defaults.prefix %>-btn-link">
+				<span class="<%- defaults.prefix %>-btn-icon"></span>
+				<!-- <img class="<%- defaults.prefix %>-btn-icon" src="<%- defaults.path %>images/main-icon.svg"> -->
+			</a>
+		</div>
+	</div>
+</div>

@@ -91,28 +91,33 @@ Emit event
 Module emits the following events:
 #### `session/create`
 New session created.
+
 Parameters:
-`sid` - current session ID
+- `sid`: current session ID
 #### `session/continue`
 Continue active session. Emits after module initiation, when current session is active.
+
 Parameters:
-`entity` - could be `user` or `agent`
+- `entity`: could be `user` or `agent`
 #### `session/join`
 Join active session. Emits when IPCC agent is joined session, aka cobrowsing initiated.
 #### `session/disjoin`
 Current session closed.
 #### `widget/load`
 Widget template is fully loaded, compiled and inserted to the DOM.
+
 Parameters: 
-`widget` - widget DOM node
+- `widget`: widget DOM node
 #### `chat/start`
 Chat request was sent to the server and was accepted.
+
 Parameters:
-`timeout` - time (in seconds) before the dialog would be closed
+- `timeout`: time (in seconds) before the dialog would be closed
 #### `chat/close`
 Dialog closed
+
 Parameters:
-`rating` - agent's service rating set by the user
+- `rating`: agent's service rating set by the user
 #### `chat/send`
 An email message was sent.
 #### `chat/timeout`
@@ -149,16 +154,16 @@ You can set which of the fields user must fill in before starting the dialog. De
 }]
 ```
 Parameters:
-`name` - name of the field
-`required` - the value of that field shouldn't be empty
-`placeholder` - could be a translation key or any other string
-`save` - if `true`, the value would be stored in the session's memory and autofilled during the active session
+- `name`: name of the field
+- `required`: the value of that field shouldn't be empty
+- `placeholder`: could be a translation key or any other string
+- `save`: if `true`, the value would be stored in the session's memory and autofilled during the active session
 
 ### Setting Offer
 Parameters:
-`inMinutes` - time after module initiating, when the offer message will be shown to the user
-`from` - string representation of the message sender
-`text` - if not defined, the value will be a default tranlation key
+- `inMinutes`: time after module initiating, when the offer message will be shown to the user
+- `from`: string representation of the message sender
+- `text`: if not defined, the value will be a default tranlation key
 
 ### Setting Styles
 Default values:
@@ -177,10 +182,10 @@ Default values:
 }
 ```
 Parameters:
-`primary.backgroundColor` - the background color of the elements, that represents widget color schema
-`primary.color` - the font color of the elemennts, that represents widget color schema
-`intro.backgroundImage` - url of the background image on the `intro` pane
-`sendmail.backgroundImage` - url of the background image on the `sendmail` pane
+- `primary.backgroundColor`: the background color of the elements, that represents widget color schema
+- `primary.color`: the font color of the elemennts, that represents widget color schema
+- `intro.backgroundImage`: url of the background image on the `intro` pane
+- `sendmail.backgroundImage`: url of the background image on the `sendmail` pane
 
 ### Setting Button Styles
 Default values:
@@ -206,9 +211,9 @@ Default values:
 }
 ```
 Parameters:
-`[widgetState].backgroundColor` - button background color depending on widget's state
-`[widgetState].color` - button icon color depending on widget's state
-`color` - if `[widgetState].color` is not specified, this value will be used
+- `[widgetState].backgroundColor`: button background color depending on widget's state
+- `[widgetState].color`: button icon color depending on widget's state
+- `color`: if `[widgetState].color` is not specified, this value will be used
 
 ### Browser Support
 * Google Chrome (latest)

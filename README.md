@@ -49,6 +49,7 @@ wchat.initModule();
 <script src="wchat.min.js"></script>
 ```
 **Note**: do not use non minified version of the script, it's very big and is used only for debugging purposes.
+
 3. Add a link tag to the webpages where the module should be loaded.
 ```html
 <link href="main.css"></link>

@@ -34,7 +34,7 @@ document.getElementById('openWidget').addEventListener('click', wchat.openWidget
 wchat.initModule();
 
 // Subscribe to events
-var wchat = Wchat({ server: 'http://ipcc-server-domain.com:8880' });
+var wchat = Wchat({ server: 'http://ipcc-server-domain.com:8880' })
 .on('session/create', sessionCreateedHandler)
 .on('widget/init', widgetInitHandler)
 .on('chat/start', chatStartedHandler)

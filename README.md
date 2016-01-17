@@ -43,18 +43,18 @@ var wchat = Wchat({ server: 'http://ipcc-server-domain.com:8880' })
 wchat.initModule();
 ```
 ### Getting Started
-1. Download all files from 'dist' folder and put them to the website's folder on the webserver, where your website/web application is hosted.
-2. Add a script tag to the webpages where the module should be loaded.
+1) Download all files from 'dist' folder and put them to the website's folder on the webserver, where your website/web application is hosted.
+2) Add a script tag to the webpages where the module should be loaded.
 ```html
 <script src="wchat.min.js"></script>
 ```
 **Note**: do not use non minified version of the script, it's very big and is used only for debugging purposes.
 
-3. Add a link tag to the webpages where the module should be loaded.
+3) Add a link tag to the webpages where the module should be loaded.
 ```html
 <link href="main.css"></link>
 ```
-4. Initiate module with the appropriate options (the options are listed below).
+4) Initiate module with the appropriate options (the options are listed below).
 ```js
 Wchat({ server: 'http://ipcc-server-domain.com:8880' }).initModule();
 ```

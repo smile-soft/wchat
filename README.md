@@ -38,7 +38,7 @@ var wchat = Wchat({ server: 'http://ipcc-server-domain.com:8880' })
 .on('session/create', sessionCreateedHandler)
 .on('widget/init', widgetInitHandler)
 .on('chat/start', chatStartedHandler)
-.on('chat/close', chatClosedHandler)
+.on('chat/close', chatClosedHandler);
 
 wchat.initModule();
 ```

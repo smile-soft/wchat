@@ -44,6 +44,7 @@ wchat.initModule();
 ```
 ### Getting Started
 1) Download all files from 'dist' folder and put them to the website's folder on the webserver, where your website/web application is hosted.
+
 2) Add a script tag to the webpages where the module should be loaded.
 ```html
 <script src="wchat.min.js"></script>

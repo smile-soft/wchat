@@ -134,7 +134,7 @@ Form submitted
 Erro was emitted
 
 ### Setting Intro
-You can set which of the fields user must fill in before starting the dialog. Default values are:
+You can set which of the fields user must fill in before starting the dialog. Example values:
 ```
 [{
 		name: 'uname',

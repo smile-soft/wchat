@@ -377,7 +377,6 @@
     width: 55px;
     height: 55px;
     max-height: 100px;
-    background-color: rgba(241, 241, 241, 0.8);
     z-index: 100;
     -webkit-transition: background-color 0.4s, width 0.4s ease-in-out, height 0.4s;
     -moz-transition: background-color 0.4s, width 0.4s ease-in-out, height 0.4s;
@@ -400,9 +399,12 @@
       font-size: 36px;
       left: 7.5px;
       top: 8.5px;
-      color: #777; }
-    .swc-btn-cont .swc-wg-btn .swc-btn-icon:before {
-      content: ""; }
+      color: #777;
+      -webkit-transition: color 0.4s;
+      -moz-transition: color 0.4s;
+      -ms-transition: color 0.4s;
+      -o-transition: color 0.4s;
+      transition: color 0.4s; }
   .swc-btn-cont .swc-lastmsg {
     display: none;
     position: absolute;
@@ -765,21 +767,20 @@
       display: none; }
     .swc-wg-cont.active .swc-wg-panes {
       display: block; }
+  .swc-wg-cont.offline .swc-wg-btn .swc-btn-icon:before {
+    content: ""; }
   .swc-wg-cont.online .swc-top-bar {
     background-color: #fff;
     color: #333; }
     .swc-wg-cont.online .swc-top-bar .swc-wg-minimize a {
       color: #333; }
-  .swc-wg-cont.online .swc-wg-btn {
-    background-color: rgba(175, 229, 255, 0.8); }
-    .swc-wg-cont.online .swc-wg-btn .swc-btn-icon:before {
-      content: ""; }
+  .swc-wg-cont.online .swc-wg-btn .swc-btn-icon:before {
+    content: ""; }
   .swc-wg-cont.online .swc-wg-pane {
     padding-top: 40px; }
   .swc-wg-cont.notified .swc-wg-btn {
     width: 290px;
-    overflow: auto;
-    background-color: rgba(253, 250, 129, 0.8) !important; }
+    overflow: auto; }
     .swc-wg-cont.notified .swc-wg-btn .swc-btn-icon:before {
       content: "" !important; }
   .swc-wg-cont.notified .swc-lastmsg {
@@ -797,8 +798,8 @@
     -ms-transform: translateY(0);
     -o-transform: translateY(0);
     transform: translateY(0); }
-  .swc-wg-cont.timeout .swc-wg-btn {
-    background-color: rgba(241, 241, 241, 0.8); }
+  .swc-wg-cont.timeout .swc-wg-btn .swc-btn-icon:before {
+    content: ""; }
   .swc-wg-cont.chat .swc-wg-btn .swc-btn-icon:before {
     content: ""; }
   .swc-wg-cont.agent-typing .swc-loader {

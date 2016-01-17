@@ -14,14 +14,27 @@ var defaults = {
 	prefix: 'swc',
 	// whether or not to ask user 
 	// to introduce him self before the chat session
-	intro: ['name', 'phone', 'subject', 'language'],
+	intro: [{
+		name: 'uname',
+		required: true,
+		placeholder: 'name_pholder',
+		save: true
+	}, {
+		name: 'phone',
+		placeholder: 'phone_pholder',
+		type: 'tel',
+		save: true
+	}, {
+		name: 'subject',
+		placeholder: 'dialog_subject_pholder',
+	}, {
+		name: 'lang'
+	}],
 	// whether or not to add widget to the webpage
 	widget: true,
 	title: 'Live Chat',
 	lang: 'en',
-	button: {
-		position: 'right'
-	},
+	position: 'right',
 	hideOfflineButton: false,
 	offer: {
 		inMinutes: 0.10,
@@ -34,11 +47,30 @@ var defaults = {
 			color: '#FFFFFF'
 		},
 		intro: {
-			background: "images/bgr-02.jpg"
+			backgroundImage: "images/bgr-02.jpg"
 		},
 		sendmail: {
-			background: "images/bgr-01.jpg"
+			backgroundImage: "images/bgr-01.jpg"
 		}
+	},
+	buttonStyles: {
+		online: {
+			backgroundColor: 'rgba(175,229,255,0.8)',
+			color: ''
+		},
+		offline: {
+			backgroundColor: 'rgba(241,241,241,0.8)',
+			color: ''
+		},
+		timeout: {
+			backgroundColor: 'rgba(241,241,241,0.8)',
+			color: ''
+		},
+		notified: {
+			backgroundColor: 'rgba(253,250,129,0.8)',
+			color: ''
+		},
+		color: '#777'
 	},
 	// absolute path to the wchat folder
 	path: '',
@@ -79,7 +111,8 @@ module.exports = Widget;
 
 function Widget(options){
 
-	_.assign(defaults, options || {});
+	_.merge(defaults, options || {});
+	// _.assign(defaults, options || {});
 
 	api = new api(options)
 	.on('session/create', onSessionSuccess)
@@ -93,8 +126,8 @@ function Widget(options){
 		.on('message/typing', onAgentTyping)
 		.on('form/submit', onFormSubmit)
 		.on('widget/load', onWidgetLoad)
-		.on('widget/init', onWidgetInit)
-		.on('widget/statechange', changeWgState);
+		.on('widget/init', onWidgetInit);
+		// .on('widget/statechange', changeWgState);
 	}
 
 	setSessionTimeoutHandler();
@@ -132,18 +165,16 @@ function onSessionSuccess(){
 
 	// set current user language
 	currLang = detectLanguage();
-
 	setSessionTimeoutHandler();
+	getLanguages();
 
 	// If page loaded and "widget" property is set - load widget
 	if(defaults.widget && !widgetState.initiated && isBrowserSupported()) {
 		loadWidget();
 	}
 
-	getLanguages();
-
 	// If timeout was occured, init chat after a session is created
-	if(widget && widgetState.state === 'timeout') {
+	if(hasWgState('timeout')) {
 		removeWgState('timeout');
 	}
 }
@@ -157,9 +188,9 @@ function loadWidget(cb){
 			defaults: defaults,
 			languages: langs,
 			translations: frases,
-			lang: currLang || defaults.lang,
+			currLang: currLang || defaults.lang,
 			// frases: frases[currLang] || defaults.lang,
-			credentials: api.getState('credentials') || {},
+			credentials: api.getState('credentials', 'session') || {},
 			_: _
 		});
 
@@ -189,9 +220,10 @@ function getLanguages(){
 
 function onNewLanguages(languages){
 	console.log('languages: ', languages);
-	var state = languages.length ? 'online' : 'offline';
-	var options = '', selected;
+	var state = languages.length ? 'online' : 'offline',
+	options = '', selected;
 
+	// if(hasWgState(state)) return;
 	if(widgetState.state === state) return;
 	
 	langs = languages;
@@ -199,23 +231,26 @@ function onNewLanguages(languages){
 	if(defaults.intro) {
 		// Add languages to the template
 		langs.forEach(function(lang) {
-			selected = lang === currLang ? currLang : '';
+			selected = lang === currLang ? 'selected' : '';
 			options += '<option value="'+lang+'" '+selected+' >'+frases[lang].lang+'</option>';
 		});
 		global[defaults.prefix+'IntroForm'].lang.innerHTML = options;
 	}
 
-	api.emit('widget/statechange', { state: state });
-	
+	changeWgState({ state: state });
 }
 
 function initWidget(){
 	console.log('Init widget!');
 	widgetState.initiated = true;
 
+	if(defaults.hideOfflineButton) {
+		addWgState('no-button');
+	}
+
 	// if chat started
 	if(api.getState('chat') === true) {
-		requestChat(api.getState('credentials'));
+		requestChat(api.getState('credentials', 'session'));
 		showWidget();
 		// initChat();
 	}
@@ -230,7 +265,7 @@ function onWidgetInit() {
 			showOffer({
 				from: defaults.offer.from,
 				time: Date.now(),
-				text: frases[currLang].offer
+				text: defaults.offer.text || frases[currLang].offer
 			});
 		}, defaults.offer.inMinutes*60*1000);
 	}
@@ -253,8 +288,8 @@ function initChat(){
 	if(!langs.length) {
 		switchPane('sendemail');
 	} else if(defaults.intro) {
-		if(api.getState('credentials') && api.getState('chat')) {
-			requestChat(api.getState('credentials'));
+		if(api.getState('credentials', 'session') && api.getState('chat')) {
+			requestChat(api.getState('credentials', 'session'));
 		} else {
 			switchPane('credentials');
 		}
@@ -268,7 +303,7 @@ function requestChat(credentials){
 
 	// Save credentials for current session
 	// It will be removed on session timeout
-	api.saveState('credentials', credentials);
+	api.saveState('credentials', credentials, 'session');
 
 	// Save user language based on preferable dialog language
 	if(credentials.lang && credentials.lang !== currLang ) {
@@ -319,7 +354,7 @@ function compileMessages(messages, template){
 	var str,
 		els = [],
 		aname = api.getState('aname', 'session'),
-		uname = api.getState('credentials') ? api.getState('credentials').uname : null;
+		uname = api.getState('credentials', 'session') ? api.getState('credentials', 'session').uname : null;
 
 	_.forEach(messages, function (message){
 		message.entity = message.from === uname ? 'user' : 'agent';
@@ -351,7 +386,9 @@ function onLastMessage(message){
 		});
 
 		lastMsg.innerHTML = message;
+		// changeWgState({ state: 'notified' });
 		addWgState('notified');
+		setButtonStyle('notified');
 	}
 }
 
@@ -523,21 +560,19 @@ function setSessionTimeoutHandler(){
 			closeChat();
 		}
 		if(widget) {
-			addWgState('timeout');
+			// addWgState('timeout');
 			closeWidget();
 		}
-		widgetState.state = 'timeout';
+		changeWgState({ state: 'timeout' });
+		// widgetState.state = 'timeout';
+		// addWgState('timeout');
+		setButtonStyle('timeout');
 		api.removeState('sid');
 
 		if(params && params.method === 'updateEvents') {
 			initModule();
 		}
 	});
-}
-
-function refreshSession() {
-	api.removeState('sid');
-	initModule();
 }
 
 /**
@@ -645,15 +680,15 @@ function btnClickHandler(e){
 	// remove notification of a new message
 	if(targ.id === defaults.prefix+'-unnotify-btn') {
 		removeWgState('notified');
-
 		// reset button height
 		resetStyles(btn.children[0]);
+		setButtonStyle(widgetState.state);
 		return;
 	}
 
 	if(currTarg.id === defaults.prefix+'-btn-cont') {
 		// If timeout is occured, init session first
-		if(widgetState.state === 'timeout') initModule();
+		if(hasWgState('timeout')) initModule();
 		else initChat();
 	}
 }
@@ -729,17 +764,28 @@ function switchPane(pane){
 }
 
 function changeWgState(params){
-	widgetState.state = params.state;
-	if(!widget) return;
-	if(params.state === 'online') {
-		addWgState('online');
-		removeWgState('no-button');
-	} else {
+	if(!widget || widgetState.state === params.state) return;
+	if(params.state === 'offline') {
 		removeWgState('online');
-		if(defaults.hideOfflineButton) {
-			addWgState('no-button');
-		}
+	} else if(params.state === 'online') {
+		removeWgState('offline');
+		
 	}
+
+	widgetState.state = params.state;
+	addWgState(params.state);
+	// api.emit('widget/statechange', { state: params.state });
+	setButtonStyle(params.state);
+}
+
+// TODO: This is not a good solution or maybe not a good implementation
+function setButtonStyle(state) {
+	if(!widget || defaults.buttonStyles[state] === undefined) return;
+	var wgBtn = widget.querySelector('.'+defaults.prefix+'-wg-btn'),
+		btnIcon = widget.querySelector('.'+defaults.prefix+'-btn-icon');
+
+	wgBtn.style.backgroundColor = defaults.buttonStyles[state].backgroundColor;
+	btnIcon.style.color = defaults.buttonStyles[state].color || defaults.buttonStyles.color;
 }
 
 function addWgState(state){
@@ -748,6 +794,7 @@ function addWgState(state){
 
 function hasWgState(state){
 	if(widget) return widget.classList.contains(state);
+	else return false;
 }
 
 function removeWgState(state){
@@ -761,6 +808,7 @@ function showWidget(){
 
 	// reset button height
 	resetStyles(btn.children[0]);
+	setButtonStyle(widgetState.state);
 
 	messagesCont.scrollTop = messagesCont.scrollHeight;
 }

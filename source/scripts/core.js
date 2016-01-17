@@ -49,6 +49,7 @@ function WchatAPI(options){
 
 	this.on('Error', function (err, params){
 		console.log('ERROR: ', err, params);
+		alert(err.message);
 		if(err.code === 404) {
 			this.sessionTimeout(params);
 		}
@@ -389,13 +390,13 @@ WchatAPI.prototype.sessionTimeout = function(params){
 };
 
 function shareEvents(){
-
+	// TODO
 }
 
 function shareBrowser(){
-
+	// TODO
 }
 
 function unshareBrowser(){
-
+	// TODO
 }

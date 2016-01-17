@@ -11,7 +11,7 @@
 		height: $btn-height;
 		max-height: 100px;
 		// background-color: #F1F1F1;
-		background-color: $btn-color-offline;
+		// background-color: $btn-color-offline;
 		z-index: 100;
 		@extend %clearfix;
 		@include transition(background-color 0.4s, width 0.4s ease-in-out, height 0.4s);
@@ -30,14 +30,15 @@
 			font-size: 36px;
 			left: 7.5px;
 			top: 8.5px;
-			color: #777;
+			color: $btn-icon-color;
+			@include transition(color 0.4s);
 			// padding: 10px;
 			// width: $btn-width;
 			// height: $btn-height;
 		}
-		.swc-btn-icon:before {
-			content: $btn-icon-offline;
-		}
+		// .swc-btn-icon:before {
+		// 	content: $btn-icon-offline;
+		// }
 	}
 
 	.swc-lastmsg {

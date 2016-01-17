@@ -4,14 +4,20 @@ $wg-width: 270px;
 $font-stack: "Trebuchet MS", Helvetica, sans-serif;
 $btn-color-online: rgba(175,229,255,0.8);
 $btn-icon-online: '\e902';
+$btn-icon-color-online: '';
 $btn-color-offline: rgba(241,241,241,0.8);
 $btn-icon-offline: '\e900';
+$btn-icon-color-offline: '';
 $btn-color-timeout: rgba(241,241,241,0.8);
 $btn-icon-timeout: '\e902';
+$btn-icon-color-timeout: '';
 $btn-color-notified: rgba(253,250,129,0.8);
 $btn-icon-notified: '\e901';
+$btn-icon-color-notified: '';
 $btn-color-chat: rgba(175,229,255,0.8);
 $btn-icon-chat: '\e903';
+$btn-icon-color-chat: '';
+$btn-icon-color: #777;
 $primary-color: #33C3F0;
 $secondary-color: #BBBBBB;
 $btn-width: 55px;
@@ -149,6 +155,18 @@ $btn-height: 55px;
 			display: block;
 		}
 	}
+	&.offline {
+		.swc-wg-btn {
+			// background-color: $btn-color-offline;
+
+			// .swc-btn-icon {
+			// 	color: $btn-icon-color-offline;
+			// }
+			.swc-btn-icon:before {
+				content: $btn-icon-offline;
+			}
+		}
+	}
 	&.online {
 		.swc-top-bar {
 			background-color: #fff;
@@ -160,8 +178,11 @@ $btn-height: 55px;
 		}
 		.swc-wg-btn {
 			// background-color: #AFE5FF;
-			background-color: $btn-color-online;
+			// background-color: $btn-color-online;
 
+			// .swc-btn-icon {
+			// 	color: $btn-icon-color-online;
+			// }
 			.swc-btn-icon:before {
 				content: $btn-icon-online;
 			}
@@ -176,8 +197,11 @@ $btn-height: 55px;
 			width: 290px;
 			overflow: auto;
 			// background-color: #FDFA81 !important;
-			background-color: $btn-color-notified !important;
+			// background-color: $btn-color-notified !important;
 
+			// .swc-btn-icon {
+			// 	color: $btn-icon-color-notified !important;
+			// }
 			.swc-btn-icon:before {
 				content: $btn-icon-notified !important;
 			}
@@ -195,11 +219,21 @@ $btn-height: 55px;
 	&.timeout {
 		.swc-wg-btn {
 			// background-color: #F1F1F1;
-			background-color: $btn-color-timeout;
+			// background-color: $btn-color-timeout;
+			// .swc-btn-icon {
+			// 	color: $btn-icon-color-timeout;
+			// }
+			.swc-btn-icon:before {
+				content: $btn-icon-timeout;
+			}
 		}
 	}
 	&.chat {
 		.swc-wg-btn {
+			// background-color: $btn-color-chat;
+			// .swc-btn-icon {
+			// 	color: $btn-icon-color-chat;
+			// }
 			.swc-btn-icon:before {
 				content: $btn-icon-chat;
 			}

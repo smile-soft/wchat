@@ -130,7 +130,7 @@ Erro was emitted
 
 ### Setting Intro
 You can set which of the fields user must fill in before starting the dialog. Default values are:
-```json
+```
 [{
 		name: 'uname',
 		required: true,
@@ -162,7 +162,7 @@ Parameters:
 
 ### Setting Styles
 Default values:
-```json
+```
 {
 		primary: {
 			backgroundColor: '#555555',
@@ -184,7 +184,7 @@ Parameters:
 
 ### Setting Button Styles
 Default values:
-```json
+```
 {
 		online: {
 			backgroundColor: 'rgba(175,229,255,0.8)',
@@ -211,12 +211,12 @@ Parameters:
 `color` - if `[widgetState].color` is not specified, this value will be used
 
 ### Browser Support
-Google Chrome (latest)
-Mozilla Firefox (latest)
-Safari
-Opera (latest)
-IE 10+
-Microsoft Edge
+* Google Chrome (latest)
+* Mozilla Firefox (latest)
+* Safari
+* Opera (latest)
+* IE 10+
+* Microsoft Edge
 
 ### License
 MIT

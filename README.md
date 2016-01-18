@@ -236,8 +236,8 @@ Parameters:
 ### Browser Support
 * Google Chrome (latest)
 * Mozilla Firefox (latest)
-* Safari
 * Opera (latest)
+* Safari
 * IE 10+
 * Microsoft Edge
 

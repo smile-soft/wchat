@@ -134,6 +134,7 @@ Parameters:
 An email message was sent.
 
 #### `chat/timeout`
+This event occures when user stood in a queue for a certain period of time, which is specified in Admin Studio by Smile IPCC administrator.
 
 #### `chat/languages`
 New list of available dialog languages was loaded from the server. If an empty array was recieved then there are no registered IPCC agents that could serve current task.

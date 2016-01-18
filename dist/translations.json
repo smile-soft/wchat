@@ -23,13 +23,12 @@
 			"fair": "Fair",
 			"bad": "Bad"
 		},
-		"name_pholder": "Your name",
+		"uname_pholder": "Your name",
 		"email_pholder": "Your email",
 		"phone_pholder": "Your phone",
-		"dialog_subject_pholder": "Dialog's subject",
+		"subject_pholder": "Dialog's subject",
 		"message_pholder": "Your message here...",
 		"comment_pholder": "Please, leave your comment here...",
-		"offer": "Welcome, need some help?",
 		"email_subjects": {
 			"dialog": "Your dialog on",
 			"complain": "Dialog comment from",
@@ -39,7 +38,10 @@
 			"fields": "Please fill in all required fields",
 			"email": "Please fill in your email",
 			"tel": "Please fill in your telephone number"
-		}
+		},
+		"default_user_name": "You",
+		"default_title": "Live chat",
+		"default_offer": "Welcome, need some help?"
     },
     "uk": {
     	"lang": "Українська",
@@ -65,13 +67,12 @@
 			"fair": "Задовільно",
 			"bad": "Погано"
 		},
-		"name_pholder": "Ваше ім'я",
+		"uname_pholder": "Ваше ім'я",
 		"email_pholder": "Ваша електронна адреса",
 		"phone_pholder": "Ваш телефон",
-		"dialog_subject_pholder": "Тема діалогу",
+		"subject_pholder": "Тема діалогу",
 		"message_pholder": "Ваше повідомлення тут...",
 		"comment_pholder": "Будь ласка, залиште тут свій коментар...",
-		"offer": "Ласкаво просимо, потрібна допомога?",
 		"email_subjects": {
 			"dialog": "Ваш діалог на",
 			"complain": "Коментар до діалогу від",
@@ -81,7 +82,10 @@
 			"fields": "Будь ласка, заповніть всі необхідні поля",
 			"email": "Будь ласка, введіть свою електронну адресу",
 			"tel": "Будь ласка, введіть свій номер телефону"
-		}
+		},
+		"default_user_name": "Ви",
+		"default_title": "Онлайн чат",
+		"default_offer": "Ласкаво просимо, потрібна допомога?"
     },
     "ru": {
     	"lang": "Русский",
@@ -107,13 +111,12 @@
 			"fair": "Нормально",
 			"bad": "Плохо"
 		},
-		"name_pholder": "Ваше имя",
+		"uname_pholder": "Ваше имя",
 		"email_pholder": "Ваш электронный адрес",
 		"phone_pholder": "Ваш телефон",
-		"dialog_subject_pholder": "Тема диалога",
+		"subject_pholder": "Тема диалога",
 		"message_pholder": "Ваше сообщение здесь...",
 		"comment_pholder": "Пожалуйста, оставьте здесь свой комментарий...",
-		"offer": "Добро пожаловать, нужна помощь?",
 		"email_subjects": {
 			"dialog": "Ваш диалог на",
 			"complain": "Комментарий к диалогу от",
@@ -123,6 +126,9 @@
 			"fields": "Пожалуйста, заполните все необходимые поля",
 			"email": "Пожалуйста, введите свой электронный адрес",
 			"tel": "Пожалуйста, введите свой номер телефона"
-		}
+		},
+		"default_user_name": "Вы",
+		"default_title": "Онлайн чат",
+		"default_offer": "Добро пожаловать, нужна помощь?"
     }
 };

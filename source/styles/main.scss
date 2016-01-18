@@ -1,6 +1,8 @@
 
-$wg-height: 400px;
+$wg-height: 455px;
 $wg-width: 270px;
+$btn-width: 55px;
+$btn-height: 55px;
 $font-stack: "Trebuchet MS", Helvetica, sans-serif;
 $btn-color-online: rgba(175,229,255,0.8);
 $btn-icon-online: '\e902';
@@ -20,8 +22,6 @@ $btn-icon-color-chat: '';
 $btn-icon-color: #777;
 $primary-color: #33C3F0;
 $secondary-color: #BBBBBB;
-$btn-width: 55px;
-$btn-height: 55px;
 
 @import 'fonts';
 @import 'mixins';
@@ -36,18 +36,19 @@ $btn-height: 55px;
 #swc-wg-window .swc-wg-cont {
 	position: absolute;
 	right: 0;
-	&.active {
-		@include bp-small {
-			height: 100%;
-			box-shadow: none;
-			left: 0;
-			-webkit-overflow-scrolling: touch;
-		}
-	}
 
-	.swc-messages-cont {
-		max-height: 100%;
+	.swc-wg-panes {
+		height: 100%;
+		width: 100%;
 	}
+	// &.active {
+	// 	@include bp-small {
+	// 		height: 100%;
+	// 		box-shadow: none;
+	// 		left: 0;
+	// 		-webkit-overflow-scrolling: touch;
+	// 	}
+	// }
 }
 
 .swc-wg-cont {

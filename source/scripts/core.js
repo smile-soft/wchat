@@ -49,7 +49,6 @@ function WchatAPI(options){
 
 	this.on('Error', function (err, params){
 		console.log('ERROR: ', err, params);
-		alert(err.message);
 		if(err.code === 404) {
 			this.sessionTimeout(params);
 		}
@@ -121,7 +120,7 @@ WchatAPI.prototype.createSession = function(pageUrl){
 		}
 
 		this.saveState('sid', body.result.sid);
-		this.emit('session/create', body);
+		this.emit('session/create', body.result);
 	}.bind(this));
 };
 

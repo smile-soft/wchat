@@ -1,9 +1,9 @@
 <% var frases = translations[currLang]; %>
 <% var positionClass = defaults.position === 'right' ? 'position-right' : 'position-left' %>
 <div id="<%- defaults.prefix %>-wg-cont" class="<%- defaults.prefix %>-wg-cont <%- positionClass %>">
-	<div id="<%- defaults.prefix %>-wg-panes" class="<%- defaults.prefix %>-wg-panes">
+	<div id="<%- defaults.prefix %>-wg-panes" class="<%- defaults.prefix %>-wg-panes" style="<% if(defaults.styles.width) { %>width: <%- defaults.styles.width %>;<% } %><% if(defaults.styles.height) { %>height: <%- defaults.styles.height %>;<% } %>">
 		<div class="<%- defaults.prefix %>-top-bar">
-			<h4 class="<%- defaults.prefix %>-wg-title <%- defaults.prefix %>-uppercase"><%- defaults.title %></h4>
+			<h4 class="<%- defaults.prefix %>-wg-title <%- defaults.prefix %>-uppercase"><%- defaults.title || frases.default_title %></h4>
 			<div class="<%- defaults.prefix %>-wg-minimize">
 				<a href="#" data-<%- defaults.prefix %>-handler="close">
 					<span style="font-weight: bold">_</span>
@@ -16,7 +16,7 @@
 				</a>
 			</div>
 		</div>
-		<% if(defaults.intro) { %>
+		<% if(defaults.intro.length) { %>
 		<div class="<%- defaults.prefix %>-wg-pane" data-<%- defaults.prefix %>-pane="credentials">
 			<div class="<%- defaults.prefix %>-pane-header <%- defaults.prefix %>-dark" <% if(defaults.styles.intro.backgroundImage) { %> style="background-image: url(<%- defaults.path %><%- defaults.styles.intro.backgroundImage %>)" <% } %>>
 				<div class="<%- defaults.prefix %>-backdrop-cont <%- defaults.prefix %>-white">
@@ -27,10 +27,9 @@
 			<div class="<%- defaults.prefix %>-pane-body">
 				<h4></h4>
 				<form id="<%- defaults.prefix %>-intro-form" name="<%- defaults.prefix %>IntroForm" data-validate-form="true">
-					<% console.log(defaults.intro); %>
 					<% _.forEach(defaults.intro, function(item){ %>
 						<% if(item.name !== 'lang') { %>
-							<input type="<%= item.type || 'text' %>" placeholder="<%- frases[item.placeholder] || item.placeholder %> <% if(item.required){ %>*<% } %>" name="<%- item.name %>" <% if(item.save){ %> value="<%- credentials[item.name] %>" <% } %> <% if(item.required){ %>required<% } %>>
+							<input type="<%= item.type || 'text' %>" placeholder="<%= item.placeholder || frases[item.name+'_pholder'] %> <% if(item.required){ %>*<% } %>" name="<%- item.name %>" <% if(item.save){ %> value="<%- credentials[item.name] %>" <% } %> <% if(item.required){ %>required<% } %>>
 						<% } %>
 						<% if(item.name === 'lang') { %>
 							<select name="lang">
@@ -40,7 +39,7 @@
 							</select>
 						<% } %>
 					<% }); %>
-					<!-- <input type="text" placeholder="<%- frases.name_pholder %> *" name="uname" value="<%- credentials.uname %>" required> -->
+					<!-- <input type="text" placeholder="<%- frases.uname_pholder %> *" name="uname" value="<%- credentials.uname %>" required> -->
 					<!-- <input type="tel" placeholder="<%- frases.phone_pholder %>" name="phone" value="<%- credentials.phone %>"> -->
 					<!-- <input type="text" placeholder="<%- frases.dialog_subject_pholder %>" name="subject"> -->
 					<button type="submit" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" style="background-color: <%- defaults.styles.primary.backgroundColor %>; color: <%- defaults.styles.primary.color %>; border: 1px solid <%- defaults.styles.primary.backgroundColor %>;"><%- frases.start_dialog_button %></button>
@@ -94,7 +93,7 @@
 			<div class="<%- defaults.prefix %>-pane-body">
 				<h4 class="<%- defaults.prefix %>-uppercase"><%- frases.send_message_header %></h4>
 				<form id="<%- defaults.prefix %>-sendmail-form" data-validate-form="true">
-					<input type="text" name="uname" placeholder="<%- frases.name_pholder %>">
+					<input type="text" name="uname" placeholder="<%- frases.uname_pholder %>">
 					<input type="email" name="email" placeholder="<%- frases.email_pholder %> *" required>
 					<textarea name="text" placeholder="<%- frases.message_pholder %>" maxlength="1500"></textarea>
 					<input type="file" name="file">

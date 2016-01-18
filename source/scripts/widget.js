@@ -14,33 +14,14 @@ var defaults = {
 	prefix: 'swc',
 	// whether or not to ask user 
 	// to introduce him self before the chat session
-	intro: [{
-		name: 'uname',
-		required: true,
-		placeholder: 'name_pholder',
-		save: true
-	}, {
-		name: 'phone',
-		placeholder: 'phone_pholder',
-		type: 'tel',
-		save: true
-	}, {
-		name: 'subject',
-		placeholder: 'dialog_subject_pholder',
-	}, {
-		name: 'lang'
-	}],
+	intro: false,
 	// whether or not to add widget to the webpage
 	widget: true,
-	title: 'Live Chat',
+	title: '',
 	lang: 'en',
 	position: 'right',
 	hideOfflineButton: false,
-	offer: {
-		inMinutes: 0.10,
-		from: 'Live Chat'
-	},
-	widgetWindowOptions: 'left=10,top=10,width=350,height=550,resizable=yes',
+	offer: false,
 	styles: {
 		primary: {
 			backgroundColor: '#555555',
@@ -72,6 +53,7 @@ var defaults = {
 		},
 		color: '#777'
 	},
+	widgetWindowOptions: 'left=10,top=10,width=350,height=550,resizable=yes',
 	// absolute path to the wchat folder
 	path: '',
 	// in seconds
@@ -116,8 +98,8 @@ function Widget(options){
 
 	api = new api(options)
 	.on('session/create', onSessionSuccess)
-	.on('session/continue', onSessionSuccess)
-	.on('chat/languages', onNewLanguages);
+	.on('session/continue', onSessionSuccess);
+	// .on('chat/languages', onNewLanguages);
 	
 	if(defaults.widget) {
 		api.on('chat/start', startChat)
@@ -125,8 +107,8 @@ function Widget(options){
 		.on('message/new', newMessage)
 		.on('message/typing', onAgentTyping)
 		.on('form/submit', onFormSubmit)
-		.on('widget/load', onWidgetLoad)
-		.on('widget/init', onWidgetInit);
+		.on('widget/load', onWidgetLoad);
+		// .on('widget/init', onWidgetInit);
 		// .on('widget/statechange', changeWgState);
 	}
 
@@ -140,8 +122,14 @@ var publicApi = {
 	initModule: initModule,
 	openWidget: openWidget,
 	initChat: initChat,
-	on: on,
-	emit: emit,
+	on: function(evt, listener) {
+		api.on(evt, listener);
+		return this;
+	},
+	emit: function (evt, listener){
+		api.emit(evt, listener);
+		return this;
+	},
 	/**
 	 * Set default user credentials.
 	 * If "intro" is false, than dialog will start with these credentials.
@@ -151,7 +139,7 @@ var publicApi = {
 	 */
 	setDefaultCredentials: function(params) {
 		defaults.credentials = params;
-		return;
+		return this;
 	}
 };
 
@@ -213,7 +201,7 @@ function onWidgetLoad(widget){
 function getLanguages(){
 	api.getLanguages(function (err, body){
 		if(err) return;
-		if(body) api.emit('chat/languages', body.result);
+		if(body) onNewLanguages(body.result);
 		setTimeout(getLanguages, defaults.checkStatusTimeout*1000);
 	});
 }
@@ -228,7 +216,7 @@ function onNewLanguages(languages){
 	
 	langs = languages;
 
-	if(defaults.intro) {
+	if(widget && defaults.intro.length) {
 		// Add languages to the template
 		langs.forEach(function(lang) {
 			selected = lang === currLang ? 'selected' : '';
@@ -238,6 +226,7 @@ function onNewLanguages(languages){
 	}
 
 	changeWgState({ state: state });
+	api.emit('chat/languages', languages);
 }
 
 function initWidget(){
@@ -248,6 +237,10 @@ function initWidget(){
 		addWgState('no-button');
 	}
 
+	if(defaults.offer) {
+		setOffer();
+	}
+
 	// if chat started
 	if(api.getState('chat') === true) {
 		requestChat(api.getState('credentials', 'session'));
@@ -256,19 +249,17 @@ function initWidget(){
 	}
 
 	// Widget is initiated
-	api.emit('widget/init');
+	// api.emit('widget/init');
 }
 
-function onWidgetInit() {
-	if(defaults.offer) {
-		setTimeout(function() {
-			showOffer({
-				from: defaults.offer.from,
-				time: Date.now(),
-				text: defaults.offer.text || frases[currLang].offer
-			});
-		}, defaults.offer.inMinutes*60*1000);
-	}
+function setOffer() {
+	setTimeout(function() {
+		showOffer({
+			from: defaults.offer.from || frases[currLang].default_title,
+			time: Date.now(),
+			text: defaults.offer.text || frases[currLang].default_offer
+		});
+	}, defaults.offer.inMinutes ? defaults.offer.inMinutes*60*1000 : 30000);
 }
 
 function showOffer(message) {
@@ -287,34 +278,40 @@ function initChat(){
 
 	if(!langs.length) {
 		switchPane('sendemail');
-	} else if(defaults.intro) {
-		if(api.getState('credentials', 'session') && api.getState('chat')) {
+	} else if(defaults.intro.length) {
+		if(api.getState('chat')) {
 			requestChat(api.getState('credentials', 'session'));
 		} else {
 			switchPane('credentials');
 		}
 	} else {
-		requestChat({ uname: 'User', lang: currLang });
+		requestChat({ lang: currLang });
 	}
 }
 
 function requestChat(credentials){
-	api.chatRequest(credentials);
-
-	// Save credentials for current session
-	// It will be removed on session timeout
-	api.saveState('credentials', credentials, 'session');
-
+	if(!credentials.uname) credentials.uname = api.getState('sid').split('_')[0];
+	
 	// Save user language based on preferable dialog language
 	if(credentials.lang && credentials.lang !== currLang ) {
 		api.saveState('lang', credentials.lang);
 	}
+	if(!credentials.lang) {
+		credentials.lang = currLang;
+	}
+	
+	// Save credentials for current session
+	// It will be removed on session timeout
+	api.saveState('credentials', credentials, 'session');
+
+	api.chatRequest(credentials);
 }
 
 function startChat(params){
 	switchPane('messages');
 	api.saveState('chat', true);
 	if(params.timeout) {
+		console.log('chat timeout: ', params.timeout);
 		chatTimeout = api.setChatTimeout(params.timeout);
 	}
 	getMessages();
@@ -353,11 +350,17 @@ function newMessage(result){
 function compileMessages(messages, template){
 	var str,
 		els = [],
+		defaultUname = false,
 		aname = api.getState('aname', 'session'),
-		uname = api.getState('credentials', 'session') ? api.getState('credentials', 'session').uname : null;
+		uname = api.getState('credentials', 'session').uname;
+
+		if(uname === api.getState('sid').split('_')[0]) {
+			defaultUname = true;
+		}
 
 	_.forEach(messages, function (message){
 		message.entity = message.from === uname ? 'user' : 'agent';
+		message.from = (message.entity === 'user' && defaultUname) ? frases[currLang].default_user_name : message.from;
 		message.time = message.time ? parseTime(message.time) : '';
 		message.text = parseMessage(message.text, message.file);
 		els.push(compileTemplate(template, message));
@@ -616,13 +619,6 @@ function setListeners(widget){
 	// addEvent(sendMsgBtn, 'click', wgSendMessage);
 	addEvent(fileSelect, 'change', wgSendFile);
 	addEvent(textField, 'keypress', wgTypingHandler);
-}
-
-function on(evt, listener){
-	api.on(evt, listener);
-}
-function emit(evt, listener){
-	api.emit(evt, listener);
 }
 
 /********************************

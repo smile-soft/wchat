@@ -4,7 +4,7 @@ Official javascript module for Smile IPCC
 
 [Detailed about Smile IP Contact Center](https://smile-soft.com/index.php/en/ipcc-overview)
 ### Prerequisites
-This module could be used only with the installed Smile IPCC server and appropriate licence must be purchased.
+This module could be used only with Smile IPCC server. Appropriate licence must be purchased.
 
 [Read the full documentation](http://smile-soft.com/resources/ru/Smile%20IPCC%20Webchat.pdf)
 ### Examples
@@ -25,7 +25,7 @@ Wchat({
 			color: "#fff"
 		}
 	},
-	path: "<?php echo get_template_directory_uri(); ?>/wchat/" // set absolute path to the module's folder in wordpress
+	path: "<?php echo get_template_directory_uri(); ?>/wchat/" // absolute path to the module's folder in wordpress template
 }).initModule();
 
 // Set widget option to false
@@ -42,7 +42,7 @@ Wchat({ server: 'http://ipcc-server-domain.com:8880' })
 .initModule();
 ```
 ### Getting Started
-1) Download all files from 'dist' folder and put them to the website's folder on the webserver, where your website/web application is hosted.
+1) Put all files from `dist` folder to the website's folder on the webserver, where your website/web application is hosted.
 
 2) Add a script tag to the webpages where the module should be loaded.
 ```html
@@ -54,7 +54,7 @@ Wchat({ server: 'http://ipcc-server-domain.com:8880' })
 ```html
 <link href="main.css"></link>
 ```
-4) Initiate module with the appropriate options (the options are listed below).
+4) Initiate module with the appropriate options (listed below).
 ```js
 Wchat({ server: 'http://ipcc-server-domain.com:8880' }).initModule();
 ```
@@ -62,19 +62,19 @@ Wchat({ server: 'http://ipcc-server-domain.com:8880' }).initModule();
 Option            | Type    | Default     | Description
 ------------------|---------|-------------|-----------------
 server            | String  |             | IPCC server IP address and http port
-title             | String  | Live chat   | Displayed in the widget's header element. Usualy a company/service name
+title             | String  | Live chat   | Displayed in the widget's header element
 lang              | String  | en          | Default language of interface and dialog. Used when automaticaly determined user language is not supported (ask your IPCC administrator for additional information). Possible values are `en`, `uk`, `ru`
 widget            | Boolean | true        | Whether the webchat widget should be opened within the main tab (if `true`) or in a separate window (if `false`)
-position          | String  | right       | Widget position on the page. Actual if `widget` is set to true. Possiblr values are `right` and `left`
-hideOfflineButton | Boolean | false       | If set to `true`, then the widget button will be hidden when there are no registered IPCC agents that could serve current task
+position          | String  | right       | Widget position on the page. Option is actual if `widget` is set to true. Possible values are `right` and `left`
+hideOfflineButton | Boolean | false       | If set to `true`, then widget's button will be hidden when there are no registered IPCC agents that could serve current task
 intro             | Array   | []          | If defined, then the user must introduce him/herself before starting a dialog. [Read more](#setting-intro)
-offer             | Object  | false       | When set, the predefined message would be shown to the user after a certain number of minutes. [Read more](#setting-offer)
+offer             | Object  | false       | When set, the predefined message will be shown to the user after a certain number of minutes. [Read more](#setting-offer)
 styles            | Obejct  |             | A basic widget styles. [Read more](#setting-styles)
 buttonStyles      | Object  |             | A set of widget's button styles. [Read more](#setting-button-styles)
 path              | String  |             | Absolute path to the module's folder on the web server
 
 ### API
-Module's API exposes the following methods
+Module's API exposes the following methods:
 #### `initModule()`
 Initiate module with all the options set and all the events subscribed.
 #### `openWidget()`
@@ -82,9 +82,9 @@ Open webchat widget in the separate window.
 #### `initChat()`
 Initiate dialog
 #### `on`
-Subscribe to event
+Subscribe to specified event.
 #### `emit`
-Emit event
+Emit a specified event.
 
 ### Events
 Module emits the following events:
@@ -94,29 +94,29 @@ New session created.
 Parameters:
 - `sid`: current session ID
 #### `session/continue`
-Continue active session. Emits after module initiation, when current session is active.
+Active session continues. Emits after module initiation, when current session is active.
 
 Parameters:
 - `entity`: could be `user` or `agent`
 #### `session/join`
-Join active session. Emits when IPCC agent is joined session, aka cobrowsing initiated.
+Join active session. Emits when IPCC agent is joined the session, aka cobrowsing initiated.
 #### `session/disjoin`
 Current session closed.
 #### `widget/load`
 Widget template is fully loaded, compiled and inserted to the DOM.
 
 Parameters: 
-- `widget`: widget DOM node
+- `widget`: widget's DOM node
 #### `chat/start`
 Chat request was sent to the server and was accepted.
 
 Parameters:
 - `timeout`: time (in seconds) before the dialog would be closed
 #### `chat/close`
-Dialog closed
+Dialog closed.
 
 Parameters:
-- `rating`: agent's service rating set by the user
+- `rating`: agent's service rating that was set by the user
 #### `chat/send`
 An email message was sent.
 #### `chat/timeout`
@@ -124,32 +124,32 @@ An email message was sent.
 #### `chat/languages`
 New list of available dialog languages was loaded from the server. If an empty array was recieved then there are no registered IPCC agents that could serve current task.
 #### `message/new`
-New message recieved
+New message recieved.
 #### `message/typing`
-Agent is typing a message
+Agent is typing a message.
 #### `form/submit`
-Form submitted
+Form submitted.
 #### `Error`
-Erro was emitted
+Erro was emitted.
 
 ### Setting Intro
 You can set which of the fields user must fill in before starting the dialog. Example values:
 ```
 [{
-		name: 'uname',
-		required: true,
-		placeholder: 'name_pholder',
-		save: true
-	}, {
-		name: 'phone',
-		placeholder: 'phone_pholder',
-		type: 'tel',
-		save: true
-	}, {
-		name: 'subject',
-		placeholder: 'dialog_subject_pholder',
-	}, {
-		name: 'lang'
+	name: 'uname',
+	required: true,
+	placeholder: 'name_pholder',
+	save: true
+}, {
+	name: 'phone',
+	placeholder: 'phone_pholder',
+	type: 'tel',
+	save: true
+}, {
+	name: 'subject',
+	placeholder: 'dialog_subject_pholder',
+}, {
+	name: 'lang'
 }]
 ```
 Parameters:
@@ -160,7 +160,7 @@ Parameters:
 
 ### Setting Offer
 Parameters:
-- `inMinutes`: time after module initiating, when the offer message will be shown to the user
+- `inMinutes`: time since module initiation, when the offer message will be shown to the user
 - `from`: string representation of the message sender
 - `text`: if not defined, the value will be a default tranlation key
 
@@ -168,21 +168,21 @@ Parameters:
 Default values:
 ```
 {
-		primary: {
-			backgroundColor: '#555555',
-			color: '#FFFFFF'
-		},
-		intro: {
-			backgroundImage: "images/bgr-02.jpg"
-		},
+	primary: {
+		backgroundColor: '#555555',
+		color: '#FFFFFF'
+	},
+	intro: {
+		backgroundImage: "images/bgr-02.jpg"
+	},
 		sendmail: {
-			backgroundImage: "images/bgr-01.jpg"
-		}
+		backgroundImage: "images/bgr-01.jpg"
+	}
 }
 ```
 Parameters:
-- `primary.backgroundColor`: the background color of the elements, that represents widget color schema
-- `primary.color`: the font color of the elemennts, that represents widget color schema
+- `primary.backgroundColor`: the background color of the elements, that represent widget's color schema
+- `primary.color`: the font color of the elemennts, that represent widget's color schema
 - `intro.backgroundImage`: url of the background image on the `intro` pane
 - `sendmail.backgroundImage`: url of the background image on the `sendmail` pane
 
@@ -190,23 +190,23 @@ Parameters:
 Default values:
 ```
 {
-		online: {
-			backgroundColor: 'rgba(175,229,255,0.8)',
-			color: ''
-		},
-		offline: {
-			backgroundColor: 'rgba(241,241,241,0.8)',
-			color: ''
-		},
-		timeout: {
-			backgroundColor: 'rgba(241,241,241,0.8)',
-			color: ''
-		},
-		notified: {
-			backgroundColor: 'rgba(253,250,129,0.8)',
-			color: ''
-		},
-		color: '#777'
+	online: {
+		backgroundColor: 'rgba(175,229,255,0.8)',
+		color: ''
+	},
+	offline: {
+		backgroundColor: 'rgba(241,241,241,0.8)',
+		color: ''
+	},
+	timeout: {
+		backgroundColor: 'rgba(241,241,241,0.8)',
+		color: ''
+	},
+	notified: {
+		backgroundColor: 'rgba(253,250,129,0.8)',
+		color: ''
+	},
+	color: '#777'
 }
 ```
 Parameters:

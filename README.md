@@ -187,6 +187,8 @@ Parameters:
 Default values:
 ```
 {
+	width: '270px',
+	height: '435px',
 	primary: {
 		backgroundColor: '#555555',
 		color: '#FFFFFF'
@@ -200,6 +202,8 @@ Default values:
 }
 ```
 Parameters:
+- `width`: widget width
+- `height`: widget height
 - `primary.backgroundColor`: the background color of the elements, that represent widget's color schema
 - `primary.color`: the font color of the elemennts, that represent widget's color schema
 - `intro.backgroundImage`: url of the background image on the `intro` pane

@@ -188,7 +188,7 @@ Default values:
 ```
 {
 	width: '270px',
-	height: '435px',
+	height: '455px',
 	primary: {
 		backgroundColor: '#555555',
 		color: '#FFFFFF'

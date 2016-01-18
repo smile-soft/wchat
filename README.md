@@ -157,16 +157,16 @@ You can set which of the fields user must fill in before starting the dialog. Ex
 [{
 	name: 'uname',
 	required: true,
-	placeholder: 'name_pholder',
+	placeholder: 'Your name',
 	save: true
 }, {
 	name: 'phone',
-	placeholder: 'phone_pholder',
+	placeholder: 'Your phone',
 	type: 'tel',
 	save: true
 }, {
 	name: 'subject',
-	placeholder: 'dialog_subject_pholder',
+	placeholder: 'Dialog's subject',
 }, {
 	name: 'lang'
 }]
@@ -174,7 +174,7 @@ You can set which of the fields user must fill in before starting the dialog. Ex
 Parameters:
 - `name`: name of the field
 - `required`: the value of that field shouldn't be empty
-- `placeholder`: could be a translation key or any other string
+- `placeholder`: could be any string value. If not defined, then it will be set automatically.
 - `save`: if `true`, the value would be stored in the session's memory and autofilled during the active session
 
 ### Setting Offer

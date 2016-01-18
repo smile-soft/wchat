@@ -42,7 +42,7 @@ Wchat({ server: 'http://ipcc-server-domain.com:8880' })
 .initModule();
 ```
 ### Getting Started
-1) Put all files from `dist` folder to the website's folder on the webserver, where your website/web application is hosted.
+1) Put all files from `dist` folder to the folder on the webserver, where your website/web application is hosted.
 
 2) Add a script tag to the webpages where the module should be loaded.
 ```html

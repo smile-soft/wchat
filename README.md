@@ -34,13 +34,12 @@ document.getElementById('openWidget').addEventListener('click', wchat.openWidget
 wchat.initModule();
 
 // Subscribe to events
-var wchat = Wchat({ server: 'http://ipcc-server-domain.com:8880' })
+Wchat({ server: 'http://ipcc-server-domain.com:8880' })
 .on('session/create', sessionCreateedHandler)
 .on('widget/init', widgetInitHandler)
 .on('chat/start', chatStartedHandler)
-.on('chat/close', chatClosedHandler);
-
-wchat.initModule();
+.on('chat/close', chatClosedHandler)
+.initModule();
 ```
 ### Getting Started
 1) Download all files from 'dist' folder and put them to the website's folder on the webserver, where your website/web application is hosted.

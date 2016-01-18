@@ -1,6 +1,6 @@
 # Wchat.js
 ### About
-Official javascript webchat module for Smile IPCC
+Official javascript module for Smile IPCC
 
 [Detailed about Smile IP Contact Center](https://smile-soft.com/index.php/en/ipcc-overview)
 ### Prerequisites

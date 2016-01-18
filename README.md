@@ -75,60 +75,78 @@ path              | String  |             | Absolute path to the module's folder
 
 ### API
 Module's API exposes the following methods:
+
 #### `initModule()`
 Initiate module with all the options set and all the events subscribed.
+
 #### `openWidget()`
 Open webchat widget in the separate window.
+
 #### `initChat()`
 Initiate dialog
+
 #### `on`
 Subscribe to specified event.
+
 #### `emit`
 Emit a specified event.
 
 ### Events
 Module emits the following events:
+
 #### `session/create`
 New session created.
 
 Parameters:
 - `sid`: current session ID
+
 #### `session/continue`
 Active session continues. Emits after module initiation, when current session is active.
 
 Parameters:
 - `entity`: could be `user` or `agent`
+
 #### `session/join`
 Join active session. Emits when IPCC agent is joined the session, aka cobrowsing initiated.
+
 #### `session/disjoin`
 Current session closed.
+
 #### `widget/load`
 Widget template is fully loaded, compiled and inserted to the DOM.
 
 Parameters: 
 - `widget`: widget's DOM node
+
 #### `chat/start`
 Chat request was sent to the server and was accepted.
 
 Parameters:
 - `timeout`: time (in seconds) before the dialog would be closed
+
 #### `chat/close`
 Dialog closed.
 
 Parameters:
 - `rating`: agent's service rating that was set by the user
+
 #### `chat/send`
 An email message was sent.
+
 #### `chat/timeout`
 
 #### `chat/languages`
 New list of available dialog languages was loaded from the server. If an empty array was recieved then there are no registered IPCC agents that could serve current task.
+
 #### `message/new`
 New message recieved.
+
 #### `message/typing`
 Agent is typing a message.
+
 #### `form/submit`
 Form submitted.
+
 #### `Error`
 Erro was emitted.
 

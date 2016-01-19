@@ -1,4 +1,10 @@
 .swc-wg-panes {
+
+	::-webkit-input-placeholder { color: #ccc; font-size: 14px; text-decoration: none; font-style: normal; }
+	::-moz-placeholder { color: #ccc; font-size: 14px; text-decoration: none; font-style: normal; } /* firefox 19+ */
+	:-ms-input-placeholder { color: #ccc; font-size: 14px; text-decoration: none; font-style: normal; } /* ie */
+	:-moz-placeholder { color: #ccc; font-size: 14px; text-decoration: none; font-style: normal; }
+
 	.swc-wg-pane {
 		form {
 			margin: 0;
@@ -27,11 +33,6 @@
 				// border: 1px solid #D1D1D1;
 				border-radius: 4px;
 				box-shadow: none;
-
-				// &::-webkit-input-placeholder { font-size: 1.2em; }
-				// &::-moz-placeholder { font-size: 1em; } /* firefox 19+ */
-				// &:-ms-input-placeholder { font-size: 1em; } /* ie */
-				// &:-moz-placeholder { font-size: 1em; }
 			}
 
 			textarea {

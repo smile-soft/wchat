@@ -42,7 +42,7 @@ Wchat({ server: 'http://ipcc-server-domain.com:8880' })
 .initModule();
 ```
 ### Getting Started
-1) Put all files from `dist` folder to the website's folder on the webserver, where your website/web application is hosted.
+1) Put all files from `dist` folder to the folder on the webserver, where your website/web application is hosted.
 
 2) Add a script tag to the webpages where the module should be loaded.
 ```html
@@ -188,7 +188,7 @@ Default values:
 ```
 {
 	width: '270px',
-	height: '435px',
+	height: '400px',
 	primary: {
 		backgroundColor: '#555555',
 		color: '#FFFFFF'
@@ -203,7 +203,7 @@ Default values:
 ```
 Parameters:
 - `width`: widget width
-- `height`: widget height
+- `height`: height of the messages container
 - `primary.backgroundColor`: the background color of the elements, that represent widget's color schema
 - `primary.color`: the font color of the elemennts, that represent widget's color schema
 - `intro.backgroundImage`: url of the background image on the `intro` pane

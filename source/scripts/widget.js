@@ -154,7 +154,6 @@ function onSessionSuccess(){
 	// set current user language
 	currLang = detectLanguage();
 	setSessionTimeoutHandler();
-	getLanguages();
 
 	// If page loaded and "widget" property is set - load widget
 	if(defaults.widget && !widgetState.initiated && isBrowserSupported()) {
@@ -191,10 +190,9 @@ function loadWidget(cb){
 
 function onWidgetLoad(widget){
 	console.log('widget loaded!');
-
-	setListeners(widget);
-	changeWgState({ state: widgetState.state });
-	initWidget();
+	api.once('chat/languages', initWidget);
+	getLanguages();
+	// initWidget();
 
 }
 
@@ -233,6 +231,9 @@ function initWidget(){
 	console.log('Init widget!');
 	widgetState.initiated = true;
 
+	setListeners(widget);
+	changeWgState({ state: widgetState.state });
+
 	if(defaults.hideOfflineButton) {
 		addWgState('no-button');
 	}
@@ -249,7 +250,7 @@ function initWidget(){
 	}
 
 	// Widget is initiated
-	// api.emit('widget/init');
+	api.emit('widget/init');
 }
 
 function setOffer() {
@@ -592,7 +593,10 @@ function openWidget(){
 			if(api.getState('chat', 'storage')) closeChat();
 		};
 		widgetWindow.onload = function(){
-			var wchat = this.Wchat({ server: defaults.server });
+			var opts = {}, wchat;
+			_.assign(opts, defaults);
+			opts.widget = true;
+			wchat = this.Wchat(opts);
 			wchat.on('widget/init', wchat.initChat);
 			wchat.initModule();
 		};

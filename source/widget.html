@@ -1,7 +1,7 @@
 <% var frases = translations[currLang]; %>
 <% var positionClass = defaults.position === 'right' ? 'position-right' : 'position-left' %>
 <div id="<%- defaults.prefix %>-wg-cont" class="<%- defaults.prefix %>-wg-cont <%- positionClass %>">
-	<div id="<%- defaults.prefix %>-wg-panes" class="<%- defaults.prefix %>-wg-panes" style="<% if(defaults.styles.width) { %>width: <%- defaults.styles.width %>;<% } %><% if(defaults.styles.height) { %>height: <%- defaults.styles.height %>;<% } %>">
+	<div id="<%- defaults.prefix %>-wg-panes" class="<%- defaults.prefix %>-wg-panes" style="<% if(defaults.styles.width) { %>width: <%- defaults.styles.width %>;<% } %>">
 		<div class="<%- defaults.prefix %>-top-bar">
 			<h4 class="<%- defaults.prefix %>-wg-title <%- defaults.prefix %>-uppercase"><%- defaults.title || frases.default_title %></h4>
 			<div class="<%- defaults.prefix %>-wg-minimize">
@@ -49,7 +49,7 @@
 		</div>
 		<% } %>
 		<div class="<%- defaults.prefix %>-wg-pane" data-<%- defaults.prefix %>-pane="messages">
-			<ul id="<%- defaults.prefix %>-messages-cont" class="<%- defaults.prefix %>-messages-cont"></ul>
+			<ul id="<%- defaults.prefix %>-messages-cont" class="<%- defaults.prefix %>-messages-cont" style="<% if(defaults.styles.height) { %>height: <%- defaults.styles.height %>;<% } %>"></ul>
 			<div class="<%- defaults.prefix %>-write-cont">
 				<div class="swc-loader">
 					<span></span>

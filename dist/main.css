@@ -520,7 +520,8 @@
       border-top: 1px solid #eee; }
     .swc-wg-panes .swc-wg-pane .swc-messages-cont {
       height: 400px;
-      padding: 0 10px 40px;
+      margin-bottom: 40px;
+      padding: 0 10px 0;
       overflow-y: auto; }
       @media only screen and (max-width: 750px) {
         .swc-wg-panes .swc-wg-pane .swc-messages-cont {
@@ -826,6 +827,6 @@
   .swc-wg-cont.type-extend .swc-msg-textarea {
     height: 80px; }
   .swc-wg-cont.type-extend .swc-messages-cont {
-    padding-bottom: 80px; }
+    margin-bottom: 80px; }
   .swc-wg-cont.no-button .swc-btn-cont {
     display: none; }

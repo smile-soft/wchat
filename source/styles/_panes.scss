@@ -107,7 +107,8 @@
 
 		.swc-messages-cont {
 			height: $wg-height;
-			padding: 0 10px 40px;
+			margin-bottom: 40px;
+			padding: 0 10px 0;
 			overflow-y: auto;
 
 			@include bp-small {

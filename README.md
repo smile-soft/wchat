@@ -63,7 +63,8 @@ Option            | Type    | Default     | Description
 ------------------|---------|-------------|-----------------
 server            | String  |             | IPCC server IP address and http port
 title             | String  | Live chat   | Displayed in the widget's header element
-lang              | String  | en          | Default language of interface and dialog. Used when automaticaly determined user language is not supported (ask your IPCC administrator for additional information). Possible values are `en`, `uk`, `ru`
+lang              | String  | en          | Default language of interface and dialog. Used when automaticaly determined user language is not supported (ask your IPCC administrator for additional information).
+langFromUrl		  | Boolean	| false		  | Experimental. This feature parses page url to figure out user's preferred language
 widget            | Boolean | true        | Whether the webchat widget should be opened within the main tab (if `true`) or in a separate window (if `false`)
 position          | String  | right       | Widget position on the page. Option is actual if `widget` is set to true. Possible values are `right` and `left`
 hideOfflineButton | Boolean | false       | If set to `true`, then widget's button will be hidden when there are no registered IPCC agents that could serve current task

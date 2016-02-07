@@ -19,6 +19,7 @@ var defaults = {
 	widget: true,
 	title: '',
 	lang: 'en',
+	langFromUrl: false,
 	position: 'right',
 	hideOfflineButton: false,
 	offer: false,
@@ -260,7 +261,7 @@ function setOffer() {
 			time: Date.now(),
 			text: defaults.offer.text || frases[currLang].default_offer
 		});
-	}, defaults.offer.inMinutes ? defaults.offer.inMinutes*60*1000 : 30000);
+	}, defaults.offer.inSeconds ? defaults.offer.inSeconds*1000 : 30000);
 }
 
 function showOffer(message) {
@@ -353,7 +354,7 @@ function compileMessages(messages, template){
 		els = [],
 		defaultUname = false,
 		aname = api.getState('aname', 'session'),
-		uname = api.getState('credentials', 'session').uname;
+		uname = api.getState('credentials', 'session') ? api.getState('credentials', 'session').uname : '';
 
 		if(uname === api.getState('sid').split('_')[0]) {
 			defaultUname = true;
@@ -893,12 +894,39 @@ function compileTemplate(template, data){
  ********************************/
 
 function detectLanguage(){
-	var storageLang = api.getState('lang');
+	var storageLang = api.getState('lang'),
+		availableLangs = [],
+		lang,
+		path;
+
 	if(storageLang) {
-		return storageLang;
+		lang = storageLang;
 	} else {
-		return (navigator.language || navigator.userLanguage).split('-')[0];
+
+		// list available languages by translations keys
+		for(var key in frases) {
+			availableLangs.push(key);
+		}
+
+		if(defaults.langFromUrl) {
+			global.location.pathname
+			.split('/')
+			.forEach(function(item) {
+				if(availableLangs.indexOf(item) !== -1) {
+					lang = item;
+				}
+			});
+		}
+
+		if(!lang) {
+			lang = (navigator.language || navigator.userLanguage).split('-')[0];
+			if(availableLangs.indexOf(lang) === -1) lang = defaults.lang;
+		}
 	}
+
+	console.log('detected lang: ', lang);
+
+	return lang;
 }
 
 function browserIsObsolete() {

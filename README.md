@@ -180,7 +180,7 @@ Parameters:
 
 ### Setting Offer
 Parameters:
-- `inMinutes`: time since module initiation, when the offer message will be shown to the user
+- `inSeconds`: time since module initiation, when the offer message will be shown to the user
 - `from`: string representation of the message sender
 - `text`: if not defined, the value will be a default tranlation key
 

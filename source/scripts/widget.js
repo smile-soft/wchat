@@ -330,6 +330,10 @@ function getMessages(){
 }
 
 function sendMessage(message){
+	// newMessage({ messages: [{
+	// 	from: api.getState('credentials', 'session').uname,
+	// 	text: message
+	// }] });
 	api.sendMessage(message);
 	if(chatTimeout) clearTimeout(chatTimeout);
 }
@@ -363,7 +367,7 @@ function compileMessages(messages, template){
 	_.forEach(messages, function (message){
 		message.entity = message.from === uname ? 'user' : 'agent';
 		message.from = (message.entity === 'user' && defaultUname) ? frases[currLang].default_user_name : message.from;
-		message.time = message.time ? parseTime(message.time) : '';
+		message.time = message.time ? parseTime(message.time) : parseTime(Date.now());
 		message.text = parseMessage(message.text, message.file);
 		els.push(compileTemplate(template, message));
 

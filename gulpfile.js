@@ -80,6 +80,9 @@ gulp.task('cp', function() {
 
 	gulp.src(basePath.src+'translations.json')
 	.pipe(gulp.dest(basePath.dest));
+
+	gulp.src(basePath.src+'forms.json')
+	.pipe(gulp.dest(basePath.dest));
 });
 
 gulp.task('build', function() {

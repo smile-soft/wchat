@@ -149,6 +149,9 @@ Agent is typing a message.
 #### `form/submit`
 Form submitted.
 
+#### `form/reject`
+Form rejected.
+
 #### `Error`
 Erro was emitted.
 

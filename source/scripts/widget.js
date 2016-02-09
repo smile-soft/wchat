@@ -5,6 +5,7 @@ var _ = require('./lodash');
 var domify = require('domify');
 var Promise = require('promise');
 var frases = require('../translations.json');
+var forms;
 
 // Widget initiation options
 var defaults = {
@@ -33,6 +34,9 @@ var defaults = {
 		},
 		sendmail: {
 			backgroundImage: "images/bgr-01.jpg"
+		},
+		closeChat: {
+			backgroundImage: "images/bgr-02.jpg"
 		}
 	},
 	buttonStyles: {
@@ -108,12 +112,23 @@ function Widget(options){
 		.on('message/new', newMessage)
 		.on('message/typing', onAgentTyping)
 		.on('form/submit', onFormSubmit)
+		.on('form/reject', closeForm)
 		.on('widget/load', onWidgetLoad);
 		// .on('widget/init', onWidgetInit);
 		// .on('widget/statechange', changeWgState);
 	}
 
 	setSessionTimeoutHandler();
+
+	// load forms
+	request.get('forms_json', defaults.path+'forms.json', function (err, result){
+		if(err) return api.emit('Error', err);
+		forms = JSON.parse(result).forms;
+	});
+
+	request.get('forms_tmp', defaults.path+'partials/forms.html', function (err, template){
+		if(err) return api.emit('Error', err);
+	});
 
 	return publicApi;
 }
@@ -164,13 +179,14 @@ function onSessionSuccess(){
 	// If timeout was occured, init chat after a session is created
 	if(hasWgState('timeout')) {
 		removeWgState('timeout');
+		getLanguages();
 	}
 }
 
 function loadWidget(cb){
 	console.log('load widget!');
 	var compiled;
-	request.get(defaults.path+'widget.html', function (err, res, body){
+	request.get('widget_tmp', defaults.path+'widget.html', function (err, body){
 		if(err) return;
 		compiled = compileTemplate(body, {
 			defaults: defaults,
@@ -245,7 +261,7 @@ function initWidget(){
 
 	// if chat started
 	if(api.getState('chat') === true) {
-		requestChat(api.getState('credentials', 'session'));
+		requestChat(api.getState('credentials', 'session') || {});
 		showWidget();
 		// initChat();
 	}
@@ -330,53 +346,71 @@ function getMessages(){
 }
 
 function sendMessage(message){
-	// newMessage({ messages: [{
-	// 	from: api.getState('credentials', 'session').uname,
-	// 	text: message
-	// }] });
 	api.sendMessage(message);
 	if(chatTimeout) clearTimeout(chatTimeout);
 }
 
 function newMessage(result){
 	console.log('new messages arrived!', result);
-	compileMessages(result.messages, messageTemplate()).forEach(function(message, index) {
-		messagesCont.insertAdjacentHTML('beforeend', '<li>'+message+'</li>');
-		
-		if(index === result.messages.length-1) {
-			onLastMessage(message);
-		}
 
-		// Need for sending dialog to email
-		dialog.push(message);
-	});
-	messagesCont.scrollTop = messagesCont.scrollHeight;
-}
-
-function compileMessages(messages, template){
 	var str,
 		els = [],
+		text,
+		compiled,
 		defaultUname = false,
+		credentials = api.getState('credentials', 'session') || {},
 		aname = api.getState('aname', 'session'),
-		uname = api.getState('credentials', 'session') ? api.getState('credentials', 'session').uname : '';
+		uname = credentials.uname ? credentials.uname : '';
 
-		if(uname === api.getState('sid').split('_')[0]) {
-			defaultUname = true;
-		}
+	if(uname === api.getState('sid').split('_')[0]) {
+		defaultUname = true;
+	}
 
-	_.forEach(messages, function (message){
+	result.messages.forEach(function(message, index) {
+		
 		message.entity = message.from === uname ? 'user' : 'agent';
 		message.from = (message.entity === 'user' && defaultUname) ? frases[currLang].default_user_name : message.from;
 		message.time = message.time ? parseTime(message.time) : parseTime(Date.now());
-		message.text = parseMessage(message.text, message.file);
-		els.push(compileTemplate(template, message));
+
+		text = parseMessage(message.text, message.file, message.entity);
+
+		if(text.type === 'form') {
+			request.get('forms_tmp', defaults.path+'partials/forms.html', function (err, template){
+				if(err) return cb(err);
+
+				compiled = compileTemplate(template, {
+					defaults: defaults,
+					message: message,
+					form: text.content,
+					credentials: credentials,
+					frases: frases[(currLang || defaults.lang)],
+					_: _
+				});
+				if(global[text.content.name]) closeForm(text.content.name);
+				messagesCont.insertAdjacentHTML('beforeend', '<li>'+compiled+'</li>');
+				messagesCont.scrollTop = messagesCont.scrollHeight;
+			});
+		} else {
+			message.text = text.content;
+			compiled = compileTemplate(messageTemplate(), message);
+			messagesCont.insertAdjacentHTML('beforeend', '<li>'+compiled+'</li>');
+
+			if(index === result.messages.length-1) {
+				onLastMessage(compiled);
+			}
+
+			// Need for sending dialog to email
+			dialog.push(compiled);
+		}
 
 		// Save agent name
 		if(message.entity === 'agent' && aname !== message.from) {
 			api.saveState('aname', message.from, 'session');
 		}
+
 	});
-	return els;
+
+	messagesCont.scrollTop = messagesCont.scrollHeight;
 }
 
 /**
@@ -403,7 +437,7 @@ function onLastMessage(message){
 
 function compileEmail(content, cb) {
 	var compiled;
-	request.get(defaults.path+'partials/email.html', function (err, res, body){
+	request.get('email_tmp', defaults.path+'partials/email.html', function (err, body){
 		if(err) return cb(err);
 
 		compiled = compileTemplate(body, {
@@ -656,6 +690,8 @@ function wgClickHandler(e){
 		wgSendMessage();
 	} else if(handler === 'openWindow') {
 		openWidget();
+	} else if(handler === 'cancel') {
+		api.emit('form/reject', targ.parentNode.name);
 	}
 
 	if(targ.tagName === 'A') {
@@ -785,6 +821,7 @@ function changeWgState(params){
 
 // TODO: This is not a good solution or maybe not a good implementation
 function setButtonStyle(state) {
+	console.log('setButtonStyle: ', state);
 	if(!widget || defaults.buttonStyles[state] === undefined) return;
 	var wgBtn = widget.querySelector('.'+defaults.prefix+'-wg-btn'),
 		btnIcon = widget.querySelector('.'+defaults.prefix+'-btn-icon');
@@ -828,8 +865,8 @@ function closeWidget(){
 }
 
 function onFormSubmit(form){
-	console.log('onFormSubmit: ', form);
 	var formData = getFormData(form);
+	console.log('onFormSubmit: ', form, formData);
 	if(form.getAttribute('data-validate-form')) {
 		var valid = validateForm(form);
 		if(!valid) return;
@@ -841,8 +878,26 @@ function onFormSubmit(form){
 		submitSendMailForm(form, formData);
 	} else if(form.id === defaults.prefix+'-intro-form') {
 		requestChat(formData);
+	} else {
+		closeForm(form.name, true);
 	}
 
+}
+
+function closeForm(name, submit){
+	var form = global[name];
+	if(!form) return false;
+	if(submit) {
+		form.outerHTML = '<p class="'+defaults.prefix+'-text-center">'+
+							'<i class="'+defaults.prefix+'-text-success '+defaults.prefix+'-icon-check"></i>'+
+							'<span> '+frases[currLang].form_submitted+'</span>'+
+						'</p>';
+	} else {
+		form.outerHTML = '<p class="'+defaults.prefix+'-text-center">'+
+							'<i class="'+defaults.prefix+'-text-danger '+defaults.prefix+'-icon-remove"></i>'+
+							'<span> '+frases[currLang].form_cancelled+'</span>'+
+						'</p>';
+	}
 }
 
 function getFileContent(element, cb){
@@ -946,19 +1001,39 @@ function parseTime(ts) {
 	return time;
 }
 
-function parseMessage(text, file){
-	var filename;
+function parseMessage(text, file, entity){
+	var filename, form;
 	if(file) {
 		filename = text.substring(text.indexOf('_')+1);
 		if(isImage(file)) {
-			return '<a href="'+api.options.server+'/ipcc/'+text+'" download="'+filename+'">' +
+			return {
+				type: 'image',
+				content: '<a href="'+api.options.server+'/ipcc/'+text+'" download="'+filename+'">' +
 						'<img src="'+api.options.server+'/ipcc/'+text+'" alt="file preview" />' +
-					'</a>';
+					'</a>'
+			};
 		} else {
-			return '<a href="'+api.options.server+'/ipcc/'+text+'" download="'+filename+'">'+filename+'</a>';
+			return {
+				type: 'file',
+				content: '<a href="'+api.options.server+'/ipcc/'+text+'" download="'+filename+'">'+filename+'</a>'
+			};
 		}
+	} else if(entity === 'agent' && new RegExp('^{.+}$').test(text)) {
+		forms.forEach(function(item) {
+			if(item.name === text.substring(1, text.length-1)) {
+				form = item;
+			}
+		});
+
+		return {
+			type: form ? 'form' : 'text',
+			content: form ? form : text
+		};
 	} else {
-		return text.split(" ").map(convertLinks).join(" ");
+		return {
+			type: 'text',
+			content: text.split(" ").map(convertLinks).join(" ")
+		};
 	}
 }
 

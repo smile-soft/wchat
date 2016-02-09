@@ -1,5 +1,6 @@
 var url = require('url');
 var http = require('http');
+var cache = {};
 
 function post(postUrl, data, cb){
 
@@ -49,9 +50,13 @@ function post(postUrl, data, cb){
 	req.end();
 }
 
-function get(postUrl, cb){
+function get(selector, postUrl, cb){
 
 	var body = '';
+
+	if(selector && cache[selector]) {
+		return cb(null, cache[selector]);
+	}
 
 	http.get(postUrl, function (res) {
 		res.setEncoding('utf8');
@@ -59,7 +64,8 @@ function get(postUrl, cb){
 			body += chunk;
 		});
 		res.on('end', function() {
-			cb(null, res, body);
+			if(selector) cache[selector] = body;
+			cb(null, body);
 		});
 	}).on('error', function(err) {
 		cb(err);

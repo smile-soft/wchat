@@ -705,6 +705,18 @@
   line-height: 1.5em;
   color: #eee; }
 
+.swc-text-success {
+  color: #69b241; }
+
+.swc-text-danger {
+  color: #DA4848; }
+
+.swc-text-warning {
+  color: #BDA309; }
+
+.swc-text-center {
+  text-align: center; }
+
 #swc-wg-window .swc-wg-cont {
   position: absolute;
   right: 0; }

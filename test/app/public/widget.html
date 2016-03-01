@@ -29,7 +29,7 @@
 				<form id="<%- defaults.prefix %>-intro-form" name="<%- defaults.prefix %>IntroForm" data-validate-form="true">
 					<% _.forEach(defaults.intro, function(item){ %>
 						<% if(item.name !== 'lang') { %>
-							<input type="<%= item.type || 'text' %>" placeholder="<%= item.placeholder || frases[item.name+'_pholder'] %> <% if(item.required){ %>*<% } %>" name="<%- item.name %>" <% if(item.save){ %> value="<%- credentials[item.name] %>" <% } %> <% if(item.required){ %>required<% } %>>
+							<input type="<%= item.type || 'text' %>" placeholder="<%= item.placeholder || frases.pholder[item.name] %> <% if(item.required){ %>*<% } %>" name="<%- item.name %>" <% if(item.save){ %> value="<%- credentials[item.name] %>" <% } %> <% if(item.required){ %>required<% } %>>
 						<% } %>
 						<% if(item.name === 'lang') { %>
 							<select name="lang">
@@ -39,9 +39,6 @@
 							</select>
 						<% } %>
 					<% }); %>
-					<!-- <input type="text" placeholder="<%- frases.uname_pholder %> *" name="uname" value="<%- credentials.uname %>" required> -->
-					<!-- <input type="tel" placeholder="<%- frases.phone_pholder %>" name="phone" value="<%- credentials.phone %>"> -->
-					<!-- <input type="text" placeholder="<%- frases.dialog_subject_pholder %>" name="subject"> -->
 					<button type="submit" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" style="background-color: <%- defaults.styles.primary.backgroundColor %>; color: <%- defaults.styles.primary.color %>; border: 1px solid <%- defaults.styles.primary.backgroundColor %>;"><%- frases.start_dialog_button %></button>
 					<a href="#" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-block" data-<%- defaults.prefix %>-handler="close"><%- frases.cancel %></a>
 				</form>
@@ -60,7 +57,7 @@
 					<input type="file" id="<%- defaults.prefix %>-file-select">
 					<span class="swc-icon-upload" style="color: <%- defaults.styles.primary.backgroundColor %>"><span>
 				</label>
-				<textarea id="<%- defaults.prefix %>-message-text" class="<%- defaults.prefix %>-msg-textarea" placeholder="<%- frases.message_pholder %>" maxlength="1000"></textarea>
+				<textarea id="<%- defaults.prefix %>-message-text" class="<%- defaults.prefix %>-msg-textarea" placeholder="<%- frases.pholder.message %>" maxlength="1000"></textarea>
 				<a href="#" class="<%- defaults.prefix %>-sendmsg-btn <%- defaults.prefix %>-button" data-<%- defaults.prefix %>-handler="sendMessage">
 					<span class="swc-icon-paper-plane" style="color: <%- defaults.styles.primary.backgroundColor %>"></span>
 				</a>
@@ -93,9 +90,9 @@
 			<div class="<%- defaults.prefix %>-pane-body">
 				<h4 class="<%- defaults.prefix %>-uppercase"><%- frases.send_message_header %></h4>
 				<form id="<%- defaults.prefix %>-sendmail-form" data-validate-form="true">
-					<input type="text" name="uname" placeholder="<%- frases.uname_pholder %>">
-					<input type="email" name="email" placeholder="<%- frases.email_pholder %> *" required>
-					<textarea name="text" placeholder="<%- frases.message_pholder %>" maxlength="1500"></textarea>
+					<input type="text" name="uname" placeholder="<%- frases.pholder.uname %>">
+					<input type="email" name="email" placeholder="<%- frases.pholder.email %> *" required>
+					<textarea name="text" placeholder="<%- frases.pholder.message %>" maxlength="1500"></textarea>
 					<input type="file" name="file">
 					<button type="submit" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" style="background-color: <%- defaults.styles.primary.backgroundColor %>; color: <%- defaults.styles.primary.color %>; border: 1px solid <%- defaults.styles.primary.backgroundColor %>;"><%- frases.send_message_button %></button>
 					<a href="#" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-block" data-<%- defaults.prefix %>-handler="close"><%- frases.close %></a>
@@ -103,15 +100,19 @@
 			</div>
 		</div>
 		<div class="<%- defaults.prefix %>-wg-pane" data-<%- defaults.prefix %>-pane="closechat">
+			<div class="<%- defaults.prefix %>-pane-header <%- defaults.prefix %>-white" <% if(defaults.styles.closeChat.backgroundImage) { %> style="background-image: url(<%- defaults.path %><%- defaults.styles.closeChat.backgroundImage %>)" <% } %>>
+				<div class="<%- defaults.prefix %>-backdrop-cont <%- defaults.prefix %>-white">
+					<br>
+					<p><%- frases.close_chat_header %></p>
+				</div>
+			</div>
 			<div class="<%- defaults.prefix %>-pane-body">
-				<h4><%- frases.close_chat_header %></h4>
-				<br>
 				<form id="<%- defaults.prefix %>-closechat-form" data-validate-form="true">
 					<label for="<%- defaults.prefix %>-send-dialog">
 						<input type="checkbox" name="sendDialog" id="<%- defaults.prefix %>-send-dialog" />
 						<span><%- frases.send_dialog_label %></span>
 					</label>
-					<input type="email" name="email" placeholder="<%- frases.email_pholder %>">
+					<input type="email" name="email" placeholder="<%- frases.pholder.email %>">
 					<select name="rating">
 						<option value="">--- <%- frases.rate_agent %> ---</option>
 						<option value="5"><%- frases.rates.excellent %></option>
@@ -119,7 +120,7 @@
 						<option value="3"><%- frases.rates.fair %></option>
 						<option value="2"><%- frases.rates.bad %></option>
 					</select>
-					<textarea placeholder="<%- frases.comment_pholder %>" name="text" maxlength="1500"></textarea>
+					<textarea placeholder="<%- frases.pholder.comment %>" name="text" maxlength="1500"></textarea>
 					<button type="submit" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" style="background-color: <%- defaults.styles.primary.backgroundColor %>; color: <%- defaults.styles.primary.color %>; border: 1px solid <%- defaults.styles.primary.backgroundColor %>;"><%- frases.finish_dialog_button %></button>
 					<a href="#messages" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-block"><%- frases.back %></a>
 				</form>

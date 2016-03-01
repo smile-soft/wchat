@@ -397,8 +397,8 @@
     .swc-btn-cont .swc-wg-btn .swc-btn-icon {
       position: absolute;
       font-size: 36px;
-      left: 7.5px;
-      top: 8.5px;
+      left: 7.7px;
+      top: 8.7px;
       color: #777;
       -webkit-transition: color 0.4s;
       -moz-transition: color 0.4s;
@@ -704,6 +704,18 @@
   width: 1px;
   line-height: 1.5em;
   color: #eee; }
+
+.swc-text-success {
+  color: #69b241; }
+
+.swc-text-danger {
+  color: #DA4848; }
+
+.swc-text-warning {
+  color: #BDA309; }
+
+.swc-text-center {
+  text-align: center; }
 
 #swc-wg-window .swc-wg-cont {
   position: absolute;

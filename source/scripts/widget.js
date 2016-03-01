@@ -60,7 +60,7 @@ var defaults = {
 	},
 	widgetWindowOptions: 'left=10,top=10,width=350,height=550,resizable=yes',
 	// absolute path to the wchat folder
-	path: '',
+	path: '/wchat/',
 	// in seconds
 	checkStatusTimeout: 30,
 	// in seconds

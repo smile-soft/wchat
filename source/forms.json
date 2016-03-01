@@ -35,29 +35,5 @@
 				"text": "EUR"
 			}]
 		}]
-	}, {
-		"name": "intro",
-		"autocomplete": true,
-		"fields": [{
-			"name": "email",
-			"type": "email",
-			"placeholder": "Email",
-			"required": true
-		}, {
-			"name": "phone",
-			"type": "tel",
-			"placeholder": "phone"
-		}, {
-			"name": "lang",
-			"type": "select",
-			"fields": [{
-				"value": "en",
-				"text": "English"
-			}, {
-				"value": "uk",
-				"selected": true,
-				"text": "Українською"
-			}]
-		}]
 	}]
 }

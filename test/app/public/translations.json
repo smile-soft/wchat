@@ -23,12 +23,6 @@
 			"fair": "Fair",
 			"bad": "Bad"
 		},
-		"uname_pholder": "Your name",
-		"email_pholder": "Your email",
-		"phone_pholder": "Your phone",
-		"subject_pholder": "Dialog's subject",
-		"message_pholder": "Your message here...",
-		"comment_pholder": "Please, leave your comment here...",
 		"email_subjects": {
 			"dialog": "Your dialog on",
 			"complain": "Dialog comment from",
@@ -39,9 +33,19 @@
 			"email": "Please fill in your email",
 			"tel": "Please fill in your telephone number"
 		},
+		"form_submitted": "Form sent, thank you!",
+		"form_cancelled": "Form cancelled",
 		"default_user_name": "You",
 		"default_title": "Live chat",
-		"default_offer": "Welcome, need some help?"
+		"default_offer": "Welcome, need some help?",
+		"pholder": {
+			"uname": "Your name",
+			"email": "Your email",
+			"phone": "Your phone",
+			"subject": "Dialog's subject",
+			"message": "Your message here...",
+			"comment": "Please, leave your comment here..."
+		}
     },
     "uk": {
     	"lang": "Українська",
@@ -67,12 +71,6 @@
 			"fair": "Задовільно",
 			"bad": "Погано"
 		},
-		"uname_pholder": "Ваше ім'я",
-		"email_pholder": "Ваша електронна адреса",
-		"phone_pholder": "Ваш телефон",
-		"subject_pholder": "Тема діалогу",
-		"message_pholder": "Ваше повідомлення тут...",
-		"comment_pholder": "Будь ласка, залиште тут свій коментар...",
 		"email_subjects": {
 			"dialog": "Ваш діалог на",
 			"complain": "Коментар до діалогу від",
@@ -83,9 +81,19 @@
 			"email": "Будь ласка, введіть свою електронну адресу",
 			"tel": "Будь ласка, введіть свій номер телефону"
 		},
+		"form_submitted": "Форма відправлена, дякуємо!",
+		"form_cancelled": "Форма відхилена",
 		"default_user_name": "Ви",
 		"default_title": "Онлайн чат",
-		"default_offer": "Ласкаво просимо, потрібна допомога?"
+		"default_offer": "Ласкаво просимо, потрібна допомога?",
+		"pholder": {
+			"uname": "Ваше ім'я",
+			"email": "Ваша електронна адреса",
+			"phone": "Ваш телефон",
+			"subject": "Тема діалогу",
+			"message": "Ваше повідомлення тут...",
+			"comment": "Будь ласка, залиште тут свій коментар..."
+		}
     },
     "ru": {
     	"lang": "Русский",
@@ -111,12 +119,6 @@
 			"fair": "Нормально",
 			"bad": "Плохо"
 		},
-		"uname_pholder": "Ваше имя",
-		"email_pholder": "Ваш электронный адрес",
-		"phone_pholder": "Ваш телефон",
-		"subject_pholder": "Тема диалога",
-		"message_pholder": "Ваше сообщение здесь...",
-		"comment_pholder": "Пожалуйста, оставьте здесь свой комментарий...",
 		"email_subjects": {
 			"dialog": "Ваш диалог на",
 			"complain": "Комментарий к диалогу от",
@@ -127,8 +129,18 @@
 			"email": "Пожалуйста, введите свой электронный адрес",
 			"tel": "Пожалуйста, введите свой номер телефона"
 		},
+		"form_submitted": "Форма отправлена, спасибо!",
+		"form_cancelled": "Форма отклонена",
 		"default_user_name": "Вы",
 		"default_title": "Онлайн чат",
-		"default_offer": "Добро пожаловать, нужна помощь?"
+		"default_offer": "Добро пожаловать, нужна помощь?",
+		"pholder": {
+			"uname": "Ваше имя",
+			"email": "Ваш электронный адрес",
+			"phone": "Ваш телефон",
+			"subject": "Тема диалога",
+			"message": "Ваше сообщение здесь...",
+			"comment": "Пожалуйста, оставьте здесь свой комментарий..."
+		}
     }
 };

@@ -19,7 +19,7 @@ var defaults = {
 	server: '',
 	// Absolute path to the webchat folder on the web server
 	// where the website is located
-	path: ''
+	path: '/wchat/'
 };
 
 inherits(WchatAPI, EventEmitter);

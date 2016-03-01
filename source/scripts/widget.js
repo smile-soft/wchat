@@ -165,7 +165,7 @@ function initModule(){
 
 // Session is either created or continues
 function onSessionSuccess(){
-	console.log('Session success!');
+	// console.log('Session success!');
 
 	// set current user language
 	currLang = detectLanguage();
@@ -184,7 +184,7 @@ function onSessionSuccess(){
 }
 
 function loadWidget(cb){
-	console.log('load widget!');
+	// console.log('load widget!');
 	var compiled;
 	request.get('widget_tmp', defaults.path+'widget.html', function (err, body){
 		if(err) return;
@@ -206,7 +206,7 @@ function loadWidget(cb){
 }
 
 function onWidgetLoad(widget){
-	console.log('widget loaded!');
+	// console.log('widget loaded!');
 	api.once('chat/languages', initWidget);
 	getLanguages();
 	// initWidget();
@@ -222,7 +222,7 @@ function getLanguages(){
 }
 
 function onNewLanguages(languages){
-	console.log('languages: ', languages);
+	// console.log('languages: ', languages);
 	var state = languages.length ? 'online' : 'offline',
 	options = '', selected;
 
@@ -245,7 +245,7 @@ function onNewLanguages(languages){
 }
 
 function initWidget(){
-	console.log('Init widget!');
+	// console.log('Init widget!');
 	widgetState.initiated = true;
 
 	setListeners(widget);
@@ -287,7 +287,7 @@ function showOffer(message) {
 }
 
 function initChat(){
-	console.log('initChat!');
+	// console.log('initChat!');
 
 	showWidget();
 
@@ -329,7 +329,7 @@ function startChat(params){
 	switchPane('messages');
 	api.saveState('chat', true);
 	if(params.timeout) {
-		console.log('chat timeout: ', params.timeout);
+		// console.log('chat timeout: ', params.timeout);
 		chatTimeout = api.setChatTimeout(params.timeout);
 	}
 	getMessages();
@@ -337,7 +337,7 @@ function startChat(params){
 }
 
 function getMessages(){
-	console.log('get messages!');
+	// console.log('get messages!');
 	api.getMessages(function() {
 		if(api.getState('chat')) {
 			messagesTimeout = setTimeout(getMessages, defaults.getMessagesTimeout*1000);
@@ -351,7 +351,7 @@ function sendMessage(message){
 }
 
 function newMessage(result){
-	console.log('new messages arrived!', result);
+	// console.log('new messages arrived!', result);
 
 	var str,
 		els = [],
@@ -519,7 +519,7 @@ function submitSendMailForm(form, data) {
 				data.filename = result.filename;
 				data.filedata = result.filedata;
 			} else {
-				console.log('File was not sent');
+				console.warn('File was not sent');
 			}
 			delete data.file;
 			sendRequest(data, function() {
@@ -542,7 +542,7 @@ function submitCloseChatForm(form, data){
 			alert(frases[currLang].required_error.email);
 			return;
 		}
-		console.log('send dialog');
+		// console.log('send dialog');
 		sendDialog({
 			to: data.email,
 			subject: frases[currLang].email_subjects.dialog+' '+defaults.host,
@@ -554,7 +554,7 @@ function submitCloseChatForm(form, data){
 			alert(frases[currLang].required_error.email);
 			return;
 		} else {
-			console.log('send complain!');
+			// console.log('send complain!');
 			sendComplain({
 				email: data.email,
 				subject: frases[currLang].email_subjects.complain+' '+data.email,
@@ -576,13 +576,13 @@ function closeChat(rating) {
 }
 
 function onChatTimeout(){
-	console.log('chat timeout!');
+	// console.log('chat timeout!');
 	switchPane('closechat');
 	closeChat();
 }
 
 function onAgentTyping(opts){
-	console.log('Agent is typing!');
+	// console.log('Agent is typing!');
 	if(!agentIsTypingTimeout) {
 		addWgState('agent-typing');
 	}
@@ -590,14 +590,14 @@ function onAgentTyping(opts){
 	agentIsTypingTimeout = setTimeout(function() {
 		agentIsTypingTimeout = null;
 		removeWgState('agent-typing');
-		console.log('agent is not typing anymore!');
+		// console.log('agent is not typing anymore!');
 	}, 5000);
 }
 
 function setSessionTimeoutHandler(){
 	if(api.listenerCount('session/timeout') >= 1) return;
 	api.once('session/timeout', function (params){
-		console.log('Session timeout!', params);
+		// console.log('Session timeout!', params);
 
 		if(api.getState('chat') === true) {
 			closeChat();
@@ -622,7 +622,7 @@ function setSessionTimeoutHandler(){
  * Open web chat widget in a new window
  */
 function openWidget(){
-	console.log('open widget!');
+	// console.log('open widget!');
 	var url = defaults.path+'window.html';
 	if(!widgetWindow || widgetWindow.closed) {
 		widgetWindow = window.open(url, 'webchat', defaults.widgetWindowOptions);
@@ -794,7 +794,7 @@ function wgSendFile(e){
 function switchPane(pane){
 	// var paneId = defaults.prefix+'-'+pane+'-pane';
 	var attr = 'data-'+defaults.prefix+'-pane';
-	console.log('switchPane panes:', panes, 'pane: ', pane);
+	// console.log('switchPane panes:', panes, 'pane: ', pane);
 	panes.forEach(function(item){
 		if(item.getAttribute(attr) === pane) {
 			item.classList.add('active');
@@ -821,7 +821,7 @@ function changeWgState(params){
 
 // TODO: This is not a good solution or maybe not a good implementation
 function setButtonStyle(state) {
-	console.log('setButtonStyle: ', state);
+	// console.log('setButtonStyle: ', state);
 	if(!widget || defaults.buttonStyles[state] === undefined) return;
 	var wgBtn = widget.querySelector('.'+defaults.prefix+'-wg-btn'),
 		btnIcon = widget.querySelector('.'+defaults.prefix+'-btn-icon');
@@ -866,11 +866,11 @@ function closeWidget(){
 
 function onFormSubmit(form){
 	var formData = getFormData(form);
-	console.log('onFormSubmit: ', form, formData);
+	// console.log('onFormSubmit: ', form, formData);
 	if(form.getAttribute('data-validate-form')) {
 		var valid = validateForm(form);
 		if(!valid) return;
-		console.log('onFormSubmit valid: ', valid);
+		// console.log('onFormSubmit valid: ', valid);
 	}
 	if(form.id === defaults.prefix+'-closechat-form') {
 		submitCloseChatForm(form, formData);
@@ -983,13 +983,13 @@ function detectLanguage(){
 		}
 	}
 
-	console.log('detected lang: ', lang);
+	// console.log('detected lang: ', lang);
 
 	return lang;
 }
 
 function browserIsObsolete() {
-	console.log('Your browser is obsolete!');
+	console.warn('Your browser is obsolete!');
 }
 
 function parseTime(ts) {
@@ -1077,7 +1077,7 @@ function getFormData(form){
 function validateForm(form){
 	var valid = true;
 	[].slice.call(form.elements).every(function(el) {
-		console.log('validateForm el:', el, el.hasAttribute('required'), el.value, el.type);
+		// console.log('validateForm el:', el, el.hasAttribute('required'), el.value, el.type);
 		if(el.hasAttribute('required') && (el.value === "" || el.value === null)) {
 			alert(frases[currLang].required_error[el.type] || frases[currLang].required_error.fields);
 			valid = false;
@@ -1086,7 +1086,7 @@ function validateForm(form){
 			return true;
 		}
 	});
-	console.log('validateForm valid: ', valid);
+	// console.log('validateForm valid: ', valid);
 	return valid;
 }
 

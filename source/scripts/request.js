@@ -4,7 +4,7 @@ var cache = {};
 
 function post(postUrl, data, cb){
 
-	console.log('post request: ', postUrl, data);
+	// console.log('post request: ', postUrl, data);
 
 	var urlObj = url.parse(postUrl);
 
@@ -27,7 +27,7 @@ function post(postUrl, data, cb){
 			body += chunk;
 		});
 		res.on('end', function() {
-			console.log(body);
+			// console.log(body);
 			if(body === '{}') {
 				body = JSON.parse({result: 'OK'});
 			}

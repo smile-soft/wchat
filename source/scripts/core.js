@@ -107,7 +107,7 @@ WchatAPI.prototype.initModule = function(){
  * @param {String} url Current full URL
  */
 WchatAPI.prototype.createSession = function(pageUrl){
-	console.log('createSession, '+this.options.serverUrl);
+	// console.log('createSession, '+this.options.serverUrl);
 	request.post(this.options.serverUrl, {
 		method: 'createSession',
 		params: {
@@ -326,7 +326,7 @@ WchatAPI.prototype.setChatTimeout = function(timeout){
 };
 
 WchatAPI.prototype.userIsTyping = function(){
-	console.log('user is typing!');
+	// console.log('user is typing!');
 	request.post(this.options.serverUrl, {
 		method: 'typing',
 		params: {
@@ -384,7 +384,7 @@ WchatAPI.prototype.removeState = function(key, location) {
 };
 
 WchatAPI.prototype.sessionTimeout = function(params){
-	console.log('sessionTimeout params: ', params);
+	// console.log('sessionTimeout params: ', params);
 	this.emit('session/timeout', params);
 };
 

@@ -44,9 +44,9 @@ gulp.task('browserify', function() {
 	.pipe(source(srcAssets.scripts+'main.js'))
 	.pipe(rename('wchat.js'))
 	.pipe(gulp.dest(basePath.dest))
-	.pipe(gulpif(argv.production, streamify(uglify())))
-	.pipe(gulpif(argv.production, rename({suffix: '.min'})))
-	.pipe(gulpif(argv.production, gulp.dest(basePath.dest)))
+	.pipe(streamify(uglify()))
+	.pipe(rename({suffix: '.min'}))
+	.pipe(gulp.dest(basePath.dest))
 	.pipe(notify({ message: 'browserify task complete' }));
 });
 

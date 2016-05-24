@@ -6,22 +6,23 @@ function post(postUrl, data, cb){
 
 	// console.log('post request: ', postUrl, data);
 
-	var urlObj = url.parse(postUrl);
+	var urlObj = url.parse(postUrl),
+		
+	json = JSON.stringify(data),
 
-	var json = JSON.stringify(data);
+	body = '',
 
-	var body = '';
-
-	var options = {
-		hostname: urlObj.hostname,
+	options = {
 		method: 'POST',
+		protocol: urlObj.protocol || window.location.protocol,
+		hostname: urlObj.hostname,
 		port: urlObj.port,
 		path: urlObj.path,
 		'Content-type': 'application/json; charset=UTF-8',
 		'Content-length': json.length
-	};
+	},
 
-	var req = http.request(options, function (res){
+	req = http.request(options, function (res){
 		res.setEncoding('utf8');
 		res.on('data', function (chunk) {
 			body += chunk;

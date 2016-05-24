@@ -30,7 +30,8 @@ function post(postUrl, data, cb){
 		res.on('end', function() {
 			// console.log(body);
 			if(body === '{}') {
-				body = JSON.parse({result: 'OK'});
+				// body = JSON.parse({result: 'OK'});
+				body = "{result: 'OK'}";
 			}
 			
 			body = JSON.parse(body);

@@ -693,6 +693,11 @@
       .swc-wg-panes .swc-wg-pane form .swc-button.swc-button-primary,
       .swc-wg-panes .swc-wg-pane form a.swc-button.swc-button-primary {
         color: #fff; }
+      .swc-wg-panes .swc-wg-pane form button.swc-button-warn,
+      .swc-wg-panes .swc-wg-pane form .swc-button.swc-button-warn,
+      .swc-wg-panes .swc-wg-pane form a.swc-button.swc-button-warn {
+        background-color: #d95353;
+        color: #fff; }
     .swc-wg-panes .swc-wg-pane form .swc-block {
       display: block;
       width: 100%; }
@@ -716,6 +721,10 @@
 
 .swc-text-center {
   text-align: center; }
+
+.wc-rmt-ptr {
+  position: absolute;
+  z-index: 2000000000; }
 
 #swc-wg-window .swc-wg-cont {
   position: absolute;

@@ -21,6 +21,7 @@ $btn-icon-chat: '\e903';
 $btn-icon-color-chat: '';
 $btn-icon-color: #777;
 $primary-color: #33C3F0;
+$warn-color: #d95353;
 $secondary-color: #BBBBBB;
 
 @import 'fonts';
@@ -31,6 +32,7 @@ $secondary-color: #BBBBBB;
 @import 'panes';
 @import 'form';
 @import 'helpers';
+@import 'remote';
 
 // Popup window styles
 #swc-wg-window .swc-wg-cont {

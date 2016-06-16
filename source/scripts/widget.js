@@ -1,10 +1,11 @@
 var api = require('./core');
-var EventEmitter = require('events').EventEmitter;
 var request = require('./request');
 var _ = require('./lodash');
 var domify = require('domify');
 var Promise = require('promise');
 var frases = require('../translations.json');
+var cobrowsing = require('./cobrowsing');
+var WebRTC = require('./webrtc');
 var forms;
 
 // Widget initiation options
@@ -66,14 +67,20 @@ var defaults = {
 	// in seconds
 	getMessagesTimeout: 1,
 	// displayed in the email template
-	host: window.location.host
+	host: window.location.host,
+	// webrtc options
+	webrtc: {
+		sip: {},
+		hotline: ''
+	},
 },
 
 // Current widget state
 widgetState = {
 	initiated: false,
 	active: false,
-	state: '' // "online" | "offline" | "timeout"
+	state: '', // "online" | "offline" | "timeout",
+	share: false
 },
 dialog = [],
 
@@ -94,8 +101,6 @@ panes,
 agentIsTypingTimeout,
 userIsTypingTimeout;
 
-module.exports = Widget;
-
 function Widget(options){
 
 	_.merge(defaults, options || {});
@@ -103,11 +108,13 @@ function Widget(options){
 
 	api = new api(options)
 	.on('session/create', onSessionSuccess)
-	.on('session/continue', onSessionSuccess);
+	.on('session/continue', onSessionSuccess)
+	.on('session/join', onSessionJoin);
 	// .on('chat/languages', onNewLanguages);
 	
 	if(defaults.widget) {
 		api.on('chat/start', startChat)
+		.on('chat/close', onChatClose)
 		.on('chat/timeout', onChatTimeout)
 		.on('message/new', newMessage)
 		.on('message/typing', onAgentTyping)
@@ -118,6 +125,14 @@ function Widget(options){
 		// .on('widget/statechange', changeWgState);
 	}
 
+	if(defaults.webrtc.sip.ws_servers !== undefined && WebRTC.isSupported()) {
+		initWebrtcModule({
+			sip: defaults.webrtc.sip,
+			emit: api.emit,
+			on: api.on
+		});
+	}
+		
 	setSessionTimeoutHandler();
 
 	// load forms
@@ -138,6 +153,8 @@ var publicApi = {
 	initModule: initModule,
 	openWidget: openWidget,
 	initChat: initChat,
+	getWidgetElement: getWidgetElement,
+	getEntity: function(){ return api.getState('entity', 'session'); },
 	on: function(evt, listener) {
 		api.on(evt, listener);
 		return this;
@@ -163,6 +180,11 @@ function initModule(){
 	api.initModule();
 }
 
+function initWebrtcModule(opts){
+	console.log('initWebrtcModule: ', opts);
+	WebRTC.init(opts);
+}
+
 // Session is either created or continues
 function onSessionSuccess(){
 	// console.log('Session success!');
@@ -183,6 +205,12 @@ function onSessionSuccess(){
 	}
 }
 
+// send shared event to the user's browser
+function onSessionJoin(params){
+	// console.log('onSessionJoin: ', params);
+	initCobrowsingModule({ url: params.url, entity: api.getState('entity', 'session') });
+}
+
 function loadWidget(cb){
 	// console.log('load widget!');
 	var compiled;
@@ -200,8 +228,10 @@ function loadWidget(cb){
 
 		// Widget variable assignment
 		widget = domify(compiled);
-		document.body.insertBefore(widget, document.body.firstChild);
+		// document.body.insertBefore(widget, document.body.firstChild);
+		document.body.appendChild(widget);
 		api.emit('widget/load', widget);
+
 	});
 }
 
@@ -210,7 +240,53 @@ function onWidgetLoad(widget){
 	api.once('chat/languages', initWidget);
 	getLanguages();
 	// initWidget();
+	
+	initCobrowsingModule({ url: window.location.href, entity: api.getState('entity', 'session'), widget: widget });
 
+}
+
+function initCobrowsingModule(params){
+	// init cobrowsing module only on main window
+	if(defaults.external) return;
+
+	api.on('cobrowsing/init', function(){
+		if(api.getState('shared', 'session') || params.entity === 'agent') cobrowsing.share();
+		// cobrowsing.emitEvents();
+	});
+	api.on('cobrowsing/event', function(params){
+		api.updateEvents(params.events, function(err, result){
+			if(err) return;
+			cobrowsing.updateEvents(result);
+		});
+	});
+
+	api.on('cobrowsing/shared', function(){
+		if(!api.getState('shared', 'session') && params.entity === 'user') {
+			api.saveState('shared', true, 'session');
+			api.switchShareState(true, params.url);
+		}
+		api.updateEvents([{ url: params.url, shared: true }], function(err, result){
+			// if(err) return;
+			result.historyEvents = true;
+			// console.log('cobrowsing update: ', result);
+			cobrowsing.updateEvents(result);
+		});
+	});
+
+	api.on('cobrowsing/unshared', function(params){
+		api.saveState('shared', false, 'session');
+		api.updateEvents([{ url: params.url, shared: false }], function(err, resul){
+			// if(err) return;
+			if(params.entity === 'user') api.switchShareState(false, window.location.href);
+			else cobrowsing.unshareAll();
+		});
+	});
+	
+	cobrowsing.init({ widget: params.widget, entity: params.entity, emit: publicApi.emit, path: defaults.path });
+}
+
+function getWidgetElement(){
+	return widget;
 }
 
 function getLanguages(){
@@ -287,11 +363,9 @@ function showOffer(message) {
 }
 
 function initChat(){
-	// console.log('initChat!');
-
 	showWidget();
 
-	// if chat already started and widget was minimized - just show the widget
+	// // if chat already started and widget was minimized - just show the widget
 	if(api.getState('chat', 'cache')) return;
 
 	if(!langs.length) {
@@ -575,6 +649,10 @@ function closeChat(rating) {
 	removeWgState('chat');
 }
 
+function onChatClose(){
+	if(api.getState('shared', 'session')) cobrowsing.unshare();
+}
+
 function onChatTimeout(){
 	// console.log('chat timeout!');
 	switchPane('closechat');
@@ -618,6 +696,15 @@ function setSessionTimeoutHandler(){
 	});
 }
 
+function initCall(){
+	switchPane('callAgent');
+	WebRTC.audiocall(defaults.webrtc.hotline);
+}
+
+function endCall(){
+	WebRTC.terminate();
+}
+
 /**
  * Open web chat widget in a new window
  */
@@ -635,6 +722,8 @@ function openWidget(){
 			var opts = {}, wchat;
 			_.assign(opts, defaults);
 			opts.widget = true;
+			// set external flag to indicate that the module loads not in the main window
+			opts.external = true;
 			wchat = this.Wchat(opts);
 			wchat.on('widget/init', wchat.initChat);
 			wchat.initModule();
@@ -692,6 +781,8 @@ function wgClickHandler(e){
 		openWidget();
 	} else if(handler === 'cancel') {
 		api.emit('form/reject', targ.parentNode.name);
+	} else if(handler === 'endCall') {
+		endCall();
 	}
 
 	if(targ.tagName === 'A') {
@@ -729,8 +820,16 @@ function btnClickHandler(e){
 
 	if(currTarg.id === defaults.prefix+'-btn-cont') {
 		// If timeout is occured, init session first
-		if(hasWgState('timeout')) initModule();
-		else initChat();
+		if(hasWgState('timeout')) {
+			initModule();
+		} else if(api.getState('chat', 'cache')){
+			showWidget();
+		// } else if(defaults.webrtc.sip.ws_servers !== undefined && defaults.webrtc.sip.uri !== undefined){
+		} else if(defaults.webrtc.sip.ws_servers !== undefined && WebRTC.isSupported()){
+			switchPane('chooseConnection');
+		} else {
+			initChat();
+		}
 	}
 }
 
@@ -802,6 +901,8 @@ function switchPane(pane){
 			item.classList.remove('active');
 		}
 	});
+
+	if(!widgetState.active) showWidget();
 }
 
 function changeWgState(params){
@@ -878,6 +979,10 @@ function onFormSubmit(form){
 		submitSendMailForm(form, formData);
 	} else if(form.id === defaults.prefix+'-intro-form') {
 		requestChat(formData);
+	} else if(form.id === defaults.prefix+'-call-btn-form'){
+		initCall();
+	} else if(form.id === defaults.prefix+'-chat-btn-form'){
+		initChat();
 	} else {
 		closeForm(form.name, true);
 	}
@@ -1042,7 +1147,7 @@ function convertLinks(text){
 	var href = text;
 	if(isLink(text)){
 
-		while(!(href.charAt(href.length-1).match(/[a-z]/i))){
+		while(!(href.charAt(href.length-1).match(/[a-z0-9\/]/i))){
 			href = href.slice(0,-1);
 			leftovers += 1;
 		}
@@ -1053,7 +1158,7 @@ function convertLinks(text){
 }
 
 function isLink(text){
-	var pattern = new RegExp('http:\/\/|https:\/\/|www');
+	var pattern = new RegExp('^http:\/\/|^https:\/\/');
 	return pattern.test(text);
 }
 
@@ -1113,3 +1218,8 @@ function removeEvent(obj, evType, fn) {
   if (obj.removeEventListener) obj.removeEventListener(evType, fn, false);
   else if (obj.detachEvent) obj.detachEvent("on"+evType, fn);
 }
+
+module.exports = {
+	module: Widget,
+	api: publicApi
+};

@@ -39,12 +39,16 @@ function WchatAPI(options){
 		sid: null,
 		eventTimestamp: 0,
 		msgTimestamp: 0,
-		entity: '',
+		entity: undefined,
 		chat: null
 	};
 
 	this.on('session/create', function (result){
 		this.session.sid = result.sid;
+		this.updateUrl(url.href);
+	});
+	this.on('session/continue', function (result){
+		this.updateUrl(url.href);
 	});
 
 	this.on('Error', function (err, params){
@@ -64,24 +68,22 @@ function WchatAPI(options){
  * Emits module/start event if module started
  */
 WchatAPI.prototype.initModule = function(){
-	var entity = this.getState('entity'),
+	var entity = this.getState('entity', 'session'),
 		sid = this.getState('sid');
 
 	// A chatSessionId parameter in the url query 
 	// indicates that the web page was opened by agent.
 	// In that case agent should join the session.
-	if(url.query.chatSessionId) {
-		this.updateEvents([{ shared: true}], function (err, result){
-			if(err) {
-				return;
-			}
-			this.saveState('entity', 'agent');
-			this.saveState('sid', url.query.chatSessionId);
-			this.emit('session/join');
-		}.bind(this));
+	if(url.href.indexOf('chatSessionId') !== -1) {
+		sid = getSidFromUrl(url.href);
+		this.saveState('entity', 'agent', 'session');
+		this.saveState('sid', sid);
+		this.joinSession(sid);
+	} else if(entity === 'agent' && sid) { // In case the cobrowsing session is active
+		this.joinSession(sid, url.href);
 	} else {
 
-		// In case session is already initiated 
+		// In case a session is already initiated 
 		// and storage containes sid parameter
 		if(sid) {
 			this.updateEvents([{ url: url.href }], function (err, result){
@@ -92,7 +94,7 @@ WchatAPI.prototype.initModule = function(){
 				this.emit('session/continue', { entity: entity });
 			}.bind(this));
 		} else {
-			this.saveState('entity', 'user');
+			this.saveState('entity', 'user', 'session');
 			// Create new session
 			this.createSession(url.href);
 		}
@@ -124,12 +126,17 @@ WchatAPI.prototype.createSession = function(pageUrl){
 	}.bind(this));
 };
 
+WchatAPI.prototype.joinSession = function(sid, url){
+	// this.saveState('shared', true, 'session');
+	this.emit('session/join', { sid: sid, url: url });
+};
+
 WchatAPI.prototype.updateEvents = function(events, cb){
 	var params = {
 		method: 'updateEvents',
 		params: {
 			sid: this.getState('sid'),
-			timestamp: this.getState('eventTimestamp'),
+			timestamp: this.getState('eventTimestamp', 'cache'),
 			events: events
 		}
 	};
@@ -138,8 +145,14 @@ WchatAPI.prototype.updateEvents = function(events, cb){
 			this.emit('Error', err, params);
 			return cb(err); // TODO: handle error
 		}
-		this.saveState('eventTimestamp', body.result.timestamp);
-		cb(null, body);
+
+		if(body.result.timestamp > this.getState('eventTimestamp', 'cache')) {
+			this.saveState('eventTimestamp', body.result.timestamp, 'cache');
+			if(cb) cb(null, body.result);
+		} else {
+			if(cb) cb(null, { events: [] });
+		}
+			
 
 	}.bind(this));
 };
@@ -319,6 +332,28 @@ WchatAPI.prototype.disjoinSession = function(sid){
 	}.bind(this));
 };
 
+/**
+ * Informs the server that the cobrowsing feature is turned on or off
+ * @param  {Boolean} state Represents the state of cobrowsing feature
+ * @param  {String} url   Url where the feature's state is changed
+ * @return none
+ */
+WchatAPI.prototype.switchShareState = function(state, url){
+	var method = state ? 'shareOpened' : 'shareClosed';
+	request.post(this.options.serverUrl, {
+		method: method,
+		params: {
+			sid: this.getState('sid'),
+			url: url
+		}
+	}, function(err, res, body){
+		if(err) {
+			this.emit('Error', err);
+			return;
+		}
+	}.bind(this));
+};
+
 WchatAPI.prototype.setChatTimeout = function(timeout){
 	return setTimeout(function (){
 		this.emit('chat/timeout');
@@ -333,6 +368,21 @@ WchatAPI.prototype.userIsTyping = function(){
 			sid: this.getState('sid')
 		}
 	}, function (err){
+		if(err) {
+			this.emit('Error', err);
+			return;
+		}
+	}.bind(this));
+};
+
+WchatAPI.prototype.updateUrl = function(url){
+	request.post(this.options.serverUrl, {
+		method: 'updateUrl',
+		params: {
+			sid: this.getState('sid'),
+			url: url
+		}
+	}, function(err, res, body){
 		if(err) {
 			this.emit('Error', err);
 			return;
@@ -357,7 +407,9 @@ WchatAPI.prototype.linkFollowed = function(url){
 
 WchatAPI.prototype.saveState = function(key, value, location){
 	this.session[key] = value;
-	storage.set(key, value, location);
+	if(location !== 'cache') {
+		storage.set(key, value, location);
+	}
 	return value;
 };
 
@@ -388,14 +440,8 @@ WchatAPI.prototype.sessionTimeout = function(params){
 	this.emit('session/timeout', params);
 };
 
-function shareEvents(){
-	// TODO
-}
-
-function shareBrowser(){
-	// TODO
-}
-
-function unshareBrowser(){
-	// TODO
+function getSidFromUrl(url){
+	var substr = url.substring(url.indexOf('chatSessionId='));
+	substr = substr.substring(substr.indexOf('=')+1);
+	return substr;
 }

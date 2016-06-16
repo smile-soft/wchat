@@ -126,6 +126,41 @@
 				</form>
 			</div>
 		</div>
+		<div class="<%- defaults.prefix %>-wg-pane" data-<%- defaults.prefix %>-pane="chooseConnection">
+			<div class="<%- defaults.prefix %>-pane-body">
+				<form id="<%- defaults.prefix %>-call-btn-form">
+					<button 
+						type="submit" 
+						class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
+						style="background-color: <%- defaults.styles.primary.backgroundColor %>; color: <%- defaults.styles.primary.color %>; border: 1px solid <%- defaults.styles.primary.backgroundColor %>;">
+						Call Agent
+					</button>
+				</form>
+				<form id="<%- defaults.prefix %>-chat-btn-form">
+					<button
+						type="submit" 
+						class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
+						style="background-color: <%- defaults.styles.primary.backgroundColor %>; color: <%- defaults.styles.primary.color %>; border: 1px solid <%- defaults.styles.primary.backgroundColor %>;">
+						Chat Agent
+					</button>
+				</form>
+			</div>
+		</div>
+		<div class="<%- defaults.prefix %>-wg-pane" data-<%- defaults.prefix %>-pane="callAgent">
+			<div class="<%- defaults.prefix %>-pane-body">
+				<form id="<%- defaults.prefix %>-call-agent-form">
+					<h3 class="<%- defaults.prefix %>-text-center">Calling...</h3>
+					<h3 class="<%- defaults.prefix %>-text-center">00:00</h3>
+					<hr>
+					<button 
+						type="button"
+						class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-warn <%- defaults.prefix %>-block"
+						data-<%- defaults.prefix %>-handler="endCall">
+						End call
+					</button>
+				</form>
+			</div>
+		</div>
 	</div>
 	<div id="<%- defaults.prefix %>-btn-cont" class="<%- defaults.prefix %>-btn-cont">
 		<div class="<%- defaults.prefix %>-wg-btn">

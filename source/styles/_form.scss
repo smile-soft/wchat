@@ -73,6 +73,10 @@
 					// border: 1px solid $primary-color;
 					color: #fff;
 				}
+				&.swc-button-warn {
+					background-color: $warn-color;
+					color: #fff;
+				}
 			}
 
 			.swc-block {

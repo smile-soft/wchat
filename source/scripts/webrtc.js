@@ -1,6 +1,6 @@
 var events = {},
-JsSIP = require('./jssip.min.js'),
-// JsSIP = global.JsSIP,
+// JsSIP = require('./jssip.min.js'),
+JsSIP = global.JsSIP,
 options,
 sipClient,
 sipSession,

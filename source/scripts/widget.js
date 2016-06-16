@@ -178,6 +178,7 @@ var publicApi = {
 
 function initModule(){
 	api.initModule();
+	return publicApi;
 }
 
 function initWebrtcModule(opts){
@@ -310,8 +311,10 @@ function onNewLanguages(languages){
 	if(widget && defaults.intro.length) {
 		// Add languages to the template
 		langs.forEach(function(lang) {
-			selected = lang === currLang ? 'selected' : '';
-			options += '<option value="'+lang+'" '+selected+' >'+frases[lang].lang+'</option>';
+			if(frases[lang] && frases[lang].lang) {
+				selected = lang === currLang ? 'selected' : '';
+				options += '<option value="'+lang+'" '+selected+' >'+frases[lang].lang+'</option>';
+			}
 		});
 		global[defaults.prefix+'IntroForm'].lang.innerHTML = options;
 	}
@@ -722,6 +725,7 @@ function openWidget(){
 			var opts = {}, wchat;
 			_.assign(opts, defaults);
 			opts.widget = true;
+			opts.lang = currLang;
 			// set external flag to indicate that the module loads not in the main window
 			opts.external = true;
 			wchat = this.Wchat(opts);
@@ -1083,8 +1087,8 @@ function detectLanguage(){
 		}
 
 		if(!lang) {
-			lang = (navigator.language || navigator.userLanguage).split('-')[0];
-			if(availableLangs.indexOf(lang) === -1) lang = defaults.lang;
+			lang = defaults.lang || (navigator.language || navigator.userLanguage).split('-')[0];
+			if(availableLangs.indexOf(lang) === -1) lang = 'en';
 		}
 	}
 

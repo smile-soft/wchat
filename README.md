@@ -8,8 +8,8 @@ This module could be used only with Smile IPCC server. Appropriate licence must 
 
 [Read the full documentation](http://smile-soft.com/resources/ru/Smile%20IPCC%20Webchat.pdf)
 ### Examples
+#### Initiate module
 ```js
-// Initiate module
 Wchat({
 	server: 'http://ipcc-server-domain.com:8880', 
 	lang: 'uk', // default language - ukranian
@@ -27,13 +27,15 @@ Wchat({
 	},
 	path: "<?php echo get_template_directory_uri(); ?>/wchat/" // absolute path to the module's folder in wordpress template
 }).initModule();
-
-// Set widget option to false
+```
+#### Initiate module and set widget option to false
+```js
 var wchat = Wchat({ server: 'http://ipcc-server-domain.com:8880', widget: false })
 document.getElementById('openWidget').addEventListener('click', wchat.openWidget, false);
 wchat.initModule();
-
-// Subscribe to events
+```
+#### Initiate module and subscribe to events
+```js
 Wchat({ server: 'http://ipcc-server-domain.com:8880' })
 .on('session/create', sessionCreateedHandler)
 .on('widget/init', widgetInitHandler)

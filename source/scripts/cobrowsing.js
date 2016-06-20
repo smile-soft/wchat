@@ -26,7 +26,7 @@ function init(options){
 	addEvent(document, 'click', eventsHandler);
 	addEvent(document, 'change', eventsHandler);
 
-	widget = options.widget;
+	widget = (typeof options.widget === 'string') ? document.querySelector(options.widget) : options.widget;
 	entity = options.entity;
 	emit = options.emit;
 	path = options.path;

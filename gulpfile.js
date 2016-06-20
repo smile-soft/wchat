@@ -14,7 +14,7 @@ var gulpif = require('gulp-if');
 var basePath = {
 	src: 'source/',
 	dest: 'dist/',
-	test: 'test/app/public/'
+	test: 'test/app/public/wchat'
 };
 
 var srcAssets = {
@@ -22,6 +22,7 @@ var srcAssets = {
 	styles: basePath.src + 'styles/',
 	images: basePath.src + 'images/',
 	partials: basePath.src + 'partials/',
+	sounds: basePath.src + 'sounds/',
 	fonts: basePath.src + 'fonts/'
 };
 
@@ -30,6 +31,7 @@ var destAssets = {
 	styles: basePath.dest + '/',
 	images: basePath.dest + 'images/',
 	partials: basePath.dest + 'partials/',
+	sounds: basePath.dest + 'sounds/',
 	fonts: basePath.dest + 'fonts/'
 };
 
@@ -68,13 +70,21 @@ gulp.task('partials', function() {
 	.pipe(gulp.dest(destAssets.partials));
 });
 
+gulp.task('sounds', function() {
+	return gulp.src(srcAssets.sounds+'*')
+	.pipe(gulp.dest(destAssets.sounds));
+});
+
 gulp.task('fonts', function() {
 	return gulp.src(srcAssets.fonts+'*')
 	.pipe(gulp.dest(destAssets.fonts));
 });
 
 gulp.task('cp', function() {
-	
+
+	gulp.src(basePath.src+'*.js')
+	.pipe(gulp.dest(basePath.dest));
+
 	gulp.src(basePath.src+'*.html')
 	.pipe(gulp.dest(basePath.dest));
 
@@ -83,6 +93,8 @@ gulp.task('cp', function() {
 
 	gulp.src(basePath.src+'forms.json')
 	.pipe(gulp.dest(basePath.dest));
+
+	gulp.start('partials', 'sounds', 'fonts');
 });
 
 gulp.task('build', function() {

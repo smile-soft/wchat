@@ -47,13 +47,19 @@
 	}
 
 	.swc-wg-pane {
+		position: relative;
 		display: none;
+		width: 100%;
 		height: 100%;
 		overflow-y: auto;
 		// max-height: 100%;
 		// padding-bottom: 20px;
 		// background-color: #f7f7f7;
 		
+		&[data-swc-pane="messages"] {
+			padding-bottom: 50px;
+		}
+
 		&.active {
 			display: block;
 		}
@@ -64,7 +70,7 @@
 
 		.swc-backdrop-cont {
 			position: relative;
-			height: 100%;
+			// height: 100%;
 			min-height: 120px;
 			padding: 10px;
 
@@ -107,7 +113,7 @@
 
 		.swc-messages-cont {
 			height: $wg-height;
-			margin-bottom: 40px;
+			// margin-bottom: 40px;
 			padding: 0 10px 0;
 			overflow-y: auto;
 
@@ -204,34 +210,14 @@
 					display: none;
 				}
 			}
-
-			.swc-loader {
-				display: none;
-				position: absolute;
-				right: 10px;
-				bottom: 100%;
-				margin-bottom: 10px;
-
-				span:nth-last-child(1) {animation: loading .8s .1s linear infinite;}
-				span:nth-last-child(2) {animation: loading .8s .2s linear infinite;}
-				span:nth-last-child(3) {animation: loading .8s .3s linear infinite;}
-
-				span {
-					display: inline-block;
-					width: 8px;
-					height: 8px;
-					border-radius: 50%;
-					background-color: $secondary-color;
-				}
-			}
 		}
 
 		.swc-msg-textarea,
 		textarea {
 			display: table-cell;
 			width: 100%;
-			height: 30px;
-			min-height: 30px;
+			height: 40px;
+			min-height: 40px;
 			margin: 0;
 			padding: 5px;
 			// padding: 6px 10px;

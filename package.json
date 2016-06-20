@@ -27,9 +27,11 @@
     "inherits": "^2.0.1",
     "jssip": "^2.0.1",
     "lodash": "^3.10.1",
-    "promise": "^7.0.4",
     "request": "^2.67.0",
     "vinyl-source-stream": "^1.1.0",
     "yargs": "^3.31.0"
+  },
+  "devDependencies": {
+    "gulp-convert-encoding": "^1.0.0"
   }
 }

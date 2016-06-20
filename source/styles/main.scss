@@ -4,21 +4,33 @@ $wg-width: 270px;
 $btn-width: 55px;
 $btn-height: 55px;
 $font-stack: "Trebuchet MS", Helvetica, sans-serif;
+
+$btn-icon-call: '\e904';
+
 $btn-color-online: rgba(175,229,255,0.8);
 $btn-icon-online: '\e902';
 $btn-icon-color-online: '';
+
 $btn-color-offline: rgba(241,241,241,0.8);
 $btn-icon-offline: '\e900';
 $btn-icon-color-offline: '';
+
 $btn-color-timeout: rgba(241,241,241,0.8);
 $btn-icon-timeout: '\e902';
 $btn-icon-color-timeout: '';
+
 $btn-color-notified: rgba(253,250,129,0.8);
 $btn-icon-notified: '\e901';
 $btn-icon-color-notified: '';
+
+$btn-color-oncall: rgba(226,173,173,0.8);
+$btn-icon-oncall: '\e904';
+$btn-icon-color-oncall: '#fff';
+
 $btn-color-chat: rgba(175,229,255,0.8);
 $btn-icon-chat: '\e903';
 $btn-icon-color-chat: '';
+
 $btn-icon-color: #777;
 $primary-color: #33C3F0;
 $warn-color: #d95353;
@@ -38,6 +50,7 @@ $secondary-color: #BBBBBB;
 #swc-wg-window .swc-wg-cont {
 	position: absolute;
 	right: 0;
+	border: none;
 
 	.swc-wg-panes {
 		height: 100%;
@@ -132,7 +145,12 @@ $secondary-color: #BBBBBB;
 			}
 		}
 	}
-
+	hr {
+		margin-top: 30px;
+		margin-bottom: 35px;
+		border-width: 0;
+		border-top: 1px solid #E1E1E1;
+	}
 	a.swc-button {
 		text-decoration: none;
 	}
@@ -149,6 +167,14 @@ $secondary-color: #BBBBBB;
 			left: 0;
 			// box-shadow: 0 0 35px;
 			-webkit-overflow-scrolling: touch;
+
+			#swc-call-control {
+				position: absolute;
+				left: 0;
+				bottom: 10px;
+				width: 100%;
+				padding: 10px;
+			}
 		}
 
 		.swc-wg-btn {
@@ -188,6 +214,11 @@ $secondary-color: #BBBBBB;
 			// }
 			.swc-btn-icon:before {
 				content: $btn-icon-online;
+			}
+		}
+		&.webrtc-enabled {
+			.swc-btn-icon:before {
+				content: $btn-icon-call;
 			}
 		}
 		.swc-wg-pane {
@@ -251,13 +282,20 @@ $secondary-color: #BBBBBB;
 		.swc-msg-textarea {
 			height: 80px;
 		}
-		.swc-messages-cont {
-			margin-bottom: 80px;
+		// .swc-messages-cont {
+		.swc-wg-pane {
+			// margin-bottom: 80px;
+			padding-bottom: 80px;
 		}
 	}
 	&.no-button {
 		.swc-btn-cont {
 			display: none;
+		}
+	}
+	&.webrtc-call {
+		.swc-btn-cont .swc-wg-btn {
+			@include animation(oncallBackground 3s ease-in-out infinite);
 		}
 	}
 }

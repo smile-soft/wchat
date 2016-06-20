@@ -1,11 +1,11 @@
+var domify = require('domify');
 var api = require('./core');
 var request = require('./request');
 var _ = require('./lodash');
-var domify = require('domify');
-var Promise = require('promise');
 var frases = require('../translations.json');
 var cobrowsing = require('./cobrowsing');
 var WebRTC = require('./webrtc');
+var serverUrl = {};
 var forms;
 
 // Widget initiation options
@@ -59,9 +59,9 @@ var defaults = {
 		},
 		color: '#777'
 	},
-	widgetWindowOptions: 'left=10,top=10,width=350,height=550,resizable=yes',
+	widgetWindowOptions: 'left=10,top=10,width=350,height=550,resizable,location,toolbar',
 	// absolute path to the wchat folder
-	path: '/wchat/',
+	path: '/ipcc/webchat/',
 	// in seconds
 	checkStatusTimeout: 30,
 	// in seconds
@@ -80,7 +80,8 @@ widgetState = {
 	initiated: false,
 	active: false,
 	state: '', // "online" | "offline" | "timeout",
-	share: false
+	share: false,
+	webrtcEnabled: false
 },
 dialog = [],
 
@@ -99,12 +100,17 @@ widgetWindow,
 // Widget panes elements
 panes,
 agentIsTypingTimeout,
-userIsTypingTimeout;
+userIsTypingTimeout,
+timerUpdateInterval;
+// ringTone = null,
+// ringToneInterval = null;
 
 function Widget(options){
 
 	_.merge(defaults, options || {});
 	// _.assign(defaults, options || {});
+
+	serverUrl = require('url').parse(defaults.server, true);
 
 	api = new api(options)
 	.on('session/create', onSessionSuccess)
@@ -126,22 +132,64 @@ function Widget(options){
 	}
 
 	if(defaults.webrtc.sip.ws_servers !== undefined && WebRTC.isSupported()) {
-		initWebrtcModule({
-			sip: defaults.webrtc.sip,
-			emit: api.emit,
-			on: api.on
-		});
+		if(window.location.protocol !== 'http:' && serverUrl.protocol !== 'http:'){
+			// set flag to indicate that webrtc feature is supported and enabled
+			widgetState.webrtcEnabled = true;
+
+			// set webrtc event handlers
+			api.on('webrtc/newRTCSession', function(){
+				initCallState('newRTCSession');
+			});
+			api.on('webrtc/progress', function(e){
+				if(e.response.status_code === 180) {
+					initCallState('ringing');
+				} else {
+					initCallState('confirmed');
+				}
+			});
+			api.on('webrtc/addstream', function(){
+				initCallState('connected');
+			});
+			api.on('webrtc/ended', function(){
+				initCallState('ended');
+			});
+			api.on('webrtc/failed', function(e){
+				if(e.cause === 'Canceled'){
+					initCallState('canceled');
+				} else {
+					initCallState('failed');
+				}
+			});
+
+			// ringTone audio element plays ringTone sound when calling to agent
+			// ringTone = document.createElement('audio');
+			// ringTone.src = defaults.server+defaults.path+'sounds/ringout.wav';
+			// document.body.appendChild(ringTone);
+
+			// initiate webrtc module with parameters
+			initWebrtcModule({
+				sip: defaults.webrtc.sip,
+				emit: publicApi.emit,
+				on: publicApi.on
+			});
+		} else {
+			// webrtc is supported by the browser, but the current web page
+			// is located on insecure origins, therefore the webrtc is not supported
+			console.warn('WebRTC feature is disabled');
+			console.warn('getUserMedia() no longer works on insecure origins. To use this feature, you should consider switching your application to a secure origin, such as HTTPS. See https://goo.gl/rStTGz for more details.');
+		}
 	}
 		
 	setSessionTimeoutHandler();
+	addWidgetStyles();
 
 	// load forms
-	request.get('forms_json', defaults.path+'forms.json', function (err, result){
+	request.get('forms_json', defaults.server+defaults.path+'forms.json', function (err, result){
 		if(err) return api.emit('Error', err);
 		forms = JSON.parse(result).forms;
 	});
 
-	request.get('forms_tmp', defaults.path+'partials/forms.html', function (err, template){
+	request.get('forms_tmp', defaults.server+defaults.path+'partials/forms.html', function (err, template){
 		if(err) return api.emit('Error', err);
 	});
 
@@ -151,9 +199,11 @@ function Widget(options){
 var publicApi = {
 
 	initModule: initModule,
+	initWidgetState: initWidgetState,
 	openWidget: openWidget,
 	initChat: initChat,
 	getWidgetElement: getWidgetElement,
+	isWebrtcSupported: WebRTC.isSupported,
 	getEntity: function(){ return api.getState('entity', 'session'); },
 	on: function(evt, listener) {
 		api.on(evt, listener);
@@ -204,6 +254,18 @@ function onSessionSuccess(){
 		removeWgState('timeout');
 		getLanguages();
 	}
+
+	// if window is not a opened window
+	if(!defaults.external) {
+		api.updateUrl(window.location.href);
+
+		initCobrowsingModule({
+			url: window.location.href,
+			entity: api.getState('entity', 'session'),
+			widget: '#'+defaults.prefix+'-wg-cont'
+		});
+	}
+		
 }
 
 // send shared event to the user's browser
@@ -215,7 +277,7 @@ function onSessionJoin(params){
 function loadWidget(cb){
 	// console.log('load widget!');
 	var compiled;
-	request.get('widget_tmp', defaults.path+'widget.html', function (err, body){
+	request.get('widget_tmp', defaults.server+defaults.path+'widget.html', function (err, body){
 		if(err) return;
 		compiled = compileTemplate(body, {
 			defaults: defaults,
@@ -241,9 +303,6 @@ function onWidgetLoad(widget){
 	api.once('chat/languages', initWidget);
 	getLanguages();
 	// initWidget();
-	
-	initCobrowsingModule({ url: window.location.href, entity: api.getState('entity', 'session'), widget: widget });
-
 }
 
 function initCobrowsingModule(params){
@@ -266,7 +325,7 @@ function initCobrowsingModule(params){
 			api.saveState('shared', true, 'session');
 			api.switchShareState(true, params.url);
 		}
-		api.updateEvents([{ url: params.url, shared: true }], function(err, result){
+		api.updateEvents([{ entity: params.entity, url: params.url, shared: true }], function(err, result){
 			// if(err) return;
 			result.historyEvents = true;
 			// console.log('cobrowsing update: ', result);
@@ -276,14 +335,14 @@ function initCobrowsingModule(params){
 
 	api.on('cobrowsing/unshared', function(params){
 		api.saveState('shared', false, 'session');
-		api.updateEvents([{ url: params.url, shared: false }], function(err, resul){
+		api.updateEvents([{ entity: params.entity, url: params.url, shared: false }], function(err, resul){
 			// if(err) return;
 			if(params.entity === 'user') api.switchShareState(false, window.location.href);
 			else cobrowsing.unshareAll();
 		});
 	});
 	
-	cobrowsing.init({ widget: params.widget, entity: params.entity, emit: publicApi.emit, path: defaults.path });
+	cobrowsing.init({ widget: params.widget, entity: params.entity, emit: publicApi.emit, path: (defaults.server+defaults.path) });
 }
 
 function getWidgetElement(){
@@ -343,6 +402,11 @@ function initWidget(){
 		requestChat(api.getState('credentials', 'session') || {});
 		showWidget();
 		// initChat();
+	}
+
+	// if webrtc supported by the browser and ws_servers parameter is set - change button icon
+	if(widgetState.webrtcEnabled) {
+		addWgState('webrtc-enabled');
 	}
 
 	// Widget is initiated
@@ -452,7 +516,7 @@ function newMessage(result){
 		text = parseMessage(message.text, message.file, message.entity);
 
 		if(text.type === 'form') {
-			request.get('forms_tmp', defaults.path+'partials/forms.html', function (err, template){
+			request.get('forms_tmp', defaults.server+defaults.path+'partials/forms.html', function (err, template){
 				if(err) return cb(err);
 
 				compiled = compileTemplate(template, {
@@ -514,7 +578,7 @@ function onLastMessage(message){
 
 function compileEmail(content, cb) {
 	var compiled;
-	request.get('email_tmp', defaults.path+'partials/email.html', function (err, body){
+	request.get('email_tmp', defaults.server+defaults.path+'partials/email.html', function (err, body){
 		if(err) return cb(err);
 
 		compiled = compileTemplate(body, {
@@ -701,39 +765,169 @@ function setSessionTimeoutHandler(){
 
 function initCall(){
 	switchPane('callAgent');
-	WebRTC.audiocall(defaults.webrtc.hotline);
+	WebRTC.audiocall('sip:'+defaults.webrtc.hotline+'@'+serverUrl.host);
+}
+
+function initCallState(state){
+	console.log('initCallState: ', state);
+
+	var spinner = document.getElementById(defaults.prefix+'-call-spinner'),
+		info = document.getElementById(defaults.prefix+'-call-info'),
+		textState = document.getElementById(defaults.prefix+'-call-state'),
+		timer = document.getElementById(defaults.prefix+'-call-timer'),
+		tryAgain = document.getElementById(defaults.prefix+'-tryagain-btn');
+
+	if(state === 'newRTCSession') {
+		initCallState('oncall');
+
+	} else if(state === 'confirmed') {
+		textState.innerText = frases[currLang].call_pane.calling_agent;
+		info.classList.remove(defaults.prefix+'-hidden');
+		spinner.classList.add(defaults.prefix+'-hidden');
+		tryAgain.classList.add(defaults.prefix+'-hidden');
+
+	} else if(state === 'ringing') {
+		setTimer(timer, 'init', 0);
+		timer.classList.remove(defaults.prefix+'-hidden');
+		// playRingTone();
+
+	} else if(state === 'connected') {
+		textState.innerText = frases[currLang].call_pane.connected_with_agent;
+		setTimer(timer, 'start', 0);
+		// stopRingTone();
+
+	} else if(state === 'ended') {
+		textState.innerText = frases[currLang].call_pane.call_ended;
+		setTimer(timer, 'stop');
+		initCallState('oncallend');
+		
+	} else if(state === 'failed' || state === 'canceled') {
+		if(state === 'failed') {
+			textState.innerText = frases[currLang].call_pane.call_failed;
+		} else {
+			textState.innerText = frases[currLang].call_pane.call_canceled;
+		}
+		info.classList.remove(defaults.prefix+'-hidden');
+		spinner.classList.add(defaults.prefix+'-hidden');
+		timer.classList.add(defaults.prefix+'-hidden');
+		tryAgain.classList.remove(defaults.prefix+'-hidden');
+		initCallState('oncallend');
+
+	} else if(state === 'oncall') {
+		window.onbeforeunload = function(){
+			return 'Your connection is in progress. Do you realy want to close it?';
+		};
+		api.saveState('call', true, 'cache');
+		addWgState('webrtc-call');
+
+	} else if(state === 'oncallend') {
+		window.onbeforeunload = null;
+		api.saveState('call', false, 'cache');
+		removeWgState('webrtc-call');
+		// stopRingTone();
+
+	} else if('init') {
+		info.classList.add(defaults.prefix+'-hidden');
+		spinner.classList.remove(defaults.prefix+'-hidden');
+		tryAgain.classList.add(defaults.prefix+'-hidden');
+	}
+}
+
+function setTimer(timer, state, seconds){
+	var time = seconds;
+	if(state === 'start') {
+		timerUpdateInterval = setInterval(function(){
+			time = time+1;
+			timer.textContent = convertTime(time);
+		}, 1000);
+	} else if(state === 'stop') {
+		clearInterval(timerUpdateInterval);
+	} else if(state === 'init') {
+		timer.textContent = convertTime(0);
+	}
 }
 
 function endCall(){
-	WebRTC.terminate();
+	if(WebRTC.isEstablished() || WebRTC.isInProgress()) {
+		WebRTC.terminate();
+	} else {
+		closeWidget();
+		initCallState('init');
+	}
 }
+
+// function playRingTone(){
+// 	if(ringToneInterval) return;
+// 	ringToneInterval = setInterval(function(){
+// 		ringTone.play();
+// 	}, 3000);
+// }
+
+// function stopRingTone(){
+// 	clearInterval(ringToneInterval);
+// }
 
 /**
  * Open web chat widget in a new window
  */
 function openWidget(){
 	// console.log('open widget!');
-	var url = defaults.path+'window.html';
+	var url = defaults.server+defaults.path+'window.html',
+		optsEncoded = '';
+	
 	if(!widgetWindow || widgetWindow.closed) {
-		widgetWindow = window.open(url, 'webchat', defaults.widgetWindowOptions);
+
+		widgetWindow = window.open('', 'wchat', defaults.widgetWindowOptions);
+		widgetWindow.sessionStorage.setItem('wchat_options', JSON.stringify(defaults));
+
+		constructWindow(widgetWindow);
+		
 		widgetWindow.onbeforeunload = function(){
-			// close chat if user close the widget window
-			// without ending chat
+			//close chat if user close the widget window
+			//without ending a dialog
 			if(api.getState('chat', 'storage')) closeChat();
-		};
-		widgetWindow.onload = function(){
-			var opts = {}, wchat;
-			_.assign(opts, defaults);
-			opts.widget = true;
-			opts.lang = currLang;
-			// set external flag to indicate that the module loads not in the main window
-			opts.external = true;
-			wchat = this.Wchat(opts);
-			wchat.on('widget/init', wchat.initChat);
-			wchat.initModule();
 		};
 	}
 	if(widgetWindow.focus) widgetWindow.focus();
+}
+
+function constructWindow(windowObject){
+	var loader,
+	script,
+	link,
+	charset,
+	viewport,
+	title;
+
+	viewport = document.createElement('meta');
+	viewport.name = 'viewport';
+	viewport.content = 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0';
+
+	charset = document.createElement('meta');
+	charset.setAttribute('charset', 'utf-8');
+
+	title = document.createElement('title');
+	title.textContent = frases[currLang].default_title;
+
+	loader = document.createElement('script');
+	loader.src = defaults.server+defaults.path+'loader.js';
+
+	script = document.createElement('script');
+	script.src = defaults.server+defaults.path+'wchat.min.js';
+	script.charset = 'UTF-8';
+
+	link = document.createElement('link');
+	link.rel = 'stylesheet';
+	link.href = defaults.server+defaults.path+'main.css';
+
+	windowObject.document.body.id = 'swc-wg-window';
+	windowObject.document.body.style = 'margin:0;';
+	windowObject.document.head.appendChild(viewport);
+	windowObject.document.head.appendChild(charset);
+	windowObject.document.head.appendChild(title);
+	windowObject.document.head.appendChild(link);
+	windowObject.document.head.appendChild(script);
+	windowObject.document.body.appendChild(loader);
 }
 
 /**
@@ -774,7 +968,7 @@ function wgClickHandler(e){
 	handler = targ.getAttribute('data-'+defaults.prefix+'-handler');
 	dataHref = targ.getAttribute('data-'+defaults.prefix+'-link');
 
-	if(handler === 'close') {
+	if(handler === 'closeWidget') {
 		closeWidget();
 	} else if(handler === 'finish') {
 		if(api.getState('chat')) switchPane('closechat');
@@ -783,8 +977,12 @@ function wgClickHandler(e){
 		wgSendMessage();
 	} else if(handler === 'openWindow') {
 		openWidget();
-	} else if(handler === 'cancel') {
+	} else if(handler === 'rejectForm') {
 		api.emit('form/reject', targ.parentNode.name);
+	} else if(handler === 'initCall') {
+		initCall();
+	} else if(handler === 'initChat') {
+		initChat();
 	} else if(handler === 'endCall') {
 		endCall();
 	}
@@ -823,17 +1021,26 @@ function btnClickHandler(e){
 	}
 
 	if(currTarg.id === defaults.prefix+'-btn-cont') {
-		// If timeout is occured, init session first
-		if(hasWgState('timeout')) {
-			initModule();
-		} else if(api.getState('chat', 'cache')){
+		initWidgetState();
+	}
+}
+
+function initWidgetState(){
+	// If timeout is occured, init session first
+	if(hasWgState('timeout')) {
+		initModule();
+	} else if(api.getState('chat', 'cache')){
+		showWidget();
+	// } else if(defaults.webrtc.sip.ws_servers !== undefined && defaults.webrtc.sip.uri !== undefined){
+	} else if(widgetState.webrtcEnabled){
+		// if call is in progress - just show the widget
+		if(api.getState('call', 'cache')) {
 			showWidget();
-		// } else if(defaults.webrtc.sip.ws_servers !== undefined && defaults.webrtc.sip.uri !== undefined){
-		} else if(defaults.webrtc.sip.ws_servers !== undefined && WebRTC.isSupported()){
-			switchPane('chooseConnection');
 		} else {
-			initChat();
+			switchPane('chooseConnection');
 		}
+	} else {
+		initChat();
 	}
 }
 
@@ -1004,7 +1211,7 @@ function closeForm(name, submit){
 	} else {
 		form.outerHTML = '<p class="'+defaults.prefix+'-text-center">'+
 							'<i class="'+defaults.prefix+'-text-danger '+defaults.prefix+'-icon-remove"></i>'+
-							'<span> '+frases[currLang].form_cancelled+'</span>'+
+							'<span> '+frases[currLang].form_canceled+'</span>'+
 						'</p>';
 	}
 }
@@ -1167,7 +1374,7 @@ function isLink(text){
 }
 
 function isImage(filename){
-	var regex = new RegExp('png|jpg|jpeg|gif');
+	var regex = new RegExp('png|PNG|jpg|JPG|JPEG|jpeg|gif|GIF');
 	var ext = filename.substring(filename.lastIndexOf('.')+1);
 	return regex.test(ext);
 }
@@ -1203,11 +1410,27 @@ function resetStyles(element){
 	element.removeAttribute('style');
 }
 
+function addWidgetStyles(){
+	
+	var link = document.createElement('link');
+		link.rel = 'stylesheet';
+		link.href = defaults.server+defaults.path+'main.css';
+
+	document.head.appendChild(link);
+}
+
 function PrefixedEvent(element, type, pfx, callback) {
 	for (var p = 0; p < pfx.length; p++) {
 		if (!pfx[p]) type = type.toLowerCase();
 		element.addEventListener(pfx[p]+type, callback, false);
 	}
+}
+
+function convertTime(seconds){
+	var minutes = Math.floor(seconds / 60),
+		secsRemain = seconds % 60,
+		str = (minutes > 9 ? minutes : '0' + minutes) + ':' + (secsRemain > 9 ? secsRemain : '0' + secsRemain);
+	return str;
 }
 
 function isBrowserSupported() {

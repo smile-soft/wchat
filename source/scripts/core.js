@@ -45,10 +45,10 @@ function WchatAPI(options){
 
 	this.on('session/create', function (result){
 		this.session.sid = result.sid;
-		this.updateUrl(url.href);
+		// this.updateUrl(url.href);
 	});
 	this.on('session/continue', function (result){
-		this.updateUrl(url.href);
+		// this.updateUrl(url.href);
 	});
 
 	this.on('Error', function (err, params){
@@ -86,7 +86,7 @@ WchatAPI.prototype.initModule = function(){
 		// In case a session is already initiated 
 		// and storage containes sid parameter
 		if(sid) {
-			this.updateEvents([{ url: url.href }], function (err, result){
+			this.updateEvents([{ entity: entity, url: url.href }], function (err, result){
 				if(err) {
 					return;
 				}

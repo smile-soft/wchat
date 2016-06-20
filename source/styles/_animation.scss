@@ -25,12 +25,24 @@
 
 @include keyframes(newMessage) {
   0% {
-  	opacity: 0;
+    opacity: 0;
     @include transform(tranlateY(100px))
   },
   100% {
     opacity: 1;
     @include transform(tranlateY(0))
+  }
+}
+
+@include keyframes(oncallBackground) {
+  0% {
+    background-color: $btn-color-oncall;
+  },
+  50% {
+    background-color: $btn-color-online;
+  },
+  100% {
+    background-color: $btn-color-oncall;
   }
 }
 

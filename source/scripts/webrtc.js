@@ -1,6 +1,6 @@
 var events = {},
-// JsSIP = require('./jssip.min.js'),
-JsSIP = global.JsSIP,
+JsSIP = require('./jssip.min.js'),
+// JsSIP = global.JsSIP,
 options,
 sipClient,
 sipSession,
@@ -20,7 +20,13 @@ function initJsSIPEvents(){
 	sipClient.on('newMessage', function(e){ console.log('sip newMessage event: ', e); });
 	sipClient.on('newRTCSession', function(e){
 		console.log('sip newRTCSession event: ', e);
-		sipSession = e.session;
+		events.emit('webrtc/newRTCSession', e);
+		// if(e.session.direction === 'outgoing')
+		// 	events.emit('webrtc/outgoingCall', e);
+		// else
+		// 	events.emit('webrtc/incomingCall', e);
+		
+			sipSession = e.session;
 	});
 	sipClient.on('registered', function(e){ console.log('sip registered event: ', e); });
 	sipClient.on('unregistered', function(e){ console.log('sip unregistered event: ', e); });
@@ -45,10 +51,26 @@ function initJsSIPEvents(){
 		},
 		addstream: function(e){
 			console.log('call addstream event: ', e);
+			events.emit('webrtc/addstream', e);
 			var stream = e.stream;
 			options.audioRemote = JsSIP.rtcninja.attachMediaStream(options.audioRemote, stream);
 		}
+		// sdp: function(e){
+		// 	console.log('sdp: ', e);
+		// }
 	};
+}
+
+function isEstablished(){
+	return sipSession.isEstablished();
+}
+
+function isInProgress(){
+	return sipSession.isInProgress();
+}
+
+function isEnded(){
+	return sipSession.isEnded();
 }
 
 function unregister(){
@@ -114,5 +136,8 @@ module.exports = {
 	terminate: terminate,
 	answer: answer,
 	hold: hold,
+	isInProgress: isInProgress,
+	isEstablished: isEstablished,
+	isEnded: isEnded,
 	isSupported: isWebrtcSupported
 };

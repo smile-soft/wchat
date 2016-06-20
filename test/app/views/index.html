@@ -5,12 +5,12 @@ and open the template in the editor.
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8">
+        <meta charset="windows-1251">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Webchat test page 1</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
-        <link rel="stylesheet" type="text/css" href="main.css">
+        <!-- <meta http-equiv="Content-Type" content="text/html; charset=windows-1251"> -->
+        <!-- <link rel="stylesheet" type="text/css" href="https://smile-soft.com:8880/ipcc/webchat/main.css"> -->
     </head>
     <body style="width: 100%">
         <div id='header'>
@@ -86,9 +86,20 @@ and open the template in the editor.
                 <p class="text">Donec eu lacus imperdiet, malesuada turpis et, egestas massa. Fusce dignissim hendrerit orci, at commodo dolor adipiscing in. Integer accumsan laoreet felis, tristique ultrices libero condimentum suscipit. Etiam sollicitudin augue eros, vel tincidunt purus convallis eu. Fusce molestie fermentum sem. Integer rutrum et elit quis convallis. Nulla facilisis ullamcorper gravida.</p>   
             </div>
         </div>
-        <script type="text/javascript" src="wchat.min.js"></script>
+        <script type="text/javascript" src="https://smile-soft.com:8880/ipcc/webchat/wchat.min.js" charset="UTF-8"></script>
         <script type="text/javascript">
-            var wchat = Wchat({ server: 'http://46.4.102.37:8881' });
+
+            var wchat = Wchat({
+                server: 'https://smile-soft.com:8880',
+                webrtc: {
+                    sip: {
+                        ws_servers: 'wss://smile-soft.com:8880',
+                        uri: 'sip:online@smile-soft.com:8880',
+                        register: false
+                    },
+                    hotline: '5678'
+                }
+            });
             var btn = document.getElementById('openWidget');
             btn.addEventListener('click', wchat.openWidget, false);
 

@@ -1,6 +1,9 @@
 {
     "en": {
 		"lang": "English",
+		"default_user_name": "You",
+		"default_title": "Live chat",
+		"default_offer": "Welcome, need some help?",
 		"greets": "Greetings!",
 		"cancel": "Cancel",
 		"close": "Close",
@@ -34,10 +37,7 @@
 			"tel": "Please fill in your telephone number"
 		},
 		"form_submitted": "Form sent, thank you!",
-		"form_cancelled": "Form cancelled",
-		"default_user_name": "You",
-		"default_title": "Live chat",
-		"default_offer": "Welcome, need some help?",
+		"form_canceled": "Form cancelled",
 		"pholder": {
 			"uname": "Your name",
 			"email": "Your email",
@@ -45,10 +45,28 @@
 			"subject": "Dialog's subject",
 			"message": "Your message here...",
 			"comment": "Please, leave your comment here..."
+		},
+		"init_pane": {
+			"choose_conn_type": "Please, choose a connection type",
+			"call_agent_btn": "Call agent",
+			"chat_agent_btn": "Start chat"
+		},
+		"call_pane": {
+			"confirm_access": "Please, confirm access to microphone",
+			"calling_agent": "Calling Agent",
+			"connected_with_agent": "Connected with Agent",
+			"call_ended": "Call ended",
+			"call_failed": "Call failed \n Please, try again later",
+			"call_canceled": "Call canceled",
+			"end_call": "End call",
+			"try_again": "Try again"
 		}
     },
     "uk": {
     	"lang": "Українська",
+    	"default_user_name": "Ви",
+    	"default_title": "Онлайн чат",
+    	"default_offer": "Ласкаво просимо, потрібна допомога?",
     	"greets": "Вітаємо!",
 		"cancel": "Відміна",
 		"close": "Закрити",
@@ -59,7 +77,7 @@
     	"start_dialog_button": "Розпочати діалог",
     	"finish_dialog_button": "Закінчити діалог",
 		"choose_dialog_lang": "Оберіть мову діалогу",
-		"intro_message": "Будь ласка, заповніть необхідні поля",
+		"intro_message": "Будь-ласка, заповніть необхідні поля",
 		"offline_message": "Наразі ми оффлайн, будь ласка, залиште нам повідомлення, ми зв'яжемося з Вами найближчим часом",
 		"send_message_header": "Відправити повідомлення",
 		"close_chat_header": "Дякуємо, що звернулися до нас!",
@@ -77,26 +95,41 @@
 			"request": "Нове повідомлення від"
 		},
 		"required_error": {
-			"fields": "Будь ласка, заповніть всі необхідні поля",
-			"email": "Будь ласка, введіть свою електронну адресу",
-			"tel": "Будь ласка, введіть свій номер телефону"
+			"fields": "Будь-ласка, заповніть всі необхідні поля",
+			"email": "Будь-ласка, введіть свою електронну адресу",
+			"tel": "Будь-ласка, введіть свій номер телефону"
 		},
 		"form_submitted": "Форма відправлена, дякуємо!",
-		"form_cancelled": "Форма відхилена",
-		"default_user_name": "Ви",
-		"default_title": "Онлайн чат",
-		"default_offer": "Ласкаво просимо, потрібна допомога?",
+		"form_canceled": "Форма відхилена",
 		"pholder": {
 			"uname": "Ваше ім'я",
 			"email": "Ваша електронна адреса",
 			"phone": "Ваш телефон",
 			"subject": "Тема діалогу",
 			"message": "Ваше повідомлення тут...",
-			"comment": "Будь ласка, залиште тут свій коментар..."
+			"comment": "Будь-ласка, залиште тут свій коментар..."
+		},
+		"init_pane": {
+			"choose_conn_type": "Будь-ласка, виберіть тип з'єднання",
+			"call_agent_btn": "Виклик агента",
+			"chat_agent_btn": "Почати чат"
+		},
+		"call_pane": {
+			"confirm_access": "Будь-ласка, підтвердіть доступ до мікрофона",
+			"calling_agent": "Йде виклик",
+			"connected_with_agent": "Виклик з'єднаний",
+			"call_ended": "Виклик завершено",
+			"call_failed": "Збій виклику \n Будь-ласка спробуйте пізніше",
+			"call_canceled": "Виклик скасований",
+			"end_call": "Завершити виклик",
+			"try_again": "Спробувати ще раз"
 		}
     },
     "ru": {
     	"lang": "Русский",
+    	"default_user_name": "Вы",
+		"default_title": "Онлайн чат",
+		"default_offer": "Добро пожаловать, нужна помощь?",
     	"greets": "Приветствуем!",
 		"cancel": "Отмена",
 		"close": "Закрыть",
@@ -130,10 +163,7 @@
 			"tel": "Пожалуйста, введите свой номер телефона"
 		},
 		"form_submitted": "Форма отправлена, спасибо!",
-		"form_cancelled": "Форма отклонена",
-		"default_user_name": "Вы",
-		"default_title": "Онлайн чат",
-		"default_offer": "Добро пожаловать, нужна помощь?",
+		"form_canceled": "Форма отклонена",
 		"pholder": {
 			"uname": "Ваше имя",
 			"email": "Ваш электронный адрес",
@@ -141,6 +171,21 @@
 			"subject": "Тема диалога",
 			"message": "Ваше сообщение здесь...",
 			"comment": "Пожалуйста, оставьте здесь свой комментарий..."
+		},
+		"init_pane": {
+			"choose_conn_type": "Пожалуйста, выберите способ соединения",
+			"call_agent_btn": "Вызов агента",
+			"chat_agent_btn": "Начать чат"
+		},
+		"call_pane": {
+			"confirm_access": "Пожалуйста, подтвердите доступ к микрофону",
+			"calling_agent": "Идет вызов",
+			"connected_with_agent": "Вызов соединен",
+			"call_ended": "Вызов завешен",
+			"call_failed": "Сбой вызова \n Пожалуйста, попробуйте позже",
+			"call_canceled": "Вызов отменен",
+			"end_call": "Заверший вызов",
+			"try_again": "Попробовать еще раз"
 		}
     }
 };

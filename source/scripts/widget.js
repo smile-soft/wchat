@@ -1031,7 +1031,8 @@ function initWidgetState(){
 		initModule();
 	} else if(api.getState('chat', 'cache')){
 		showWidget();
-	// } else if(defaults.webrtc.sip.ws_servers !== undefined && defaults.webrtc.sip.uri !== undefined){
+	} else if(!langs.length){
+		switchPane('sendemail');
 	} else if(widgetState.webrtcEnabled){
 		// if call is in progress - just show the widget
 		if(api.getState('call', 'cache')) {

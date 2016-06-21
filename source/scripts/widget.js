@@ -59,7 +59,7 @@ var defaults = {
 		},
 		color: '#777'
 	},
-	widgetWindowOptions: 'left=10,top=10,width=350,height=550,resizable,location,toolbar',
+	widgetWindowOptions: 'left=10,top=10,width=350,height=550,resizable',
 	// absolute path to the wchat folder
 	path: '/ipcc/webchat/',
 	// in seconds
@@ -978,7 +978,7 @@ function wgClickHandler(e){
 	} else if(handler === 'openWindow') {
 		openWidget();
 	} else if(handler === 'rejectForm') {
-		api.emit('form/reject', targ.parentNode.name);
+		api.emit('form/reject', { formName: _.findParent(targ, 'form').name });
 	} else if(handler === 'initCall') {
 		initCall();
 	} else if(handler === 'initChat') {
@@ -1083,7 +1083,7 @@ function wgSubmitHandler(e){
 	var targ = e.target;
 	e.preventDefault();
 	if(targ.tagName === 'FORM')
-		api.emit('form/submit', targ);
+		api.emit('form/submit', { formElement: targ, formData: getFormData(targ) });
 }
 
 function wgSendFile(e){
@@ -1176,8 +1176,9 @@ function closeWidget(){
 	}
 }
 
-function onFormSubmit(form){
-	var formData = getFormData(form);
+function onFormSubmit(params){
+	var form = params.formElement;
+	var formData = params.formData;
 	// console.log('onFormSubmit: ', form, formData);
 	if(form.getAttribute('data-validate-form')) {
 		var valid = validateForm(form);

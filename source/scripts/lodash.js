@@ -22,6 +22,35 @@ function debounce(func, wait, immediate) {
 	};
 }
 
+function findParent(elem, selector) {
+
+    var firstChar = selector.charAt(0);
+
+    // Get closest match
+    for ( ; elem && elem !== document; elem = elem.parentNode ) {
+        if ( firstChar === '.' ) {
+            if ( elem.classList.contains( selector.substr(1) ) ) {
+                return elem;
+            }
+        } else if ( firstChar === '#' ) {
+            if ( elem.id === selector.substr(1) ) {
+                return elem;
+            }
+        } else if ( firstChar === '[' ) {
+            if (elem.hasAttribute( selector.substr(1, selector.length - 2))) {
+                return elem;
+            }
+        } else {
+            if(elem.nodeName === selector.toUpperCase()){
+                return elem;
+            }
+        }
+    }
+
+    return false;
+
+}
+
 module.exports = {
 	template: _template,
 	forEach: _forEach,
@@ -30,5 +59,6 @@ module.exports = {
 	isEqual: _isEqual,
 	trim: _trim,
 	throttle: _throttle,
-	debounce: debounce
+	debounce: debounce,
+	findParent: findParent
 };

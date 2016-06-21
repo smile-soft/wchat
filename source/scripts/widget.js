@@ -527,7 +527,7 @@ function newMessage(result){
 					frases: frases[(currLang || defaults.lang)],
 					_: _
 				});
-				if(global[text.content.name]) closeForm(text.content.name);
+				if(global[text.content.name]) closeForm({ formName: text.content.name });
 				messagesCont.insertAdjacentHTML('beforeend', '<li>'+compiled+'</li>');
 				messagesCont.scrollTop = messagesCont.scrollHeight;
 			});
@@ -1196,13 +1196,13 @@ function onFormSubmit(params){
 	} else if(form.id === defaults.prefix+'-chat-btn-form'){
 		initChat();
 	} else {
-		closeForm(form.name, true);
+		closeForm({ formName: form.name }, true);
 	}
 
 }
 
-function closeForm(name, submit){
-	var form = global[name];
+function closeForm(params, submit){
+	var form = global[params.formName];
 	if(!form) return false;
 	if(submit) {
 		form.outerHTML = '<p class="'+defaults.prefix+'-text-center">'+

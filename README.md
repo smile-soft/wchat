@@ -44,19 +44,16 @@ Wchat({ server: 'http://ipcc-server-domain.com:8880' })
 .initModule();
 ```
 ### Getting Started
-1) Put all files from `dist` folder to the folder on the webserver, where your website/web application is hosted.
+1) Put all files from `dist` folder to the folder on the IPCC webserver. The default path is: *path-to-the-ipcc-directory>/web/ipcc/webchat*.
+**Note**: if you prefer to change the default directory for the webchat files, then change the path parameter in the module's options declaration.
 
 2) Add a script tag to the webpages where the module should be loaded.
 ```html
-<script src="wchat.min.js"></script>
+<script src="ipcc-server-domain-or-ip/ipcc/webchat/wchat.min.js" charset="UTF-8"></script>
 ```
 **Note**: do not use non minified version of the script, it's very big and is used only for debugging purposes.
 
-3) Add a link tag to the webpages where the module should be loaded.
-```html
-<link href="main.css"></link>
-```
-4) Initiate module with the appropriate options (listed below).
+3) Initiate module with the appropriate options (listed below).
 ```js
 Wchat({ server: 'http://ipcc-server-domain.com:8880' }).initModule();
 ```
@@ -66,7 +63,7 @@ Option            | Type    | Default     | Description
 server            | String  |             | IPCC server IP address and http port
 title             | String  | Live chat   | Displayed in the widget's header element
 lang              | String  | en          | Default language of interface and dialog. Used when automaticaly determined user language is not supported (ask your IPCC administrator for additional information).
-langFromUrl		  | Boolean	| false		  | Experimental. This feature parses page url to figure out user's preferred language
+langFromUrl	  | Boolean | false	  | Experimental. This feature parses page url to figure out user's preferred language
 widget            | Boolean | true        | Whether the webchat widget should be opened within the main tab (if `true`) or in a separate window (if `false`)
 position          | String  | right       | Widget position on the page. Option is actual if `widget` is set to true. Possible values are `right` and `left`
 hideOfflineButton | Boolean | false       | If set to `true`, then widget's button will be hidden when there are no registered IPCC agents that could serve current task
@@ -74,7 +71,8 @@ intro             | Array   | []          | If defined, then the user must intro
 offer             | Object  | false       | When set, the predefined message will be shown to the user after a certain number of minutes. [Read more](#setting-offer)
 styles            | Obejct  |             | A basic widget styles. [Read more](#setting-styles)
 buttonStyles      | Object  |             | A set of widget's button styles. [Read more](#setting-button-styles)
-path              | String  |             | Absolute path to the module's folder on the web server
+path              | String  | /ipcc/webchat | Absolute path to the module's folder on the web server
+webrtc		  | Object  |		  | Settings for the WebRTC call feature. [Read more](#setting-webrtc)
 
 ### API
 Module's API exposes the following methods:
@@ -151,8 +149,15 @@ Agent is typing a message.
 #### `form/submit`
 Form submitted.
 
+Parameters: 
+- `formElement`: form element
+- `formData`: serialized object, represented as an object of keys and values
+
 #### `form/reject`
 Form rejected.
+
+Parameters: 
+- `formName`: the value of the name attribute of the form that was rejected
 
 #### `Error`
 Erro was emitted.
@@ -242,6 +247,20 @@ Parameters:
 - `[widgetState].backgroundColor`: button background color depending on widget's state
 - `[widgetState].color`: button icon color depending on widget's state
 - `color`: if `[widgetState].color` is not specified, this value will be used
+
+### Setting WebRTC
+Parameters:
+- `sip`: User Agent configuration object with mandatory and optional parameters. The full list of parameters you can find at: [http://jssip.net/documentation/2.0.x/api/ua_configuration_parameters/](http://jssip.net/documentation/2.0.x/api/ua_configuration_parameters/). The mandatory parameters are:
+
+   * `ws_servers`: domain name or ip address of the websocket server (the same as IPCC server). Example: *wss://ipcc-domain-name-or-ip-address.com*
+
+   * `uri`: SIP URI associated to the User Agent. Example: "sip:online@ipcc-doamin-name-org-ip-address.com"
+
+   * `register`: Indicate if SIP User Agent should register automatically when starting. This value should be set to `false`.
+
+- `hotline`: Destination of the call. String assosiated with the record in the IPCC routing table.
+
+**Note**: WebRTC feature will not work on insecure origins. To use this feature, you should consider switching your application to a secure origin, such as HTTPS. See https://goo.gl/rStTGz for more details.
 
 ### Browser Support
 * Google Chrome (latest)

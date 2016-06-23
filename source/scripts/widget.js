@@ -265,7 +265,9 @@ function onSessionSuccess(){
 			widget: '#'+defaults.prefix+'-wg-cont'
 		});
 	}
-		
+
+	api.emit('session/init', defaults);
+
 }
 
 // send shared event to the user's browser
@@ -897,37 +899,40 @@ function constructWindow(windowObject){
 	link,
 	charset,
 	viewport,
-	title;
+	title,
+	// createElement = windowObject.document.createElement,
+	head = windowObject.document.getElementsByTagName('head')[0],
+	body = windowObject.document.getElementsByTagName('body')[0];
 
-	viewport = document.createElement('meta');
+	viewport = windowObject.document.createElement('meta');
 	viewport.name = 'viewport';
 	viewport.content = 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0';
 
-	charset = document.createElement('meta');
+	charset = windowObject.document.createElement('meta');
 	charset.setAttribute('charset', 'utf-8');
 
-	title = document.createElement('title');
+	title = windowObject.document.createElement('title');
 	title.textContent = frases[currLang].default_title;
 
-	loader = document.createElement('script');
+	loader = windowObject.document.createElement('script');
 	loader.src = defaults.server+defaults.path+'loader.js';
 
-	script = document.createElement('script');
+	script = windowObject.document.createElement('script');
 	script.src = defaults.server+defaults.path+'wchat.min.js';
 	script.charset = 'UTF-8';
 
-	link = document.createElement('link');
+	link = windowObject.document.createElement('link');
 	link.rel = 'stylesheet';
 	link.href = defaults.server+defaults.path+'main.css';
 
-	windowObject.document.body.id = 'swc-wg-window';
-	windowObject.document.body.style = 'margin:0;';
-	windowObject.document.head.appendChild(viewport);
-	windowObject.document.head.appendChild(charset);
-	windowObject.document.head.appendChild(title);
-	windowObject.document.head.appendChild(link);
-	windowObject.document.head.appendChild(script);
-	windowObject.document.body.appendChild(loader);
+	body.id = 'swc-wg-window';
+	body.style = 'margin:0;';
+	head.appendChild(viewport);
+	head.appendChild(charset);
+	head.appendChild(title);
+	head.appendChild(link);
+	head.appendChild(script);
+	body.appendChild(loader);
 }
 
 /**

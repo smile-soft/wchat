@@ -16,7 +16,7 @@
 		});
 		wchat.initModule();
 	}
-		
+
 	function poll(fn, callback, errback, timeout, interval) {
 		var endTime = Number(new Date()) + (timeout || 2000);
 		interval = interval || 100;

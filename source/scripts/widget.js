@@ -241,7 +241,7 @@ function onSessionSuccess(){
 	// console.log('Session success!');
 
 	// set current user language
-	currLang = detectLanguage();
+	currLang = currLang || detectLanguage();
 	setSessionTimeoutHandler();
 
 	// If page loaded and "widget" property is set - load widget
@@ -900,9 +900,14 @@ function constructWindow(windowObject){
 	charset,
 	viewport,
 	title,
-	// createElement = windowObject.document.createElement,
+	currLang = currLang || detectLanguage(),
+	loaderElements = windowObject.document.createElement('div'),
+	loaderStyles = createStylesheet(windowObject, 'swc-loader-styles'),
 	head = windowObject.document.getElementsByTagName('head')[0],
 	body = windowObject.document.getElementsByTagName('body')[0];
+
+	loaderElements.className = "swc-widget-loader";
+	loaderElements.innerHTML = "<span></span><span></span><span></span>";
 
 	viewport = windowObject.document.createElement('meta');
 	viewport.name = 'viewport';
@@ -921,18 +926,80 @@ function constructWindow(windowObject){
 	script.src = defaults.server+defaults.path+'wchat.min.js';
 	script.charset = 'UTF-8';
 
-	link = windowObject.document.createElement('link');
-	link.rel = 'stylesheet';
-	link.href = defaults.server+defaults.path+'main.css';
-
-	body.id = 'swc-wg-window';
-	body.style = 'margin:0;';
 	head.appendChild(viewport);
 	head.appendChild(charset);
 	head.appendChild(title);
-	head.appendChild(link);
+	head.appendChild(loaderStyles);
 	head.appendChild(script);
+
+	body.id = 'swc-wg-window';
+	body.appendChild(loaderElements);
 	body.appendChild(loader);
+
+	addLoaderRules(head.getElementsByTagName('style')[0]);
+}
+
+function createStylesheet(windowObject, id){
+	// Create the <style> tag
+		var style = windowObject.document.createElement("style");
+		style.type = 'text/css';
+		if(id) style.id = id;
+
+		// WebKit hack :(
+		style.appendChild(windowObject.document.createTextNode(""));
+
+		return style;
+}
+
+function addLoaderRules(style){
+	var theRules = [
+		"body { margin:0; background-color: #eee; }",
+		"@keyframes preloading {",
+			"0 { transform: translate(0,0); -webkit-transform: translate(0,0); -moz-transform: translate(0,0); -ms-transform: translate(0,0); -o-transform: translate(0,0); }",
+			"50% { transform: translate(0,15px); -webkit-transform: translate(0,15px); -moz-transform: translate(0,15px); -ms-transform: translate(0,15px); -o-transform: translate(0,15px); }",
+			"100% { transform: translate(0,0); -webkit-transform: translate(0,0); -moz-transform: translate(0,0); -ms-transform: translate(0,0); -o-transform: translate(0,0); }",
+		"}",
+		"@-webkit-keyframes preloading {",
+			"0 { transform: translate(0,0); -webkit-transform: translate(0,0); -moz-transform: translate(0,0); -ms-transform: translate(0,0); -o-transform: translate(0,0); }",
+			"50% { transform: translate(0,15px); -webkit-transform: translate(0,15px); -moz-transform: translate(0,15px); -ms-transform: translate(0,15px); -o-transform: translate(0,15px); }",
+			"100% { transform: translate(0,0); -webkit-transform: translate(0,0); -moz-transform: translate(0,0); -ms-transform: translate(0,0); -o-transform: translate(0,0); }",
+		"}",
+		"@-moz-keyframes preloading {",
+			"0 { transform: translate(0,0); -webkit-transform: translate(0,0); -moz-transform: translate(0,0); -ms-transform: translate(0,0); -o-transform: translate(0,0); }",
+			"50% { transform: translate(0,15px); -webkit-transform: translate(0,15px); -moz-transform: translate(0,15px); -ms-transform: translate(0,15px); -o-transform: translate(0,15px); }",
+			"100% { transform: translate(0,0); -webkit-transform: translate(0,0); -moz-transform: translate(0,0); -ms-transform: translate(0,0); -o-transform: translate(0,0); }",
+		"}",
+		"@-ms-keyframes preloading {",
+			"0 { transform: translate(0,0); -webkit-transform: translate(0,0); -moz-transform: translate(0,0); -ms-transform: translate(0,0); -o-transform: translate(0,0); }",
+			"50% { transform: translate(0,15px); -webkit-transform: translate(0,15px); -moz-transform: translate(0,15px); -ms-transform: translate(0,15px); -o-transform: translate(0,15px); }",
+			"100% { transform: translate(0,0); -webkit-transform: translate(0,0); -moz-transform: translate(0,0); -ms-transform: translate(0,0); -o-transform: translate(0,0); }",
+		"}",
+		"@-o-keyframes preloading {",
+			"0 { transform: translate(0,0); -webkit-transform: translate(0,0); -moz-transform: translate(0,0); -ms-transform: translate(0,0); -o-transform: translate(0,0); }",
+			"50% { transform: translate(0,15px); -webkit-transform: translate(0,15px); -moz-transform: translate(0,15px); -ms-transform: translate(0,15px); -o-transform: translate(0,15px); }",
+			"100% { transform: translate(0,0); -webkit-transform: translate(0,0); -moz-transform: translate(0,0); -ms-transform: translate(0,0); -o-transform: translate(0,0); }",
+		"}",
+		".swc-widget-loader {",
+			"position: absolute;",
+			"width: 100%;",
+			"top: 50%;",
+			"margin-top: -18px;",
+			"text-align: center;",
+		"}",
+		".swc-widget-loader span {",
+			"display: inline-block;",
+			"width: 18px;",
+			"height: 18px;",
+			"border-radius: 50%;",
+			"background-color: #fff;",
+			"margin: 3px;",
+		"}",
+		".swc-widget-loader span:nth-last-child(1) { -webkit-animation: preloading .8s .1s linear infinite; -moz-animation: preloading .8s .1s linear infinite; -ms-animation: preloading .8s .1s linear infinite; -o-animation: preloading .8s .1s linear infinite; animation: preloading .8s .1s linear infinite; }",
+		".swc-widget-loader span:nth-last-child(2) { -webkit-animation: preloading .8s .3s linear infinite; -moz-animation: preloading .8s .3s linear infinite; -ms-animation: preloading .8s .3s linear infinite; -o-animation: preloading .8s .3s linear infinite; animation: preloading .8s .3s linear infinite; }",
+		".swc-widget-loader span:nth-last-child(3) { -webkit-animation: preloading .8s .5s linear infinite; -moz-animation: preloading .8s .5s linear infinite; -ms-animation: preloading .8s .5s linear infinite; -o-animation: preloading .8s .5s linear infinite; animation: preloading .8s .5s linear infinite; }",
+	].join(" ");
+
+	style.innerHTML = theRules;
 }
 
 /**

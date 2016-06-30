@@ -1162,6 +1162,7 @@ function wgSubmitHandler(e){
 function wgSendFile(e){
 	var targ = e.target;
 	var file = getFileContent(targ, function(err, result) {
+		console.log('wgSendFile: ', result);
 		if(err) {
 			alert('File was not sent');
 		} else {
@@ -1293,6 +1294,7 @@ function closeForm(params, submit){
 function getFileContent(element, cb){
 	var files = element.files,
 		file,
+		data,
 		reader;
 
 	if(!files.length) return;
@@ -1305,7 +1307,9 @@ function getFileContent(element, cb){
 
 	reader = new FileReader();
 	reader.onload = function(event) {
-		if(cb) cb(null, { filedata: event.target.result, filename: file.name });
+		data = event.target.result;
+		data = data.substring(data.indexOf(',')+1);
+		if(cb) cb(null, { filedata: data, filename: file.name });
 	};
 	reader.onerror = function(event) {
 		api.emit('Error', event.target.error);

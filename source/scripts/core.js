@@ -117,7 +117,7 @@ WchatAPI.prototype.createSession = function(pageUrl){
 		}
 	}, function (err, res, body){
 		if(err) {
-			this.emit('Error', err);
+			this.emit('Error', err, { method: 'createSession', params: { pageUrl: pageUrl } });
 			return;
 		}
 
@@ -171,7 +171,7 @@ WchatAPI.prototype.getLanguages = function(cb){
 		}
 	}, function (err, res, body){
 		if(err) {
-			this.emit('Error', err);
+			this.emit('Error', err, { method: 'getLanguages' });
 			return cb(err);
 		}
 
@@ -191,7 +191,7 @@ WchatAPI.prototype.chatRequest = function(params, cb){
 		params: params
 	}, function (err, res, body){
 		if(err) {
-			this.emit('Error', err);
+			this.emit('Error', err, { method: 'chatRequest', params: params });
 			if(cb) cb(err);
 			return;
 		}
@@ -215,7 +215,7 @@ WchatAPI.prototype.getMessages = function(cb){
 		}
 	}, function (err, res, body){
 		if(err) {
-			this.emit('Error', err);
+			this.emit('Error', err, { method: 'getMessages' });
 			return cb(err);
 		}
 
@@ -247,7 +247,7 @@ WchatAPI.prototype.sendMessage = function(text, file){
 		params: params
 	}, function(err, res, body){
 		if(err) {
-			this.emit('Error', err);
+			this.emit('Error', err, { method: 'sendMessage', params: params });
 			return cb(err);
 		}
 	});
@@ -299,7 +299,7 @@ WchatAPI.prototype.sendEmail = function(params, cb){
 		params: params
 	}, function (err, res, body){
 		if(err) {
-			this.emit('Error', err);
+			this.emit('Error', err, { method: 'sendEmail', params: params });
 			if(cb) cb(err);
 			return;
 		}
@@ -324,7 +324,7 @@ WchatAPI.prototype.disjoinSession = function(sid){
 		}
 	}, function (err, res, body){
 		if(err) {
-			this.emit('Error', err);
+			this.emit('Error', err, { method: 'disjoinSession', params: { sid: sid } });
 			return;
 		}
 
@@ -348,7 +348,7 @@ WchatAPI.prototype.switchShareState = function(state, url){
 		}
 	}, function(err, res, body){
 		if(err) {
-			this.emit('Error', err);
+			this.emit('Error', err, { method: 'switchShareState', params: { state: state } });
 			return;
 		}
 	}.bind(this));
@@ -369,7 +369,7 @@ WchatAPI.prototype.userIsTyping = function(){
 		}
 	}, function (err){
 		if(err) {
-			this.emit('Error', err);
+			this.emit('Error', err, { method: 'setChatTimeout' });
 			return;
 		}
 	}.bind(this));
@@ -384,7 +384,7 @@ WchatAPI.prototype.updateUrl = function(url){
 		}
 	}, function(err, res, body){
 		if(err) {
-			this.emit('Error', err);
+			this.emit('Error', err, { method: 'updateUrl', params: { url: url } });
 			return;
 		}
 	}.bind(this));
@@ -399,7 +399,7 @@ WchatAPI.prototype.linkFollowed = function(url){
 		}
 	}, function (err, res, body){
 		if(err) {
-			this.emit('Error', err);
+			this.emit('Error', err, { method: 'linkFollowed', params: { url: url } });
 			return;
 		}
 	}.bind(this));

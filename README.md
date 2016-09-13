@@ -23,8 +23,7 @@ Wchat({
 			backgroundColor: "#33C3F0",
 			color: "#fff"
 		}
-	},
-	path: "<?php echo get_template_directory_uri(); ?>/wchat/" // absolute path to the module's folder in wordpress template
+	}
 }).initModule();
 ```
 #### Initiate module and set widget option to false

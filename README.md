@@ -59,7 +59,7 @@ Wchat({ server: 'http://ipcc-server-domain.com:8880' }).initModule();
 
 Option            | Type    | Default     | Description
 ------------------|---------|-------------|-----------------
-server            | String  |             | IPCC server IP address and http port
+server            | String  |             | Required. IPCC server IP address and http port
 title             | String  | Live chat   | Displayed in the widget's header element
 lang              | String  | en          | Default language of interface and dialog. Used when automaticaly determined user language is not supported (ask your IPCC administrator for additional information).
 langFromUrl	  | Boolean | false	  | Experimental. This feature parses page url to figure out user's preferred language

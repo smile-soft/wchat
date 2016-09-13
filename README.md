@@ -6,13 +6,12 @@ Official javascript module for Smile IPCC
 ### Prerequisites
 This module could be used only with Smile IPCC server. Appropriate licence must be purchased.
 
-[Read the full documentation](http://smile-soft.com/resources/ru/Smile%20IPCC%20Webchat.pdf)
 ### Examples
 #### Initiate module
 ```js
 Wchat({
 	server: 'http://ipcc-server-domain.com:8880', 
-	lang: 'uk', // default language - ukranian
+	lang: 'uk',
 	title: 'SmileSoft',
 	position: 'left',
 	offer: {

@@ -16,7 +16,7 @@ Wchat({
 	position: 'left',
 	offer: {
 		inSeconds: 0.20,
-		from: 'Ringotel'
+		from: 'SmileSoft support'
 	},
 	styles: {
 		primary: {

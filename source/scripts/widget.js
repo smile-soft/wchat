@@ -89,6 +89,7 @@ dialog = [],
 langs = [],
 currLang = '',
 messagesTimeout,
+noMessagesTimeout,
 chatTimeout,
 // Container for messages
 messagesCont,
@@ -110,18 +111,21 @@ function Widget(options){
 	_.merge(defaults, options || {});
 	// _.assign(defaults, options || {});
 
+	addWidgetStyles();
 	serverUrl = require('url').parse(defaults.server, true);
 
 	api = new api(options)
 	.on('session/create', onSessionSuccess)
 	.on('session/continue', onSessionSuccess)
-	.on('session/join', onSessionJoin);
+	.on('session/join', onSessionJoin)
+	.on('session/init', onSessionInit);
 	// .on('chat/languages', onNewLanguages);
 	
 	if(defaults.widget) {
 		api.on('chat/start', startChat)
 		.on('chat/close', onChatClose)
 		.on('chat/timeout', onChatTimeout)
+		.on('message/new', clearUndelivered)
 		.on('message/new', newMessage)
 		.on('message/typing', onAgentTyping)
 		.on('form/submit', onFormSubmit)
@@ -181,7 +185,6 @@ function Widget(options){
 	}
 		
 	setSessionTimeoutHandler();
-	addWidgetStyles();
 
 	// load forms
 	request.get('forms_json', defaults.server+defaults.path+'forms.json', function (err, result){
@@ -268,6 +271,11 @@ function onSessionSuccess(){
 
 	api.emit('session/init', defaults);
 
+}
+
+function onSessionInit(){
+	api.saveState('init', true, 'session');
+	if(widgetWindow && !widgetWindow.closed) widgetWindow.sessionStorage.setItem(defaults.prefix+'.init', true);
 }
 
 // send shared event to the user's browser
@@ -427,8 +435,18 @@ function setOffer() {
 
 function showOffer(message) {
 	// Return if user already interact with the widget
-	if(widgetState.state !== 'online' || api.getState('interacted', 'session')) return;
+	if(widgetState.state !== 'online' || isInteracted()) return;
 	newMessage({ messages: [message] });
+}
+
+function setInteracted(){
+	if(!api.getState('interacted', 'session')) {
+		api.saveState('interacted', true, 'session');
+	}
+}
+
+function isInteracted(){
+	return api.getState('interacted', 'session');
 }
 
 function initChat(){
@@ -466,10 +484,10 @@ function requestChat(credentials){
 	api.saveState('credentials', credentials, 'session');
 
 	api.chatRequest(credentials);
+	switchPane('messages');
 }
 
 function startChat(params){
-	switchPane('messages');
 	api.saveState('chat', true);
 	if(params.timeout) {
 		// console.log('chat timeout: ', params.timeout);
@@ -481,15 +499,27 @@ function startChat(params){
 
 function getMessages(){
 	// console.log('get messages!');
-	api.getMessages(function() {
+	
+	if(api.getState('chat'))
+		noMessagesTimeout = setTimeout(getMessages, 60*1000);
+	
+	api.getMessages(function(result) {
 		if(api.getState('chat')) {
 			messagesTimeout = setTimeout(getMessages, defaults.getMessagesTimeout*1000);
+			clearTimeout(noMessagesTimeout);
 		}
 	});
 }
 
 function sendMessage(message){
 	api.sendMessage(message);
+	newMessage({ messages: [{
+		from: api.getState('credentials', 'session').uname,
+		time: Date.now(),
+		text: message,
+		hidden: true,
+		className: defaults.prefix+'-msg-undelivered'
+	}] });
 	if(chatTimeout) clearTimeout(chatTimeout);
 }
 
@@ -536,14 +566,14 @@ function newMessage(result){
 		} else {
 			message.text = text.content;
 			compiled = compileTemplate(messageTemplate(), message);
-			messagesCont.insertAdjacentHTML('beforeend', '<li>'+compiled+'</li>');
+			messagesCont.insertAdjacentHTML('beforeend', '<li '+(message.className ? 'class="'+message.className+'"' : '' )+'>'+compiled+'</li>');
 
 			if(index === result.messages.length-1) {
 				onLastMessage(compiled);
 			}
 
 			// Need for sending dialog to email
-			dialog.push(compiled);
+			if(!message.hidden) dialog.push(compiled);
 		}
 
 		// Save agent name
@@ -554,6 +584,15 @@ function newMessage(result){
 	});
 
 	messagesCont.scrollTop = messagesCont.scrollHeight;
+}
+
+function clearUndelivered(){
+	var undelivered = [].slice.call(document.querySelectorAll('.'+defaults.prefix+'-msg-undelivered'));
+	if(undelivered && undelivered.length) {
+		undelivered.forEach(function(msg){
+			msg.classList.add(defaults.prefix+'-hidden');
+		});
+	}
 }
 
 /**
@@ -767,7 +806,8 @@ function setSessionTimeoutHandler(){
 
 function initCall(){
 	switchPane('callAgent');
-	WebRTC.audiocall('sip:'+defaults.webrtc.hotline+'@'+serverUrl.host);
+	WebRTC.audiocall(defaults.webrtc.hotline);
+	// WebRTC.audiocall('sip:'+defaults.webrtc.hotline+'@'+serverUrl.host);
 }
 
 function initCallState(state){
@@ -873,7 +913,7 @@ function endCall(){
  * Open web chat widget in a new window
  */
 function openWidget(){
-	// console.log('open widget!');
+	console.log('open widget: ', api.getState('sid'));
 	var url = defaults.server+defaults.path+'window.html',
 		optsEncoded = '';
 	
@@ -1077,12 +1117,6 @@ function btnClickHandler(e){
 	var targ = e.target,
 		currTarg = e.currentTarget;
 
-	// If element is interacted, then no notifications of a new message 
-	// will occur during current browser session
-	if(!api.getState('interacted', 'session')) {
-		api.saveState('interacted', true, 'session');
-	}
-
 	// remove notification of a new message
 	if(targ.id === defaults.prefix+'-unnotify-btn') {
 		removeWgState('notified');
@@ -1098,6 +1132,9 @@ function btnClickHandler(e){
 }
 
 function initWidgetState(){
+	// If element is interacted, then no notifications of a new message 
+	// will occur during current browser session
+	setInteracted();
 	// If timeout is occured, init session first
 	if(hasWgState('timeout')) {
 		initModule();
@@ -1272,7 +1309,6 @@ function onFormSubmit(params){
 	} else {
 		closeForm({ formName: form.name }, true);
 	}
-
 }
 
 function closeForm(params, submit){

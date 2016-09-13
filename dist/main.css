@@ -762,6 +762,10 @@
 .swc-shown {
   display: block !important; }
 
+.swc-msg-undelivered,
+.swc-dimmed {
+  opacity: 0.3; }
+
 .swc-loader {
   display: none;
   position: absolute;
@@ -790,7 +794,11 @@
 #swc-wg-window .swc-wg-cont {
   position: absolute;
   right: 0;
+  left: 0;
   border: none; }
+  #swc-wg-window .swc-wg-cont.active {
+    height: 100%;
+    width: 100%; }
   #swc-wg-window .swc-wg-cont .swc-wg-panes {
     height: 100%;
     width: 100%; }
@@ -799,7 +807,12 @@
   font: 14px "Trebuchet MS", Helvetica, sans-serif;
   position: fixed;
   bottom: 0;
-  z-index: 99999; }
+  z-index: 99999;
+  -webkit-transition: height 0.4s ease-in-out 0.4s;
+  -moz-transition: height 0.4s ease-in-out 0.4s;
+  -ms-transition: height 0.4s ease-in-out 0.4s;
+  -o-transition: height 0.4s ease-in-out 0.4s;
+  transition: height 0.4s ease-in-out 0.4s; }
   .swc-wg-cont.position-right {
     right: 10px;
     transform-origin: right bottom; }

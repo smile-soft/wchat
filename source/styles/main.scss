@@ -50,20 +50,18 @@ $secondary-color: #BBBBBB;
 #swc-wg-window .swc-wg-cont {
 	position: absolute;
 	right: 0;
+	left: 0;
 	border: none;
 
-	.swc-wg-panes {
+	&.active {
 		height: 100%;
 		width: 100%;
 	}
-	// &.active {
-	// 	@include bp-small {
-	// 		height: 100%;
-	// 		box-shadow: none;
-	// 		left: 0;
-	// 		-webkit-overflow-scrolling: touch;
-	// 	}
-	// }
+
+	.swc-wg-panes {
+		height: 100%;
+		width: 100%;		
+	}
 }
 
 .swc-wg-cont {
@@ -71,6 +69,7 @@ $secondary-color: #BBBBBB;
 	position: fixed;
 	bottom: 0;
 	z-index: 99999;
+	@include transition(height 0.4s ease-in-out 0.4s);
 
 	&.position-right {
 		right: 10px;

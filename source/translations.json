@@ -36,16 +36,6 @@
 			"email": "Please fill in your email",
 			"tel": "Please fill in your telephone number"
 		},
-		"form_submitted": "Form sent, thank you!",
-		"form_canceled": "Form cancelled",
-		"pholder": {
-			"uname": "Your name",
-			"email": "Your email",
-			"phone": "Your phone",
-			"subject": "Dialog's subject",
-			"message": "Your message here...",
-			"comment": "Please, leave your comment here..."
-		},
 		"init_pane": {
 			"choose_conn_type": "Please, choose a connection type",
 			"call_agent_btn": "Call agent",
@@ -60,6 +50,21 @@
 			"call_canceled": "Call canceled",
 			"end_call": "End call",
 			"try_again": "Try again"
+		},
+		"form_submitted": "Form sent, thank you!",
+		"form_canceled": "Form cancelled",
+		"forms": {
+			"description": {
+				"test": "Please, fill in the form",
+			},
+			"pholder": {
+				"uname": "Your name",
+				"email": "Your email",
+				"phone": "Your phone",
+				"subject": "Dialog's subject",
+				"message": "Your message here...",
+				"comment": "Please, leave your comment here..."
+			}
 		}
     },
     "uk": {
@@ -77,7 +82,7 @@
     	"start_dialog_button": "Розпочати діалог",
     	"finish_dialog_button": "Закінчити діалог",
 		"choose_dialog_lang": "Оберіть мову діалогу",
-		"intro_message": "Будь-ласка, заповніть необхідні поля",
+		"intro_message": "Будь ласка, заповніть необхідні поля",
 		"offline_message": "Наразі ми оффлайн, будь ласка, залиште нам повідомлення, ми зв'яжемося з Вами найближчим часом",
 		"send_message_header": "Відправити повідомлення",
 		"close_chat_header": "Дякуємо, що звернулися до нас!",
@@ -95,34 +100,39 @@
 			"request": "Нове повідомлення від"
 		},
 		"required_error": {
-			"fields": "Будь-ласка, заповніть всі необхідні поля",
-			"email": "Будь-ласка, введіть свою електронну адресу",
-			"tel": "Будь-ласка, введіть свій номер телефону"
-		},
-		"form_submitted": "Форма відправлена, дякуємо!",
-		"form_canceled": "Форма відхилена",
-		"pholder": {
-			"uname": "Ваше ім'я",
-			"email": "Ваша електронна адреса",
-			"phone": "Ваш телефон",
-			"subject": "Тема діалогу",
-			"message": "Ваше повідомлення тут...",
-			"comment": "Будь-ласка, залиште тут свій коментар..."
+			"fields": "Будь ласка, заповніть всі необхідні поля",
+			"email": "Будь ласка, введіть свою електронну адресу",
+			"tel": "Будь ласка, введіть свій номер телефону"
 		},
 		"init_pane": {
-			"choose_conn_type": "Будь-ласка, виберіть тип з'єднання",
+			"choose_conn_type": "Будь ласка, виберіть тип з'єднання",
 			"call_agent_btn": "Виклик агента",
 			"chat_agent_btn": "Почати чат"
 		},
 		"call_pane": {
-			"confirm_access": "Будь-ласка, підтвердіть доступ до мікрофона",
+			"confirm_access": "Будь ласка, підтвердіть доступ до мікрофона",
 			"calling_agent": "Йде виклик",
 			"connected_with_agent": "Виклик з'єднаний",
 			"call_ended": "Виклик завершено",
-			"call_failed": "Збій виклику \n Будь-ласка спробуйте пізніше",
+			"call_failed": "Збій виклику \n Будь ласка спробуйте пізніше",
 			"call_canceled": "Виклик скасований",
 			"end_call": "Завершити виклик",
 			"try_again": "Спробувати ще раз"
+		},
+		"form_submitted": "Форма відправлена, дякуємо!",
+		"form_canceled": "Форма відхилена",
+		"forms": {
+			"description": {
+				"test": "Будь ласка, заповніть форму"
+			},
+			"pholder": {
+				"uname": "Ваше ім'я",
+				"email": "Ваша електронна адреса",
+				"phone": "Ваш телефон",
+				"subject": "Тема діалогу",
+				"message": "Ваше повідомлення тут...",
+				"comment": "Будь ласка, залиште тут свій коментар..."
+			}
 		}
     },
     "ru": {
@@ -162,16 +172,6 @@
 			"email": "Пожалуйста, введите свой электронный адрес",
 			"tel": "Пожалуйста, введите свой номер телефона"
 		},
-		"form_submitted": "Форма отправлена, спасибо!",
-		"form_canceled": "Форма отклонена",
-		"pholder": {
-			"uname": "Ваше имя",
-			"email": "Ваш электронный адрес",
-			"phone": "Ваш телефон",
-			"subject": "Тема диалога",
-			"message": "Ваше сообщение здесь...",
-			"comment": "Пожалуйста, оставьте здесь свой комментарий..."
-		},
 		"init_pane": {
 			"choose_conn_type": "Пожалуйста, выберите способ соединения",
 			"call_agent_btn": "Вызов агента",
@@ -186,6 +186,21 @@
 			"call_canceled": "Вызов отменен",
 			"end_call": "Заверший вызов",
 			"try_again": "Попробовать еще раз"
+		},
+		"form_submitted": "Форма отправлена, спасибо!",
+		"form_canceled": "Форма отклонена",
+		"forms": {
+			"description": {
+				"test": "Пожалуйста, заполните форму"
+			},
+			"pholder": {
+				"uname": "Ваше имя",
+				"email": "Ваш электронный адрес",
+				"phone": "Ваш телефон",
+				"subject": "Тема диалога",
+				"message": "Ваше сообщение здесь...",
+				"comment": "Пожалуйста, оставьте здесь свой комментарий..."
+			}
 		}
     }
 };

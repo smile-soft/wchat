@@ -3,23 +3,35 @@
 	<span class="<%- defaults.prefix %>-message-time"> <%- message.time %></span>
 	<br>
 	<div class="<%- defaults.prefix %>-message-content" <% if(message.entity === "user") { %> style="border-color:'<%- defaults.styles.primary.backgroundColor %>" <% } %>>
+		<% if(form.description) { %>
+			<p><%= frases.forms.description[form.description] || form.description %></p>
+		<% } %>
 		<form name="<%- form.name %>" <% if(form.autocomplete){ %>autocomplete="on"<% } %> data-validate-form="true">
 			<% _.forEach(form.fields, function(item){ %>
 				<% if(item.type !== 'select') { %>
-					<input type="<%= item.type || 'text' %>" placeholder="<%= frases.pholder[item.placeholder] || frases.pholder[item.name] %> <% if(item.required){ %>*<% } %>" name="<%- item.name %>" <% if(item.value){ %> value="<%- credentials[item.value] %>" <% } %> <% if(item.required){ %>required<% } %>>
+					<input 
+						type="<%= item.type || 'text' %>"
+						placeholder="<%= frases.forms.pholder[item.placeholder] || frases.forms.pholder[item.name] %> <% if(item.required){ %>*<% } %>"
+						name="<%- item.name %>" <% if(item.value){ %>
+						value="<%- credentials[item.value] %>" <% } %> <% if(item.required){ %>required<% } %>>
 				<% } %>
 				<% if(item.type === 'select') { %>
 					<select name="<%- item.name %>">
 						<% _.forEach(item.options, function(option) { %>
 							<option value="<%- option.value %>" <% if(option.selected) { %> selected <% } %> >
-								<%- frases.pholder[option.text] || option.text %>
+								<%- frases.forms.pholder[option.text] || option.text %>
 							</option>
 						<% }); %>
 					</select>
 				<% } %>
 			<% }); %>
-			<button type="submit" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" style="background-color: <%- defaults.styles.primary.backgroundColor %>; color: <%- defaults.styles.primary.color %>; border: 1px solid <%- defaults.styles.primary.backgroundColor %>;"><%- frases.send %></button>
-			<button class="<%- defaults.prefix %>-button <%- defaults.prefix %>-block" data-<%- defaults.prefix %>-handler="rejectForm"><%- frases.cancel %></button>
+			<button 
+				type="submit"
+				class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block"
+				style="background-color: <%- defaults.styles.primary.backgroundColor %>; color: <%- defaults.styles.primary.color %>; border: 1px solid <%- defaults.styles.primary.backgroundColor %>;"><%- frases.send %></button>
+			<button
+				class="<%- defaults.prefix %>-button <%- defaults.prefix %>-block"
+				data-<%- defaults.prefix %>-handler="rejectForm"><%- frases.cancel %></button>
 		</form>
 	</div>
 </div>

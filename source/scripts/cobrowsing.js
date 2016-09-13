@@ -150,6 +150,7 @@ function getCaretPosition (oField) {
 }
 
 function emitEvents(){
+	// if(!shared && !localEvents.length) return;
 	emit('cobrowsing/event', { entity: entity, events: localEvents });
 	localEvents = [];
 }

@@ -71,6 +71,8 @@ WchatAPI.prototype.initModule = function(){
 	var entity = this.getState('entity', 'session'),
 		sid = this.getState('sid');
 
+	console.log('initModule: ', entity, sid);
+
 	// A chatSessionId parameter in the url query 
 	// indicates that the web page was opened by agent.
 	// In that case agent should join the session.
@@ -132,10 +134,13 @@ WchatAPI.prototype.joinSession = function(sid, url){
 };
 
 WchatAPI.prototype.updateEvents = function(events, cb){
-	var params = {
+	var sessionId = this.getState('sid'), params;
+	if(!sessionId) return;
+	
+	params = {
 		method: 'updateEvents',
 		params: {
-			sid: this.getState('sid'),
+			sid: sessionId,
 			timestamp: this.getState('eventTimestamp', 'cache'),
 			events: events
 		}

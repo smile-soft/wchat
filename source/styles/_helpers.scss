@@ -25,6 +25,10 @@
 .swc-shown {
 	display: block !important;
 }
+.swc-msg-undelivered,
+.swc-dimmed {
+	opacity: 0.3;
+}
 .swc-loader {
 	display: none;
 	position: absolute;

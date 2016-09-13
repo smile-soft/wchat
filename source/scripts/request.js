@@ -10,7 +10,7 @@ function post(postUrl, data, cb){
 		
 	json = JSON.stringify(data),
 
-	body = '',
+	req, body = '', keepAliveAgent,
 
 	options = {
 		method: 'POST',
@@ -20,7 +20,10 @@ function post(postUrl, data, cb){
 		path: urlObj.path,
 		'Content-type': 'application/json; charset=UTF-8',
 		'Content-length': json.length
-	},
+	};
+
+	keepAliveAgent = new http.Agent({ keepAlive: true });
+	options.agent = keepAliveAgent;
 
 	req = http.request(options, function (res){
 		res.setEncoding('utf8');

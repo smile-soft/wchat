@@ -1,11 +1,13 @@
 (function(window, document){
 	
-	function init(){
-
-		var opts = JSON.parse(window.sessionStorage.getItem('wchat_options')),
+	var opts = JSON.parse(window.sessionStorage.getItem('wchat_options')),
 		wchat;
 
-		console.log('chat options: ', opts);
+	console.log('chat options: ', opts, window.sessionStorage.getItem(opts.prefix+'.sid'));
+
+	function init(){
+
+		// console.log('chat options: ', opts, window.sessionStorage.getItem(opts.prefix+'.sid'));
 
 		opts.widget = true;
 		// set external flag to indicate that the module loads not in the main window
@@ -19,7 +21,7 @@
 
 	function poll(fn, callback, errback, timeout, interval) {
 		var endTime = Number(new Date()) + (timeout || 2000);
-		interval = interval || 100;
+		interval = interval || 300;
 
 		(function p() {
 			// If the condition is met, we're done! 
@@ -38,11 +40,14 @@
 	}
 
 	poll(function(){
-		return typeof Wchat !== 'undefined';
+		// console.log(typeof Wchat !== 'undefined');
+		// console.log(opts.prefix+'.init');
+		// console.log(window.localStorage.getItem(opts.prefix+'.init'));
+		return (typeof Wchat !== 'undefined' && window.sessionStorage.getItem(opts.prefix+'.init') !== null);
 	}, function(){
 		init();
 	}, function(){
 		window.reload();
-	}, 20000);
+	}, 120000);
 
 })(window, document);

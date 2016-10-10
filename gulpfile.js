@@ -14,7 +14,7 @@ var gulpif = require('gulp-if');
 var basePath = {
 	src: 'source/',
 	dest: 'dist/',
-	test: 'test/app/public/wchat'
+	test: 'test/app/public/webchat'
 };
 
 var srcAssets = {

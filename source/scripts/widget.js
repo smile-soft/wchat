@@ -30,7 +30,6 @@ var defaults = {
 	position: 'right',
 	hideOfflineButton: false,
 	offer: false,
-	stylesPath: '',
 	styles: {
 		primary: {
 			backgroundColor: '#555555',
@@ -68,6 +67,10 @@ var defaults = {
 	widgetWindowOptions: 'left=10,top=10,width=350,height=550,resizable',
 	// absolute path to the wchat folder
 	path: '/ipcc/webchat/',
+	// absolute path to the clients files. If not set, files requested from defaults.server + defaults.path.
+	clientPath: '',
+	// absolute path to the css flie
+	stylesPath: '',
 	// in seconds
 	checkStatusTimeout: 30,
 	// in seconds
@@ -122,6 +125,8 @@ function Widget(options){
 	// _.assign(defaults, options || {});
 
 	debug.log('Widget: ', options);
+
+	defaults.clientPath = defaults.clientPath || (defaults.server + defaults.path);
 
 	addWidgetStyles();
 	serverUrl = require('url').parse(defaults.server, true);
@@ -180,7 +185,7 @@ function Widget(options){
 
 			// ringTone audio element plays ringTone sound when calling to agent
 			// ringTone = document.createElement('audio');
-			// ringTone.src = defaults.server+defaults.path+'sounds/ringout.wav';
+			// ringTone.src = defaults.clientPath+'sounds/ringout.wav';
 			// document.body.appendChild(ringTone);
 
 			// initiate webrtc module with parameters
@@ -200,18 +205,18 @@ function Widget(options){
 	setSessionTimeoutHandler();
 
 	// load translations
-	request.get('frases', defaults.server+defaults.path+'translations.json', function (err, result){
+	request.get('frases', defaults.clientPath+'translations.json', function (err, result){
 		if(err) return api.emit('Error', err);
 		frases = JSON.parse(result);
 	});
 	
 	// load forms
-	request.get('forms_json', defaults.server+defaults.path+'forms.json', function (err, result){
+	request.get('forms_json', defaults.clientPath+'forms.json', function (err, result){
 		if(err) return api.emit('Error', err);
 		forms = JSON.parse(result).forms;
 	});
 
-	request.get('forms_tmp', defaults.server+defaults.path+'partials/forms.html', function (err, template){
+	request.get('forms_tmp', defaults.clientPath+'partials/forms.html', function (err, template){
 		if(err) return api.emit('Error', err);
 	});
 
@@ -323,15 +328,13 @@ function onSessionJoin(params){
 function loadWidget(cb){
 	// debug.log('load widget!');
 	var compiled;
-	request.get('widget_tmp', defaults.server+defaults.path+'widget.html', function (err, body){
+	request.get('widget_tmp', defaults.clientPath+'widget.html', function (err, body){
 		if(err) return;
 		compiled = compileTemplate(body, {
 			defaults: defaults,
 			languages: langs,
 			translations: frases,
 			currLang: currLang || defaults.lang,
-
-			// frases: frases[currLang] || defaults.lang,
 			credentials: storage.getState('credentials', 'session') || {},
 			_: _
 		});
@@ -346,7 +349,7 @@ function loadWidget(cb){
 }
 
 function onWidgetLoad(widget){
-	// debug.log('widget loaded!');
+	debug.log('widget loaded!');
 	
 	if(defaults.buttonElement) 
 		defaults.buttonElement.addEventListener('click', publicApi.openWidget, false);
@@ -393,7 +396,12 @@ function initCobrowsingModule(params){
 		});
 	});
 	
-	cobrowsing.init({ widget: params.widget, entity: params.entity, emit: publicApi.emit, path: (defaults.server+defaults.path) });
+	cobrowsing.init({
+		widget: params.widget,
+		entity: params.entity,
+		emit: publicApi.emit,
+		path: defaults.clientPath
+	});
 }
 
 function getWidgetElement(){
@@ -589,7 +597,7 @@ function newMessage(result){
 		text = parseMessage(message.text, message.file, message.entity);
 
 		if(text.type === 'form') {
-			request.get('forms_tmp', defaults.server+defaults.path+'partials/forms.html', function (err, template){
+			request.get('forms_tmp', defaults.clientPath+'partials/forms.html', function (err, template){
 				if(err) return cb(err);
 
 				compiled = compileTemplate(template, {
@@ -660,7 +668,7 @@ function onLastMessage(message){
 
 function compileEmail(content, cb) {
 	var compiled;
-	request.get('email_tmp', defaults.server+defaults.path+'partials/email.html', function (err, body){
+	request.get('email_tmp', defaults.clientPath+'partials/email.html', function (err, body){
 		if(err) return cb(err);
 
 		compiled = compileTemplate(body, {
@@ -996,7 +1004,7 @@ function endCall(){
  */
 function openWidget(){
 	debug.log('open widget: ', storage.getState('sid'));
-	var url = defaults.server+defaults.path+'window.html',
+	var url = defaults.clientPath+'window.html',
 		opts = {},
 		optsEncoded = '';
 	

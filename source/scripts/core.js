@@ -18,10 +18,7 @@ var inherits = require('inherits');
 var defaults = {
 	// IPCC server IP address/domain name and port number.
 	// ex.: "http://192.168.1.100:8880"
-	server: '',
-	// Absolute path to the webchat folder on the web server
-	// where the website is located
-	path: '/wchat/'
+	server: ''
 };
 
 inherits(WchatAPI, EventEmitter);

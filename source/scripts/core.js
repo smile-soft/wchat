@@ -2,7 +2,9 @@
 var EventEmitter = require('events').EventEmitter;
 var storage = require('./storage');
 var request = require('./request');
-var url = require('url').parse(document.URL, true);
+var debug = require('./debug');
+// var url = require('url').parse(document.URL, true);
+var url = window.location;
 var _ = require('./lodash');
 var inherits = require('inherits');
 
@@ -34,29 +36,24 @@ function WchatAPI(options){
 
 	this.options.serverUrl = this.options.server + '/ipcc/$$$';
 
-	// Current session state object
-	this.session = {
-		sid: null,
-		eventTimestamp: 0,
-		msgTimestamp: 0,
-		entity: undefined,
-		chat: null
-	};
+	// // Current session state object
+	// this.session = {
+	// 	sid: null,
+	// 	eventTimestamp: 0,
+	// 	msgTimestamp: 0,
+	// 	entity: undefined,
+	// 	chat: null
+	// };
 
-	this.on('session/create', function (result){
-		this.session.sid = result.sid;
-		// this.updateUrl(url.href);
-	});
-	this.on('session/continue', function (result){
-		// this.updateUrl(url.href);
-	});
+	// this.on('session/create', function (result){
+	// 	this.session.sid = result.sid;
+	// });
 
 	this.on('Error', function (err, params){
-		console.log('ERROR: ', err, params);
 		if(err.code === 404) {
 			this.sessionTimeout(params);
 		}
-		console.error(err, params);
+		debug.error(err, params);
 	});
 
 	return this;
@@ -68,18 +65,18 @@ function WchatAPI(options){
  * Emits module/start event if module started
  */
 WchatAPI.prototype.initModule = function(){
-	var entity = this.getState('entity', 'session'),
-		sid = this.getState('sid');
+	var entity = storage.getState('entity', 'session'),
+		sid = storage.getState('sid');
 
-	console.log('initModule: ', entity, sid);
+	debug.log('initModule: ', entity, sid);
 
 	// A chatSessionId parameter in the url query 
 	// indicates that the web page was opened by agent.
 	// In that case agent should join the session.
 	if(url.href.indexOf('chatSessionId') !== -1) {
-		sid = getSidFromUrl(url.href);
-		this.saveState('entity', 'agent', 'session');
-		this.saveState('sid', sid);
+		sid = this.getSidFromUrl(url.href);
+		storage.saveState('entity', 'agent', 'session');
+		storage.saveState('sid', sid);
 		this.joinSession(sid);
 	} else if(entity === 'agent' && sid) { // In case the cobrowsing session is active
 		this.joinSession(sid, url.href);
@@ -92,11 +89,11 @@ WchatAPI.prototype.initModule = function(){
 				if(err) {
 					return;
 				}
-				this.saveState('sid', sid);
-				this.emit('session/continue', { entity: entity });
+				storage.saveState('sid', sid);
+				this.emit('session/continue', { entity: entity, url: url.href });
 			}.bind(this));
 		} else {
-			this.saveState('entity', 'user', 'session');
+			storage.saveState('entity', 'user', 'session');
 			// Create new session
 			this.createSession(url.href);
 		}
@@ -108,10 +105,10 @@ WchatAPI.prototype.initModule = function(){
  * Emits session/create event
  * if initiation is successful
  *
- * @param {String} url Current full URL
+ * @param 	{String} 	url 	Current full URL
+ * @return 	{String}	sid 	New session id
  */
 WchatAPI.prototype.createSession = function(pageUrl){
-	// console.log('createSession, '+this.options.serverUrl);
 	request.post(this.options.serverUrl, {
 		method: 'createSession',
 		params: {
@@ -123,25 +120,30 @@ WchatAPI.prototype.createSession = function(pageUrl){
 			return;
 		}
 
-		this.saveState('sid', body.result.sid);
+		body.result.url = url.href;
+		storage.saveState('sid', body.result.sid);
 		this.emit('session/create', body.result);
 	}.bind(this));
 };
 
 WchatAPI.prototype.joinSession = function(sid, url){
-	// this.saveState('shared', true, 'session');
 	this.emit('session/join', { sid: sid, url: url });
 };
 
+/** 
+ * Send/obtain events to/from the server. 
+ * Events could be obtained from the server by specifying a timestamp
+ * as a starting point from which an events would be obtained
+**/
 WchatAPI.prototype.updateEvents = function(events, cb){
-	var sessionId = this.getState('sid'), params;
+	var sessionId = storage.getState('sid'), params;
 	if(!sessionId) return;
 	
 	params = {
 		method: 'updateEvents',
 		params: {
 			sid: sessionId,
-			timestamp: this.getState('eventTimestamp', 'cache'),
+			timestamp: storage.getState('eventTimestamp', 'cache'),
 			events: events
 		}
 	};
@@ -151,8 +153,8 @@ WchatAPI.prototype.updateEvents = function(events, cb){
 			return cb(err); // TODO: handle error
 		}
 
-		if(body.result.timestamp > this.getState('eventTimestamp', 'cache')) {
-			this.saveState('eventTimestamp', body.result.timestamp, 'cache');
+		if(body.result.timestamp > storage.getState('eventTimestamp', 'cache')) {
+			storage.saveState('eventTimestamp', body.result.timestamp, 'cache');
 			if(cb) cb(null, body.result);
 		} else {
 			if(cb) cb(null, { events: [] });
@@ -166,13 +168,13 @@ WchatAPI.prototype.updateEvents = function(events, cb){
  * Get available dialog languages
  * If languages are not available, 
  * then either there are no available agents or
- * languages weren't set by administrator
+ * languages weren't set in Admin Studio
  */
 WchatAPI.prototype.getLanguages = function(cb){
 	request.post(this.options.serverUrl, {
 		method: 'getLanguages',
 		params: {
-			sid: this.getState('sid')
+			sid: storage.getState('sid')
 		}
 	}, function (err, res, body){
 		if(err) {
@@ -187,10 +189,10 @@ WchatAPI.prototype.getLanguages = function(cb){
 /**
  * Request chat session
  * 
- * @param  {Object} params - user parameters (name, phone, etc.)
+ * @param  {Object} params - user parameters (name, phone, subject, language, etc.)
  */
 WchatAPI.prototype.chatRequest = function(params, cb){
-	params.sid = this.getState('sid');
+	params.sid = storage.getState('sid');
 	request.post(this.options.serverUrl, {
 		method: 'chatRequest',
 		params: params
@@ -201,7 +203,8 @@ WchatAPI.prototype.chatRequest = function(params, cb){
 			return;
 		}
 
-		this.emit('chat/start', body.result);
+		params.url = url.href;
+		this.emit('chat/start', _.merge(params, body.result));
 		if(cb) cb(null, body);
 	}.bind(this));
 };
@@ -215,8 +218,8 @@ WchatAPI.prototype.getMessages = function(cb){
 	request.post(this.options.serverUrl, {
 		method: 'getMessages',
 		params: {
-			sid: this.getState('sid'),
-			timestamp: this.getState('msgTimestamp')
+			sid: storage.getState('sid'),
+			timestamp: storage.getState('msgTimestamp')
 		}
 	}, function (err, res, body){
 		if(err) {
@@ -229,7 +232,7 @@ WchatAPI.prototype.getMessages = function(cb){
 		} else if(body.result.typing) {
 			this.emit('message/typing', body.result);
 		}
-		this.saveState('msgTimestamp', body.result.timestamp);
+		storage.saveState('msgTimestamp', body.result.timestamp);
 		if(cb) cb(null, body.result);
 	}.bind(this));
 };
@@ -243,7 +246,7 @@ WchatAPI.prototype.getMessages = function(cb){
  */
 WchatAPI.prototype.sendMessage = function(text, file){
 	var params = {
-		sid: this.getState('sid'),
+		sid: storage.getState('sid'),
 		text: text
 	};
 	if(file) params.file = file;
@@ -267,7 +270,7 @@ WchatAPI.prototype.closeChat = function(rating){
 	var reqParams = {
 		method: 'closeChat',
 		params: {
-			sid: this.getState('sid')
+			sid: storage.getState('sid')
 		}
 	};
 	if(rating) reqParams.params.rating = rating;
@@ -276,8 +279,8 @@ WchatAPI.prototype.closeChat = function(rating){
 			this.emit('Error', err, reqParams);
 			return;
 		}
-		this.saveState('chat', false);
-		this.emit('chat/close', { rating: rating });
+		storage.saveState('chat', false);
+		this.emit('chat/close', { rating: rating, url: url.href });
 	}.bind(this));
 };
 
@@ -298,7 +301,7 @@ WchatAPI.prototype.closeChat = function(rating){
  * @param  {String} text		Email body
  */
 WchatAPI.prototype.sendEmail = function(params, cb){
-	params.sid = this.getState('sid');
+	params.sid = storage.getState('sid');
 	request.post(this.options.serverUrl, {
 		method: 'sendMail',
 		params: params
@@ -311,6 +314,27 @@ WchatAPI.prototype.sendEmail = function(params, cb){
 
 		this.emit('chat/send', params);
 		if(cb) cb(null, body);
+	}.bind(this));
+};
+
+/**
+ * Send callback request
+ * 
+ * @param  {String} task - id of the callback task that configured in the Admin Studio
+ * @param  {String} phone - User's phone number
+ * @param  {Number} time - Timestamp of the call to be initiated
+ */
+WchatAPI.prototype.requestCallback = function(params, cb){
+	params.sid = storage.getState('sid');
+	request.post(this.options.serverUrl, {
+		method: 'requestCallback',
+		params: params
+	}, function(err, res, body){
+		if(err) {
+			this.emit('Error', err, { method: 'requestCallback', params: params });
+			return cb(err);
+		}
+		if(cb) cb(null, body.result);
 	}.bind(this));
 };
 
@@ -333,7 +357,7 @@ WchatAPI.prototype.disjoinSession = function(sid){
 			return;
 		}
 
-		this.emit('session/disjoin');
+		this.emit('session/disjoin', { url: url.href });
 	}.bind(this));
 };
 
@@ -348,7 +372,7 @@ WchatAPI.prototype.switchShareState = function(state, url){
 	request.post(this.options.serverUrl, {
 		method: method,
 		params: {
-			sid: this.getState('sid'),
+			sid: storage.getState('sid'),
 			url: url
 		}
 	}, function(err, res, body){
@@ -366,11 +390,11 @@ WchatAPI.prototype.setChatTimeout = function(timeout){
 };
 
 WchatAPI.prototype.userIsTyping = function(){
-	// console.log('user is typing!');
+	// debug.log('user is typing!');
 	request.post(this.options.serverUrl, {
 		method: 'typing',
 		params: {
-			sid: this.getState('sid')
+			sid: storage.getState('sid')
 		}
 	}, function (err){
 		if(err) {
@@ -384,7 +408,7 @@ WchatAPI.prototype.updateUrl = function(url){
 	request.post(this.options.serverUrl, {
 		method: 'updateUrl',
 		params: {
-			sid: this.getState('sid'),
+			sid: storage.getState('sid'),
 			url: url
 		}
 	}, function(err, res, body){
@@ -399,7 +423,7 @@ WchatAPI.prototype.linkFollowed = function(url){
 	request.post(this.options.serverUrl, {
 		method: 'linkFollowed',
 		params: {
-			sid: this.getState('sid'),
+			sid: storage.getState('sid'),
 			url: url
 		}
 	}, function (err, res, body){
@@ -410,43 +434,14 @@ WchatAPI.prototype.linkFollowed = function(url){
 	}.bind(this));
 };
 
-WchatAPI.prototype.saveState = function(key, value, location){
-	this.session[key] = value;
-	if(location !== 'cache') {
-		storage.set(key, value, location);
-	}
-	return value;
-};
-
-/**
- * Get saved property from localStorage or from session cache
- * @param  {String} key      - item key in storage memory
- * @param  {[type]} location - from where to retrieve item. 
- * Could be either "storage" - from localStorage, or "cache" - from session cache
- * @return {String|Object|Function}          - item value
- */
-WchatAPI.prototype.getState = function(key, location){
-	if(!location) {
-		return (this.session[key] !== undefined && this.session[key] !== null) ? this.session[key] : storage.get(key);
-	} else if(location === 'cache') {
-		return this.session[key];
-	} else {
-		return storage.get(key, location);
-	}
-};
-
-WchatAPI.prototype.removeState = function(key, location) {
-	delete this.session[key];
-	storage.remove(key);
-};
-
-WchatAPI.prototype.sessionTimeout = function(params){
-	// console.log('sessionTimeout params: ', params);
+WchatAPI.prototype.sessionTimeout = function(params) {
+	// debug.log('sessionTimeout params: ', params);
+	params.url = url.href;
 	this.emit('session/timeout', params);
 };
 
-function getSidFromUrl(url){
+WchatAPI.prototype.getSidFromUrl = function(url) {
 	var substr = url.substring(url.indexOf('chatSessionId='));
 	substr = substr.substring(substr.indexOf('=')+1);
 	return substr;
-}
+};

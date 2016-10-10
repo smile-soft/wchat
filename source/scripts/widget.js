@@ -1,12 +1,15 @@
 var domify = require('domify');
-var api = require('./core');
+var core = require('./core');
+var storage = require('./storage');
 var request = require('./request');
+var debug = require('./debug');
 var _ = require('./lodash');
-var frases = require('../translations.json');
+var frases = null;
 var cobrowsing = require('./cobrowsing');
 var WebRTC = require('./webrtc');
 var serverUrl = {};
 var forms;
+var api;
 
 // Widget initiation options
 var defaults = {
@@ -19,12 +22,15 @@ var defaults = {
 	intro: false,
 	// whether or not to add widget to the webpage
 	widget: true,
+	// DOM element that opens a widget
+	buttonElement: null,
 	title: '',
 	lang: 'en',
 	langFromUrl: false,
 	position: 'right',
 	hideOfflineButton: false,
 	offer: false,
+	stylesPath: '',
 	styles: {
 		primary: {
 			backgroundColor: '#555555',
@@ -73,6 +79,10 @@ var defaults = {
 		sip: {},
 		hotline: ''
 	},
+	webrtcEnabled: false,
+	callback: {
+		task: ''
+	}
 },
 
 // Current widget state
@@ -80,8 +90,7 @@ widgetState = {
 	initiated: false,
 	active: false,
 	state: '', // "online" | "offline" | "timeout",
-	share: false,
-	webrtcEnabled: false
+	share: false
 },
 dialog = [],
 
@@ -102,7 +111,8 @@ widgetWindow,
 panes,
 agentIsTypingTimeout,
 userIsTypingTimeout,
-timerUpdateInterval;
+timerUpdateInterval,
+pollTurns = 1;
 // ringTone = null,
 // ringToneInterval = null;
 
@@ -111,10 +121,12 @@ function Widget(options){
 	_.merge(defaults, options || {});
 	// _.assign(defaults, options || {});
 
+	debug.log('Widget: ', options);
+
 	addWidgetStyles();
 	serverUrl = require('url').parse(defaults.server, true);
 
-	api = new api(options)
+	api = new core(options)
 	.on('session/create', onSessionSuccess)
 	.on('session/continue', onSessionSuccess)
 	.on('session/join', onSessionJoin)
@@ -128,6 +140,7 @@ function Widget(options){
 		.on('message/new', clearUndelivered)
 		.on('message/new', newMessage)
 		.on('message/typing', onAgentTyping)
+
 		.on('form/submit', onFormSubmit)
 		.on('form/reject', closeForm)
 		.on('widget/load', onWidgetLoad);
@@ -136,9 +149,9 @@ function Widget(options){
 	}
 
 	if(defaults.webrtc.sip.ws_servers !== undefined && WebRTC.isSupported()) {
-		if(window.location.protocol !== 'http:' && serverUrl.protocol !== 'http:'){
+		if(window.location.protocol === 'https:' && serverUrl.protocol === 'https:'){
 			// set flag to indicate that webrtc feature is supported and enabled
-			widgetState.webrtcEnabled = true;
+			defaults.webrtcEnabled = true;
 
 			// set webrtc event handlers
 			api.on('webrtc/newRTCSession', function(){
@@ -179,13 +192,19 @@ function Widget(options){
 		} else {
 			// webrtc is supported by the browser, but the current web page
 			// is located on insecure origins, therefore the webrtc is not supported
-			console.warn('WebRTC feature is disabled');
-			console.warn('getUserMedia() no longer works on insecure origins. To use this feature, you should consider switching your application to a secure origin, such as HTTPS. See https://goo.gl/rStTGz for more details.');
+			debug.warn('WebRTC feature is disabled');
+			debug.warn('getUserMedia() no longer works on insecure origins. To use this feature, you should consider switching your application to a secure origin, such as HTTPS. See https://goo.gl/rStTGz for more details.');
 		}
 	}
 		
 	setSessionTimeoutHandler();
 
+	// load translations
+	request.get('frases', defaults.server+defaults.path+'translations.json', function (err, result){
+		if(err) return api.emit('Error', err);
+		frases = JSON.parse(result);
+	});
+	
 	// load forms
 	request.get('forms_json', defaults.server+defaults.path+'forms.json', function (err, result){
 		if(err) return api.emit('Error', err);
@@ -207,7 +226,7 @@ var publicApi = {
 	initChat: initChat,
 	getWidgetElement: getWidgetElement,
 	isWebrtcSupported: WebRTC.isSupported,
-	getEntity: function(){ return api.getState('entity', 'session'); },
+	getEntity: function(){ return storage.getState('entity', 'session'); },
 	on: function(evt, listener) {
 		api.on(evt, listener);
 		return this;
@@ -235,57 +254,74 @@ function initModule(){
 }
 
 function initWebrtcModule(opts){
-	console.log('initWebrtcModule: ', opts);
+	debug.log('initWebrtcModule: ', opts);
 	WebRTC.init(opts);
 }
 
 // Session is either created or continues
 function onSessionSuccess(){
-	// console.log('Session success!');
 
-	// set current user language
-	currLang = currLang || detectLanguage();
-	setSessionTimeoutHandler();
+	// Wait while translations are loaded
+	_.poll(function(){
 
-	// If page loaded and "widget" property is set - load widget
-	if(defaults.widget && !widgetState.initiated && isBrowserSupported()) {
-		loadWidget();
-	}
+		return (frases !== null);
 
-	// If timeout was occured, init chat after a session is created
-	if(hasWgState('timeout')) {
-		removeWgState('timeout');
-		getLanguages();
-	}
+	}, function(){
+		
+		// set current user language
+		currLang = currLang || detectLanguage();
+		setSessionTimeoutHandler();
 
-	// if window is not a opened window
-	if(!defaults.external) {
-		api.updateUrl(window.location.href);
+		// If page loaded and "widget" property is set - load widget
+		if(defaults.widget && !widgetState.initiated && isBrowserSupported()) {
+			loadWidget();
+		}
 
-		initCobrowsingModule({
-			url: window.location.href,
-			entity: api.getState('entity', 'session'),
-			widget: '#'+defaults.prefix+'-wg-cont'
-		});
-	}
+		// If timeout was occured, init chat after a session is created
+		if(hasWgState('timeout')) {
+			removeWgState('timeout');
+			getLanguages();
+		}
 
-	api.emit('session/init', defaults);
+		// if window is not a opened window
+		if(!defaults.external) {
+			api.updateUrl(window.location.href);
+
+			initCobrowsingModule({
+				url: window.location.href,
+				entity: storage.getState('entity', 'session'),
+				widget: '#'+defaults.prefix+'-wg-cont'
+			});
+		}
+
+		api.emit('session/init', {options: defaults, url: global.location.href });
+
+	}, function(){
+		
+		if(pollTurns < 2) {
+			pollTurns++;
+			Widget(defaults).initModule();
+		} else {
+			return api.emit('Error', 'Module wasn\'t initiated due to network errors');
+		}
+
+	}, 60000);		
 
 }
 
 function onSessionInit(){
-	api.saveState('init', true, 'session');
+	storage.saveState('init', true, 'session');
 	if(widgetWindow && !widgetWindow.closed) widgetWindow.sessionStorage.setItem(defaults.prefix+'.init', true);
 }
 
 // send shared event to the user's browser
 function onSessionJoin(params){
-	// console.log('onSessionJoin: ', params);
-	initCobrowsingModule({ url: params.url, entity: api.getState('entity', 'session') });
+	// debug.log('onSessionJoin: ', params);
+	initCobrowsingModule({ url: params.url, entity: storage.getState('entity', 'session') });
 }
 
 function loadWidget(cb){
-	// console.log('load widget!');
+	// debug.log('load widget!');
 	var compiled;
 	request.get('widget_tmp', defaults.server+defaults.path+'widget.html', function (err, body){
 		if(err) return;
@@ -294,8 +330,9 @@ function loadWidget(cb){
 			languages: langs,
 			translations: frases,
 			currLang: currLang || defaults.lang,
+
 			// frases: frases[currLang] || defaults.lang,
-			credentials: api.getState('credentials', 'session') || {},
+			credentials: storage.getState('credentials', 'session') || {},
 			_: _
 		});
 
@@ -309,7 +346,11 @@ function loadWidget(cb){
 }
 
 function onWidgetLoad(widget){
-	// console.log('widget loaded!');
+	// debug.log('widget loaded!');
+	
+	if(defaults.buttonElement) 
+		defaults.buttonElement.addEventListener('click', publicApi.openWidget, false);
+
 	api.once('chat/languages', initWidget);
 	getLanguages();
 	// initWidget();
@@ -320,7 +361,7 @@ function initCobrowsingModule(params){
 	if(defaults.external) return;
 
 	api.on('cobrowsing/init', function(){
-		if(api.getState('shared', 'session') || params.entity === 'agent') cobrowsing.share();
+		if(storage.getState('shared', 'session') || params.entity === 'agent') cobrowsing.share();
 		// cobrowsing.emitEvents();
 	});
 	api.on('cobrowsing/event', function(params){
@@ -331,20 +372,20 @@ function initCobrowsingModule(params){
 	});
 
 	api.on('cobrowsing/shared', function(){
-		if(!api.getState('shared', 'session') && params.entity === 'user') {
-			api.saveState('shared', true, 'session');
+		if(!storage.getState('shared', 'session') && params.entity === 'user') {
+			storage.saveState('shared', true, 'session');
 			api.switchShareState(true, params.url);
 		}
 		api.updateEvents([{ entity: params.entity, url: params.url, shared: true }], function(err, result){
 			// if(err) return;
 			result.historyEvents = true;
-			// console.log('cobrowsing update: ', result);
+			// debug.log('cobrowsing update: ', result);
 			cobrowsing.updateEvents(result);
 		});
 	});
 
 	api.on('cobrowsing/unshared', function(params){
-		api.saveState('shared', false, 'session');
+		storage.saveState('shared', false, 'session');
 		api.updateEvents([{ entity: params.entity, url: params.url, shared: false }], function(err, resul){
 			// if(err) return;
 			if(params.entity === 'user') api.switchShareState(false, window.location.href);
@@ -368,7 +409,7 @@ function getLanguages(){
 }
 
 function onNewLanguages(languages){
-	// console.log('languages: ', languages);
+	// debug.log('languages: ', languages);
 	var state = languages.length ? 'online' : 'offline',
 	options = '', selected;
 
@@ -393,7 +434,7 @@ function onNewLanguages(languages){
 }
 
 function initWidget(){
-	// console.log('Init widget!');
+	// debug.log('Init widget!');
 	widgetState.initiated = true;
 
 	setListeners(widget);
@@ -408,14 +449,14 @@ function initWidget(){
 	}
 
 	// if chat started
-	if(api.getState('chat') === true) {
-		requestChat(api.getState('credentials', 'session') || {});
+	if(storage.getState('chat') === true) {
+		requestChat(storage.getState('credentials', 'session') || {});
 		showWidget();
 		// initChat();
 	}
 
 	// if webrtc supported by the browser and ws_servers parameter is set - change button icon
-	if(widgetState.webrtcEnabled) {
+	if(defaults.webrtcEnabled) {
 		addWgState('webrtc-enabled');
 	}
 
@@ -426,7 +467,7 @@ function initWidget(){
 function setOffer() {
 	setTimeout(function() {
 		showOffer({
-			from: defaults.offer.from || frases[currLang].default_title,
+			from: defaults.offer.from || frases[currLang].TOP_BAR.title,
 			time: Date.now(),
 			text: defaults.offer.text || frases[currLang].default_offer
 		});
@@ -440,26 +481,26 @@ function showOffer(message) {
 }
 
 function setInteracted(){
-	if(!api.getState('interacted', 'session')) {
-		api.saveState('interacted', true, 'session');
+	if(!storage.getState('interacted', 'session')) {
+		storage.saveState('interacted', true, 'session');
 	}
 }
 
 function isInteracted(){
-	return api.getState('interacted', 'session');
+	return storage.getState('interacted', 'session');
 }
 
 function initChat(){
 	showWidget();
 
 	// // if chat already started and widget was minimized - just show the widget
-	if(api.getState('chat', 'cache')) return;
+	if(storage.getState('chat', 'cache')) return;
 
 	if(!langs.length) {
 		switchPane('sendemail');
 	} else if(defaults.intro.length) {
-		if(api.getState('chat')) {
-			requestChat(api.getState('credentials', 'session'));
+		if(storage.getState('chat')) {
+			requestChat(storage.getState('credentials', 'session'));
 		} else {
 			switchPane('credentials');
 		}
@@ -469,11 +510,11 @@ function initChat(){
 }
 
 function requestChat(credentials){
-	if(!credentials.uname) credentials.uname = api.getState('sid').split('_')[0];
+	if(!credentials.uname) credentials.uname = storage.getState('sid').split('_')[0];
 	
 	// Save user language based on preferable dialog language
 	if(credentials.lang && credentials.lang !== currLang ) {
-		api.saveState('lang', credentials.lang);
+		storage.saveState('lang', credentials.lang);
 	}
 	if(!credentials.lang) {
 		credentials.lang = currLang;
@@ -481,16 +522,16 @@ function requestChat(credentials){
 	
 	// Save credentials for current session
 	// It will be removed on session timeout
-	api.saveState('credentials', credentials, 'session');
+	storage.saveState('credentials', credentials, 'session');
 
 	api.chatRequest(credentials);
 	switchPane('messages');
 }
 
 function startChat(params){
-	api.saveState('chat', true);
+	storage.saveState('chat', true);
 	if(params.timeout) {
-		// console.log('chat timeout: ', params.timeout);
+		// debug.log('chat timeout: ', params.timeout);
 		chatTimeout = api.setChatTimeout(params.timeout);
 	}
 	getMessages();
@@ -498,13 +539,13 @@ function startChat(params){
 }
 
 function getMessages(){
-	// console.log('get messages!');
+	// debug.log('get messages!');
 	
-	if(api.getState('chat'))
+	if(storage.getState('chat'))
 		noMessagesTimeout = setTimeout(getMessages, 60*1000);
 	
 	api.getMessages(function(result) {
-		if(api.getState('chat')) {
+		if(storage.getState('chat')) {
 			messagesTimeout = setTimeout(getMessages, defaults.getMessagesTimeout*1000);
 			clearTimeout(noMessagesTimeout);
 		}
@@ -514,7 +555,7 @@ function getMessages(){
 function sendMessage(message){
 	api.sendMessage(message);
 	newMessage({ messages: [{
-		from: api.getState('credentials', 'session').uname,
+		from: storage.getState('credentials', 'session').uname,
 		time: Date.now(),
 		text: message,
 		hidden: true,
@@ -524,18 +565,18 @@ function sendMessage(message){
 }
 
 function newMessage(result){
-	// console.log('new messages arrived!', result);
+	// debug.log('new messages arrived!', result);
 
 	var str,
 		els = [],
 		text,
 		compiled,
 		defaultUname = false,
-		credentials = api.getState('credentials', 'session') || {},
-		aname = api.getState('aname', 'session'),
+		credentials = storage.getState('credentials', 'session') || {},
+		aname = storage.getState('aname', 'session'),
 		uname = credentials.uname ? credentials.uname : '';
 
-	if(uname === api.getState('sid').split('_')[0]) {
+	if(uname === storage.getState('sid').split('_')[0]) {
 		defaultUname = true;
 	}
 
@@ -578,7 +619,7 @@ function newMessage(result){
 
 		// Save agent name
 		if(message.entity === 'agent' && aname !== message.from) {
-			api.saveState('aname', message.from, 'session');
+			storage.saveState('aname', message.from, 'session');
 		}
 
 	});
@@ -646,7 +687,7 @@ function sendComplain(params){
 	var body = [];
 	// TODO: explain...
 	var complain = compileTemplate(messageTemplate(), {
-		from: frases[currLang].email_subjects.complain+' '+params.email,
+		from: frases[currLang].EMAIL_SUBJECTS.complain+' '+params.email,
 		text: params.text,
 		entity: '',
 		time: ''
@@ -654,7 +695,7 @@ function sendComplain(params){
 
 	body = body.concat(
 		complain,
-		'<br><p class="h1">'+frases[currLang].email_subjects.dialog+' '+defaults.host+'</p><br>',
+		'<br><p class="h1">'+frases[currLang].EMAIL_SUBJECTS.dialog+' '+defaults.host+'</p><br>',
 		dialog
 	).reduce(function(prev, curr) {
 		return prev.concat(curr);
@@ -670,7 +711,7 @@ function sendComplain(params){
 function sendRequest(params, cb) {
 	// TODO: explain...
 	var msg = compileTemplate(messageTemplate(), {
-		from: frases[currLang].email_subjects.request+' '+params.uname+' ('+params.email+')',
+		from: frases[currLang].EMAIL_SUBJECTS.request+' '+params.uname+' ('+params.email+')',
 		text: params.text,
 		entity: '',
 		time: ''
@@ -689,11 +730,11 @@ function submitSendMailForm(form, data) {
 		file;
 
 	if(!data.email) {
-		alert(frases[currLang].required_error.email);
+		alert(frases[currLang].ERRORS.email);
 		return;
 	}
 
-	data.subject = frases[currLang].email_subjects.request+' '+data.email;
+	data.subject = frases[currLang].EMAIL_SUBJECTS.request+' '+data.email;
 
 	if(data.file) {
 		file = getFileContent(form.file, function(err, result) {
@@ -701,7 +742,7 @@ function submitSendMailForm(form, data) {
 				data.filename = result.filename;
 				data.filedata = result.filedata;
 			} else {
-				console.warn('File was not sent');
+				debug.warn('File wasn\'t sent');
 			}
 			delete data.file;
 			sendRequest(data, function() {
@@ -721,25 +762,25 @@ function submitCloseChatForm(form, data){
 	var rating = (data && data.rating) ? parseInt(data.rating, 10) : null;
 	if(data && data.sendDialog) {
 		if(!data.email) {
-			alert(frases[currLang].required_error.email);
+			alert(frases[currLang].ERRORS.email);
 			return;
 		}
-		// console.log('send dialog');
+		// debug.log('send dialog');
 		sendDialog({
 			to: data.email,
-			subject: frases[currLang].email_subjects.dialog+' '+defaults.host,
+			subject: frases[currLang].EMAIL_SUBJECTS.dialog+' '+defaults.host,
 			text: dialog // global variable
 		});
 	}
 	if(data && data.text) {
 		if(!data.email) {
-			alert(frases[currLang].required_error.email);
+			alert(frases[currLang].ERRORS.email);
 			return;
 		} else {
-			// console.log('send complain!');
+			// debug.log('send complain!');
 			sendComplain({
 				email: data.email,
-				subject: frases[currLang].email_subjects.complain+' '+data.email,
+				subject: frases[currLang].EMAIL_SUBJECTS.complain+' '+data.email,
 				text: data.text
 			});
 		}
@@ -752,23 +793,23 @@ function submitCloseChatForm(form, data){
 }
 
 function closeChat(rating) {
-	api.saveState('chat', false);
+	storage.saveState('chat', false);
 	api.closeChat(rating);
 	removeWgState('chat');
 }
 
 function onChatClose(){
-	if(api.getState('shared', 'session')) cobrowsing.unshare();
+	if(storage.getState('shared', 'session')) cobrowsing.unshare();
 }
 
 function onChatTimeout(){
-	// console.log('chat timeout!');
+	// debug.log('chat timeout!');
 	switchPane('closechat');
 	closeChat();
 }
 
 function onAgentTyping(opts){
-	// console.log('Agent is typing!');
+	// debug.log('Agent is typing!');
 	if(!agentIsTypingTimeout) {
 		addWgState('agent-typing');
 	}
@@ -776,16 +817,16 @@ function onAgentTyping(opts){
 	agentIsTypingTimeout = setTimeout(function() {
 		agentIsTypingTimeout = null;
 		removeWgState('agent-typing');
-		// console.log('agent is not typing anymore!');
+		// debug.log('agent is not typing anymore!');
 	}, 5000);
 }
 
 function setSessionTimeoutHandler(){
 	if(api.listenerCount('session/timeout') >= 1) return;
 	api.once('session/timeout', function (params){
-		// console.log('Session timeout!', params);
+		// debug.log('Session timeout!', params);
 
-		if(api.getState('chat') === true) {
+		if(storage.getState('chat') === true) {
 			closeChat();
 		}
 		if(widget) {
@@ -796,7 +837,7 @@ function setSessionTimeoutHandler(){
 		// widgetState.state = 'timeout';
 		// addWgState('timeout');
 		setButtonStyle('timeout');
-		api.removeState('sid');
+		storage.removeState('sid');
 
 		if(params && params.method === 'updateEvents') {
 			initModule();
@@ -810,8 +851,49 @@ function initCall(){
 	// WebRTC.audiocall('sip:'+defaults.webrtc.hotline+'@'+serverUrl.host);
 }
 
+function initCallback(){
+	switchPane('callback');
+}
+
+function setCallback(){
+	var form = document.getElementById(defaults.prefix+'-callback-settings'),
+		formData = getFormData(form),
+		cbSpinner = document.getElementById(defaults.prefix+'-callback-spinner'),
+		cbSent = document.getElementById(defaults.prefix+'-callback-sent');
+	
+	formData.phone = formData.phone ? formatPhoneNumber(formData.phone) : null;
+
+	if(!formData.phone || formData.phone.length < 10) {
+		return alert(frases[currLang].ERRORS.tel);
+	}
+
+	formData.time = parseFloat(formData.time);
+	
+	if(formData.time <= 0) return;
+
+	formData.time = Date.now() + (formData.time * 60 * 1000);
+	formData.task = defaults.callback.task;
+	debug.log('setCallback data: ', formData);
+
+	form.classList.add(defaults.prefix+'-hidden');
+	cbSpinner.classList.remove(defaults.prefix+'-hidden');
+
+	api.requestCallback(formData, function(err, result) {
+		debug.log('setCallback result: ', err, result);
+
+		cbSpinner.classList.add(defaults.prefix+'-hidden');
+		form.classList.remove(defaults.prefix+'-hidden');
+
+		if(err) return;
+		
+		switchPane('callbackSent');
+	});
+
+	form.reset();
+}
+
 function initCallState(state){
-	console.log('initCallState: ', state);
+	debug.log('initCallState: ', state);
 
 	var spinner = document.getElementById(defaults.prefix+'-call-spinner'),
 		info = document.getElementById(defaults.prefix+'-call-info'),
@@ -823,7 +905,7 @@ function initCallState(state){
 		initCallState('oncall');
 
 	} else if(state === 'confirmed') {
-		textState.innerText = frases[currLang].call_pane.calling_agent;
+		textState.innerText = frases[currLang].AUDIO_CALL.calling_agent;
 		info.classList.remove(defaults.prefix+'-hidden');
 		spinner.classList.add(defaults.prefix+'-hidden');
 		tryAgain.classList.add(defaults.prefix+'-hidden');
@@ -834,20 +916,20 @@ function initCallState(state){
 		// playRingTone();
 
 	} else if(state === 'connected') {
-		textState.innerText = frases[currLang].call_pane.connected_with_agent;
+		textState.innerText = frases[currLang].AUDIO_CALL.connected_with_agent;
 		setTimer(timer, 'start', 0);
 		// stopRingTone();
 
 	} else if(state === 'ended') {
-		textState.innerText = frases[currLang].call_pane.call_ended;
+		textState.innerText = frases[currLang].AUDIO_CALL.call_ended;
 		setTimer(timer, 'stop');
 		initCallState('oncallend');
 		
 	} else if(state === 'failed' || state === 'canceled') {
 		if(state === 'failed') {
-			textState.innerText = frases[currLang].call_pane.call_failed;
+			textState.innerText = frases[currLang].AUDIO_CALL.call_failed;
 		} else {
-			textState.innerText = frases[currLang].call_pane.call_canceled;
+			textState.innerText = frases[currLang].AUDIO_CALL.call_canceled;
 		}
 		info.classList.remove(defaults.prefix+'-hidden');
 		spinner.classList.add(defaults.prefix+'-hidden');
@@ -859,12 +941,12 @@ function initCallState(state){
 		window.onbeforeunload = function(){
 			return 'Your connection is in progress. Do you realy want to close it?';
 		};
-		api.saveState('call', true, 'cache');
+		storage.saveState('call', true, 'cache');
 		addWgState('webrtc-call');
 
 	} else if(state === 'oncallend') {
 		window.onbeforeunload = null;
-		api.saveState('call', false, 'cache');
+		storage.saveState('call', false, 'cache');
 		removeWgState('webrtc-call');
 		// stopRingTone();
 
@@ -913,21 +995,56 @@ function endCall(){
  * Open web chat widget in a new window
  */
 function openWidget(){
-	console.log('open widget: ', api.getState('sid'));
+	debug.log('open widget: ', storage.getState('sid'));
 	var url = defaults.server+defaults.path+'window.html',
+		opts = {},
 		optsEncoded = '';
 	
 	if(!widgetWindow || widgetWindow.closed) {
 
-		widgetWindow = window.open('', 'wchat', defaults.widgetWindowOptions);
-		widgetWindow.sessionStorage.setItem('wchat_options', JSON.stringify(defaults));
+		_.merge(opts, defaults);
 
-		constructWindow(widgetWindow);
+		opts.widget = true;
+		// set external flag to indicate that the module loads not in the main window
+		opts.external = true;
+
+		widgetWindow = window.open('', 'wchat', defaults.widgetWindowOptions);
+		widgetWindow = constructWindow(widgetWindow);
+		widgetWindow.sessionStorage.setItem('wchat_options', JSON.stringify(opts));
+
+		// Wait while the script is loaded, 
+		// then init module in the child window
+		_.poll(function(){
+			return widgetWindow.Wchat !== undefined;
+		}, function(){
+			widgetWindow.Module = widgetWindow.Wchat(opts);
+			widgetWindow.Module.on('widget/init', function(){
+				widgetWindow.Module.initWidgetState();
+			});
+			
+			/* 
+			* Proxy all events that is emitted in the child window
+			* to the main window, but with the 'window/' prefix before the event name.
+			* So, for example, 'chat/start' event in the child window,
+			* would be 'window/chat/start' in the main window 
+			*/
+			_.forEach(api._events, function(value, key, coll){
+				widgetWindow.Module.on(key, function(params){
+					params.url = global.location.href;
+					api.emit('window/'+key, params);
+				});
+			});
+
+			widgetWindow.Module.initModule();
+
+		}, function(){
+			console.warn('Wchat module was not initiated due to network connection issues.');
+		}, 120000);
 		
 		widgetWindow.onbeforeunload = function(){
 			//close chat if user close the widget window
 			//without ending a dialog
-			if(api.getState('chat', 'storage')) closeChat();
+			if(storage.getState('chat', 'storage')) closeChat();
 		};
 	}
 	if(widgetWindow.focus) widgetWindow.focus();
@@ -957,10 +1074,10 @@ function constructWindow(windowObject){
 	charset.setAttribute('charset', 'utf-8');
 
 	title = windowObject.document.createElement('title');
-	title.textContent = frases[currLang].default_title;
+	title.textContent = frases[currLang].TOP_BAR.title;
 
-	loader = windowObject.document.createElement('script');
-	loader.src = defaults.server+defaults.path+'loader.js';
+	// loader = windowObject.document.createElement('script');
+	// loader.src = defaults.server+defaults.path+'loader.js';
 
 	script = windowObject.document.createElement('script');
 	script.src = defaults.server+defaults.path+'wchat.min.js';
@@ -974,9 +1091,11 @@ function constructWindow(windowObject){
 
 	body.id = 'swc-wg-window';
 	body.appendChild(loaderElements);
-	body.appendChild(loader);
+	// body.appendChild(loader);
 
 	addLoaderRules(head.getElementsByTagName('style')[0]);
+
+	return windowObject;
 }
 
 function createStylesheet(windowObject, id){
@@ -1049,11 +1168,25 @@ function addLoaderRules(style){
 function setListeners(widget){
 	// var sendMsgBtn = document.getElementById(defaults.prefix+'-send-message'),
 	var fileSelect = document.getElementById(defaults.prefix+'-file-select'),
-		textField = document.getElementById(defaults.prefix+'-message-text');
+		textField = document.getElementById(defaults.prefix+'-message-text'),
+		inputs = [].slice.call(widget.querySelectorAll('.'+defaults.prefix+'-inputfile'));
 
 	btn = document.getElementById(defaults.prefix+'-btn-cont');
 	panes = [].slice.call(widget.querySelectorAll('.'+defaults.prefix+'-wg-pane'));
 	messagesCont = document.getElementById(defaults.prefix+'-messages-cont');
+
+	inputs.forEach(function(input){
+		var label = input.nextElementSibling,
+			labelVal = label.textContent;
+
+		addEvent(input, 'change', function(e){
+			var fileName = e.target.value.split( '\\' ).pop();
+			if(fileName)
+				label.textContent = fileName;
+			else
+				label.textContent = labelVal;
+		});
+	});
 
 	addEvent(btn, 'click', btnClickHandler);
 	addEvent(widget, 'click', wgClickHandler);
@@ -1083,7 +1216,7 @@ function wgClickHandler(e){
 	if(handler === 'closeWidget') {
 		closeWidget();
 	} else if(handler === 'finish') {
-		if(api.getState('chat')) switchPane('closechat');
+		if(storage.getState('chat')) switchPane('closechat');
 		else closeWidget();
 	} else if(handler === 'sendMessage') {
 		wgSendMessage();
@@ -1093,6 +1226,10 @@ function wgClickHandler(e){
 		api.emit('form/reject', { formName: _.findParent(targ, 'form').name });
 	} else if(handler === 'initCall') {
 		initCall();
+	} else if(handler === 'initCallback') {
+		initCallback();
+	} else if(handler === 'setCallback') {
+		setCallback();
 	} else if(handler === 'initChat') {
 		initChat();
 	} else if(handler === 'endCall') {
@@ -1138,17 +1275,19 @@ function initWidgetState(){
 	// If timeout is occured, init session first
 	if(hasWgState('timeout')) {
 		initModule();
-	} else if(api.getState('chat', 'cache')){
+	} else if(storage.getState('chat', 'cache')){
 		showWidget();
 	} else if(!langs.length){
 		switchPane('sendemail');
-	} else if(widgetState.webrtcEnabled){
+	} else if(defaults.webrtcEnabled){
 		// if call is in progress - just show the widget
-		if(api.getState('call', 'cache')) {
+		if(storage.getState('call', 'cache')) {
 			showWidget();
 		} else {
 			switchPane('chooseConnection');
 		}
+	} else if(defaults.callback.task) {
+		switchPane('chooseConnection');
 	} else {
 		initChat();
 	}
@@ -1164,7 +1303,7 @@ function wgSendMessage(){
 		textarea.value = '';
 		removeWgState('type-extend');
 	}
-	if(!api.getState('chat')) {
+	if(!storage.getState('chat')) {
 		initChat();
 	}
 }
@@ -1199,7 +1338,7 @@ function wgSubmitHandler(e){
 function wgSendFile(e){
 	var targ = e.target;
 	var file = getFileContent(targ, function(err, result) {
-		console.log('wgSendFile: ', result);
+		debug.log('wgSendFile: ', result);
 		if(err) {
 			alert('File was not sent');
 		} else {
@@ -1215,7 +1354,7 @@ function wgSendFile(e){
 function switchPane(pane){
 	// var paneId = defaults.prefix+'-'+pane+'-pane';
 	var attr = 'data-'+defaults.prefix+'-pane';
-	// console.log('switchPane panes:', panes, 'pane: ', pane);
+	// debug.log('switchPane panes:', panes, 'pane: ', pane);
 	panes.forEach(function(item){
 		if(item.getAttribute(attr) === pane) {
 			item.classList.add('active');
@@ -1244,7 +1383,7 @@ function changeWgState(params){
 
 // TODO: This is not a good solution or maybe not a good implementation
 function setButtonStyle(state) {
-	// console.log('setButtonStyle: ', state);
+	// debug.log('setButtonStyle: ', state);
 	if(!widget || defaults.buttonStyles[state] === undefined) return;
 	var wgBtn = widget.querySelector('.'+defaults.prefix+'-wg-btn'),
 		btnIcon = widget.querySelector('.'+defaults.prefix+'-btn-icon');
@@ -1290,11 +1429,11 @@ function closeWidget(){
 function onFormSubmit(params){
 	var form = params.formElement;
 	var formData = params.formData;
-	// console.log('onFormSubmit: ', form, formData);
+	// debug.log('onFormSubmit: ', form, formData);
 	if(form.getAttribute('data-validate-form')) {
 		var valid = validateForm(form);
 		if(!valid) return;
-		// console.log('onFormSubmit valid: ', valid);
+		// debug.log('onFormSubmit valid: ', valid);
 	}
 	if(form.id === defaults.prefix+'-closechat-form') {
 		submitCloseChatForm(form, formData);
@@ -1317,12 +1456,12 @@ function closeForm(params, submit){
 	if(submit) {
 		form.outerHTML = '<p class="'+defaults.prefix+'-text-center">'+
 							'<i class="'+defaults.prefix+'-text-success '+defaults.prefix+'-icon-check"></i>'+
-							'<span> '+frases[currLang].form_submitted+'</span>'+
+							'<span> '+frases[currLang].FORMS.submitted+'</span>'+
 						'</p>';
 	} else {
 		form.outerHTML = '<p class="'+defaults.prefix+'-text-center">'+
 							'<i class="'+defaults.prefix+'-text-danger '+defaults.prefix+'-icon-remove"></i>'+
-							'<span> '+frases[currLang].form_canceled+'</span>'+
+							'<span> '+frases[currLang].FORMS.canceled+'</span>'+
 						'</p>';
 	}
 }
@@ -1383,7 +1522,7 @@ function compileTemplate(template, data){
  ********************************/
 
 function detectLanguage(){
-	var storageLang = api.getState('lang'),
+	var storageLang = storage.getState('lang'),
 		availableLangs = [],
 		lang,
 		path;
@@ -1413,13 +1552,13 @@ function detectLanguage(){
 		}
 	}
 
-	// console.log('detected lang: ', lang);
+	// debug.log('detected lang: ', lang);
 
 	return lang;
 }
 
 function browserIsObsolete() {
-	console.warn('Your browser is obsolete!');
+	debug.warn('Your browser is obsolete!');
 }
 
 function parseTime(ts) {
@@ -1507,16 +1646,16 @@ function getFormData(form){
 function validateForm(form){
 	var valid = true;
 	[].slice.call(form.elements).every(function(el) {
-		// console.log('validateForm el:', el, el.hasAttribute('required'), el.value, el.type);
+		// debug.log('validateForm el:', el, el.hasAttribute('required'), el.value, el.type);
 		if(el.hasAttribute('required') && (el.value === "" || el.value === null)) {
-			alert(frases[currLang].required_error[el.type] || frases[currLang].required_error.fields);
+			alert(frases[currLang].ERRORS[el.type] || frases[currLang].ERRORS.required);
 			valid = false;
 			return false;
 		} else {
 			return true;
 		}
 	});
-	// console.log('validateForm valid: ', valid);
+	// debug.log('validateForm valid: ', valid);
 	return valid;
 }
 
@@ -1528,7 +1667,7 @@ function addWidgetStyles(){
 	
 	var link = document.createElement('link');
 		link.rel = 'stylesheet';
-		link.href = defaults.server+defaults.path+'main.css';
+		link.href = defaults.stylesPath || defaults.server+defaults.path+'main.css';
 
 	document.head.appendChild(link);
 }
@@ -1545,6 +1684,10 @@ function convertTime(seconds){
 		secsRemain = seconds % 60,
 		str = (minutes > 9 ? minutes : '0' + minutes) + ':' + (secsRemain > 9 ? secsRemain : '0' + secsRemain);
 	return str;
+}
+
+function formatPhoneNumber(phone) {
+	return phone.replace(/\D+/g, "");
 }
 
 function isBrowserSupported() {

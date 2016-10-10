@@ -1,206 +1,377 @@
 {
+    "uk": {
+    	"lang": "Українська",
+    	"default_user_name": "Ви",
+    	"default_offer": "Ласкаво просимо, потрібна допомога?",    	
+    	"TOP_BAR": {
+    		"title": "Онлайн чат"
+    	},
+    	"PANELS": {
+    		"CONNECTION_TYPES": {
+    			"choose_conn_type": "Будь ласка, виберіть тип з'єднання",
+                "call_agent_btn": "Виклик агента",
+    			"callback_btn": "Передзвоніть мені",
+    			"chat_agent_btn": "Почати чат",
+    			"cancel": "Відміна"
+    		},
+    		"INTRO": {
+    			"intro_message": "Будь ласка, заповніть необхідні поля",
+    			"start_dialog_button": "Розпочати діалог",
+    			"cancel": "Відміна",
+    			"PLACEHOLDERS": {
+    				"uname": "Ваше ім'я",
+					"email": "Ваша електронна адреса",
+					"phone": "Ваш телефон",
+					"subject": "Тема діалогу",
+    				"lang": "Оберіть мову діалогу"
+    			}
+    		},
+    		"MESSAGES": {
+    			"PLACEHOLDERS": {
+    				"message": "Ваше повідомлення тут..."
+    			}
+    		},
+    		"OFFLINE": {
+    			"offline_message": "Наразі ми оффлайн, будь ласка, залиште нам повідомлення, ми зв'яжемося з Вами найближчим часом",
+    			"send_message_header": "Відправити повідомлення",
+				"send_message_button": "Відправити",
+                "choose_file": "+ Додати файл...",
+    			"close": "Закрити",
+    			"PLACEHOLDERS": {
+    				"uname": "Ваше ім'я",
+					"email": "Ваша електронна адреса",
+    				"message": "Ваше повідомлення тут..."
+    			}
+    		},
+    		"CLOSE_CHAT": {
+    			"close_chat_header": "Дякуємо, що звернулися до нас!",
+				"send_dialog_label": "Відправити діалог на ваш email?",
+    			"finish_dialog_button": "Закінчити діалог",
+    			"rate_agent": "Оцінити роботу оператора",
+    			"back": "Назад",
+    			"PLACEHOLDERS": {
+    				"email": "Ваша електронна адреса",
+					"comment": "Будь ласка, залиште тут свій коментар..."
+    			}
+    		},
+    		"AUDIO_CALL": {
+    			"confirm_access": "Будь ласка, підтвердіть доступ до мікрофона",
+    			"calling_agent": "Йде виклик",
+    			"connected_with_agent": "Виклик з'єднаний",
+    			"call_ended": "Виклик завершено",
+    			"call_failed": "Збій виклику \n Будь ласка спробуйте пізніше",
+    			"call_canceled": "Виклик скасований",
+    			"end_call": "Завершити виклик",
+    			"try_again": "Спробувати ще раз"
+    		},
+            "CALLBACK": {
+                "title": "Введіть ваш номер телефону, ми передзвонимо на протязі зазначеного часу.",
+                "confirm_callback": "Підтвердити",
+                "sending_request": "Зачекайте, будь ласка",
+                "request_sent": "Запит відправлено, оператор зв'яжеться з вами у зазначений час.",
+                "back": "Назад",
+                "close": "Закрити",
+                "LABELS": {
+                    "phone": "Передзвонити за номером",
+                    "time": "через"
+                },
+                "PLACEHOLDERS": {
+                    "phone": "067 123 45 67"
+                },
+                "TIME_POINTS": [
+                    { "minutes": 0.5, "label": "30 секунд" },
+                    { "minutes": 1, "label": "1 хвилину" },
+                    { "minutes": 5, "label": "5 хвилин" },
+                    { "minutes": 10, "label": "10 хвилин" },
+                    { "minutes": 15, "label": "15 хвилин" },
+                    { "minutes": 20, "label": "20 хвилин" },
+                    { "minutes": 25, "label": "25 хвилин" },
+                    { "minutes": 30, "label": "30 хвилин" }
+                ]
+            }
+    	},
+    	"AGENT_RATES": {
+    		"excellent": "Відмінно",
+			"good": "Добре",
+			"fair": "Задовільно",
+			"bad": "Погано"
+    	},
+    	"EMAIL_SUBJECTS": {
+    		"dialog": "Ваш діалог на",
+    		"complain": "Коментар до діалогу від",
+    		"request": "Нове повідомлення від"
+    	},
+    	"FORMS": {
+    		"send": "Відправити",
+    		"cancel": "Відміна",
+    		"submitted": "Форма відправлена, дякуємо!",
+    		"canceled": "Форма відхилена",
+    		"DESCRIPTIONS": {
+    			"test": "Будь ласка, заповніть форму"
+    		},
+    		"PLACEHOLDERS": {
+    			"uname": "Ваше ім'я",
+				"email": "Ваша електронна адреса",
+				"phone": "Ваш телефон"
+    		}
+    	},
+    	"FLOATING_BUTTON": {
+    		"close": "Закрити"
+    	},
+    	"ERRORS": {
+    		"required": "Будь ласка, заповніть всі необхідні поля",
+			"email": "Будь ласка, введіть свою електронну адресу",
+			"tel": "Будь ласка, введіть свій номер телефону"
+    	}
+    },
+    "ru": {
+    	"lang": "Русский",
+    	"default_user_name": "Вы",
+    	"default_offer": "Добро пожаловать, нужна помощь?",
+    	"TOP_BAR": {
+    		"title": "Онлайн чат"
+    	},
+    	"PANELS": {
+    		"CONNECTION_TYPES": {
+    			"choose_conn_type": "Пожалуйста, выберите способ соединения",
+                "call_agent_btn": "Вызов агента",
+    			"callback_btn": "Перезвоните мне",
+    			"chat_agent_btn": "Начать чат",
+    			"cancel": "Отмена"
+    		},
+    		"INTRO": {
+    			"intro_message": "Пожалуйста, заполните необходимые поля",
+    			"start_dialog_button": "Начать диалог",
+    			"cancel": "Отмена",
+    			"PLACEHOLDERS": {
+    				"uname": "Ваше имя",
+    				"email": "Ваш электронный адрес",
+    				"phone": "Ваш телефон",
+    				"subject": "Тема диалога",
+    				"lang": "Выберите язык диалога"
+    			}
+    		},
+    		"MESSAGES": {
+    			"PLACEHOLDERS": {
+    				"message": "Ваше сообщение здесь..."
+    			}
+    		},
+    		"OFFLINE": {
+    			"offline_message": "Сейчас мы оффлайн, пожалуйста, оставьте нам сообщение, мы свяжемся с Вами в ближайшее время",
+    			"send_message_header": "Отправить сообщение",
+    			"send_message_button": "Отправить",
+                "choose_file": "+ Добавить файл...",
+    			"close": "Закрыть",
+    			"PLACEHOLDERS": {
+    				"uname": "Ваше имя",
+    				"email": "Ваш электронный адрес",
+    				"message": "Ваше сообщение здесь..."
+    			}
+    		},
+    		"CLOSE_CHAT": {
+    			"close_chat_header": "Спасибо, что обратились к нам!",
+    			"send_dialog_label": "Отправить диалог на ваш email?",
+    			"finish_dialog_button": "Завершить диалог",
+    			"rate_agent": "Оценить работу оператора",
+    			"back": "Назад",
+    			"PLACEHOLDERS": {
+    				"email": "Ваш электронный адрес",
+    				"comment": "Пожалуйста, оставьте здесь свой комментарий..."
+    			}
+    		},
+    		"AUDIO_CALL": {
+    			"confirm_access": "Пожалуйста, подтвердите доступ к микрофону",
+    			"calling_agent": "Идет вызов",
+    			"connected_with_agent": "Вызов соединен",
+    			"call_ended": "Вызов завешен",
+    			"call_failed": "Сбой вызова \n Пожалуйста, попробуйте позже",
+    			"call_canceled": "Вызов отменен",
+    			"end_call": "Заверший вызов",
+    			"try_again": "Попробовать еще раз"
+    		},
+            "CALLBACK": {
+                "title": "Введите номер телефона, мы перезвоним в течение указанного времени.",
+                "confirm_callback": "Подтвердить",
+                "sending_request": "Пожалуйста, ожидайте",
+                "request_sent": "Запрос отправлен, оператор свяжется с вами в указанное время.",
+                "back": "Назад",
+                "close": "Закрыть",
+                "LABELS": {
+                    "phone": "Перезвонить по номеру",
+                    "time": "через"
+                },
+                "PLACEHOLDERS": {
+                    "phone": "067 123 45 67"
+                },
+                "TIME_POINTS": [
+                    { "minutes": 0.5, "label": "30 секунд" },
+                    { "minutes": 1, "label": "1 минуту" },
+                    { "minutes": 5, "label": "5 минут" },
+                    { "minutes": 10, "label": "10 минут" },
+                    { "minutes": 15, "label": "15 минут" },
+                    { "minutes": 20, "label": "20 минут" },
+                    { "minutes": 25, "label": "25 минут" },
+                    { "minutes": 30, "label": "30 минут" }
+                ]
+            }
+    	},
+    	"AGENT_RATES": {
+    		"excellent": "Отлично",
+    		"good": "Хорошо",
+    		"fair": "Нормально",
+    		"bad": "Плохо"
+    	},
+    	"EMAIL_SUBJECTS": {
+    		"dialog": "Ваш диалог на",
+			"complain": "Комментарий к диалогу от",
+			"request": "Новое сообщение от"
+    	},
+    	"FORMS": {
+    		"send": "Отправить",
+    		"cancel": "Отмена",
+    		"submitted": "Форма отправлена, спасибо!",
+			"canceled": "Форма отклонена",
+    		"DESCRIPTIONS": {
+    			"test": "Пожалуйста, заполните форму"
+    		},
+    		"PLACEHOLDERS": {
+    			"uname": "Ваше имя",
+    			"email": "Ваш электронный адрес",
+    			"phone": "Ваш телефон"
+    		}
+    	},
+    	"FLOATING_BUTTON": {
+    		"close": "Закрыть"
+    	},
+    	"ERRORS": {
+    		"required": "Пожалуйста, заполните все необходимые поля",
+    		"email": "Пожалуйста, введите свой электронный адрес",
+    		"tel": "Пожалуйста, введите свой номер телефона"
+    	}
+    },
     "en": {
 		"lang": "English",
 		"default_user_name": "You",
-		"default_title": "Live chat",
 		"default_offer": "Welcome, need some help?",
-		"greets": "Greetings!",
-		"cancel": "Cancel",
-		"close": "Close",
-		"finish": "Finish",
-		"back": "Back",
-		"send": "Send",
-		"send_message_button": "Send message",
-		"start_dialog_button": "Start dialog",
-		"finish_dialog_button": "Finish dialog",
-		"choose_dialog_lang": "Choose dialog language",
-		"intro_message": "Please, introduce yourself",
-		"offline_message": "We are offline now, please leave us a message, we'll contact you shortly",
-		"send_message_header": "Send a message",
-		"close_chat_header": "Thank you for reaching us!",
-		"send_dialog_label": "Send dialog to your email?",
-		"rate_agent": "Rate agent service",
-		"rates": {
+		"TOP_BAR": {
+			"title": "Live chat"
+		},
+		"PANELS": {
+			"CONNECTION_TYPES": {
+				"choose_conn_type": "Please, choose a connection type",
+                "call_agent_btn": "Call agent",
+				"callback_btn": "Call me",
+				"chat_agent_btn": "Start chat",
+				"cancel": "Cancel"
+			},
+			"INTRO": {
+				"intro_message": "Please, introduce yourself",
+				"start_dialog_button": "Start dialog",
+				"cancel": "Cancel",
+				"PLACEHOLDERS": {
+					"uname": "Your name",
+					"email": "Your email",
+					"phone": "Your phone",
+					"subject": "Dialog's subject",
+					"lang": "Choose dialog language"
+				}
+			},
+			"MESSAGES": {
+				"PLACEHOLDERS": {
+					"message": "Your message here..."
+				}
+			},
+			"OFFLINE": {
+				"offline_message": "We are offline now, please leave us a message, we'll contact you shortly",
+				"send_message_header": "Send a message",
+				"send_message_button": "Send message",
+                "choose_file": "+ Add file...",
+				"close": "Close",
+				"PLACEHOLDERS": {
+					"uname": "Your name",
+					"email": "Your email",
+					"message": "Your message here..."
+				}
+			},
+			"CLOSE_CHAT": {
+				"close_chat_header": "Thank you for reaching us!",
+				"send_dialog_label": "Send dialog to your email?",
+				"finish_dialog_button": "Finish dialog",
+				"rate_agent": "Rate agent service",
+				"back": "Back",
+				"PLACEHOLDERS": {
+					"email": "Your email",
+					"comment": "Please, leave your comment here..."
+				}
+			},
+			"AUDIO_CALL": {
+				"confirm_access": "Please, confirm access to microphone",
+				"calling_agent": "Calling Agent",
+				"connected_with_agent": "Connected with Agent",
+				"call_ended": "Call ended",
+				"call_failed": "Call failed \n Please, try again later",
+				"call_canceled": "Call canceled",
+				"end_call": "End call",
+				"try_again": "Try again"
+			},
+            "CALLBACK": {
+                "title": "Enter your phone number, we will call back within the specified time.",
+                "confirm_callback": "Confirm",
+                "sending_request": "Please, wait",
+                "request_sent": "Request sent, the agent will call you at a specified time.",
+                "back": "Back",
+                "close": "Close",
+                "LABELS": {
+                    "phone": "Make a call on",
+                    "time": "in"
+                },
+                "PLACEHOLDERS": {
+                    "phone": "067 123 45 67"
+                },
+                "TIME_POINTS": [
+                    { "minutes": 0.5, "label": "30 seconds" },
+                    { "minutes": 1, "label": "1 minute" },
+                    { "minutes": 5, "label": "5 minutes" },
+                    { "minutes": 10, "label": "10 minutes" },
+                    { "minutes": 15, "label": "15 minutes" },
+                    { "minutes": 20, "label": "20 minutes" },
+                    { "minutes": 25, "label": "25 minutes" },
+                    { "minutes": 30, "label": "30 minutes" }
+                ]
+            }
+		},
+		"AGENT_RATES": {
 			"excellent": "Excellent",
 			"good": "Good",
 			"fair": "Fair",
 			"bad": "Bad"
 		},
-		"email_subjects": {
+		"EMAIL_SUBJECTS": {
 			"dialog": "Your dialog on",
 			"complain": "Dialog comment from",
 			"request": "New message from"
 		},
-		"required_error": {
-			"fields": "Please fill in all required fields",
-			"email": "Please fill in your email",
-			"tel": "Please fill in your telephone number"
-		},
-		"init_pane": {
-			"choose_conn_type": "Please, choose a connection type",
-			"call_agent_btn": "Call agent",
-			"chat_agent_btn": "Start chat"
-		},
-		"call_pane": {
-			"confirm_access": "Please, confirm access to microphone",
-			"calling_agent": "Calling Agent",
-			"connected_with_agent": "Connected with Agent",
-			"call_ended": "Call ended",
-			"call_failed": "Call failed \n Please, try again later",
-			"call_canceled": "Call canceled",
-			"end_call": "End call",
-			"try_again": "Try again"
-		},
-		"form_submitted": "Form sent, thank you!",
-		"form_canceled": "Form cancelled",
-		"forms": {
-			"description": {
-				"test": "Please, fill in the form",
+		"FORMS": {
+			"send": "Send",
+			"cancel": "Cancel",
+			"submitted": "Form sent, thank you!",
+			"canceled": "Form cancelled",
+			"DESCRIPTIONS": {
+				"test": "Please, fill in the form"
 			},
-			"pholder": {
+			"PLACEHOLDERS": {
 				"uname": "Your name",
 				"email": "Your email",
-				"phone": "Your phone",
-				"subject": "Dialog's subject",
-				"message": "Your message here...",
-				"comment": "Please, leave your comment here..."
+				"phone": "Your phone"
 			}
-		}
-    },
-    "uk": {
-    	"lang": "Українська",
-    	"default_user_name": "Ви",
-    	"default_title": "Онлайн чат",
-    	"default_offer": "Ласкаво просимо, потрібна допомога?",
-    	"greets": "Вітаємо!",
-		"cancel": "Відміна",
-		"close": "Закрити",
-		"finish": "Завершити",
-		"back": "Назад",
-		"send": "Відправити",
-		"send_message_button": "Відправити",
-    	"start_dialog_button": "Розпочати діалог",
-    	"finish_dialog_button": "Закінчити діалог",
-		"choose_dialog_lang": "Оберіть мову діалогу",
-		"intro_message": "Будь ласка, заповніть необхідні поля",
-		"offline_message": "Наразі ми оффлайн, будь ласка, залиште нам повідомлення, ми зв'яжемося з Вами найближчим часом",
-		"send_message_header": "Відправити повідомлення",
-		"close_chat_header": "Дякуємо, що звернулися до нас!",
-		"send_dialog_label": "Відправити діалог на ваш email?",
-		"rate_agent": "Оцінити роботу оператора",
-		"rates": {
-			"excellent": "Відмінно",
-			"good": "Добре",
-			"fair": "Задовільно",
-			"bad": "Погано"
 		},
-		"email_subjects": {
-			"dialog": "Ваш діалог на",
-			"complain": "Коментар до діалогу від",
-			"request": "Нове повідомлення від"
+		"FLOATING_BUTTON": {
+			"close": "Close"
 		},
-		"required_error": {
-			"fields": "Будь ласка, заповніть всі необхідні поля",
-			"email": "Будь ласка, введіть свою електронну адресу",
-			"tel": "Будь ласка, введіть свій номер телефону"
-		},
-		"init_pane": {
-			"choose_conn_type": "Будь ласка, виберіть тип з'єднання",
-			"call_agent_btn": "Виклик агента",
-			"chat_agent_btn": "Почати чат"
-		},
-		"call_pane": {
-			"confirm_access": "Будь ласка, підтвердіть доступ до мікрофона",
-			"calling_agent": "Йде виклик",
-			"connected_with_agent": "Виклик з'єднаний",
-			"call_ended": "Виклик завершено",
-			"call_failed": "Збій виклику \n Будь ласка спробуйте пізніше",
-			"call_canceled": "Виклик скасований",
-			"end_call": "Завершити виклик",
-			"try_again": "Спробувати ще раз"
-		},
-		"form_submitted": "Форма відправлена, дякуємо!",
-		"form_canceled": "Форма відхилена",
-		"forms": {
-			"description": {
-				"test": "Будь ласка, заповніть форму"
-			},
-			"pholder": {
-				"uname": "Ваше ім'я",
-				"email": "Ваша електронна адреса",
-				"phone": "Ваш телефон",
-				"subject": "Тема діалогу",
-				"message": "Ваше повідомлення тут...",
-				"comment": "Будь ласка, залиште тут свій коментар..."
-			}
-		}
-    },
-    "ru": {
-    	"lang": "Русский",
-    	"default_user_name": "Вы",
-		"default_title": "Онлайн чат",
-		"default_offer": "Добро пожаловать, нужна помощь?",
-    	"greets": "Приветствуем!",
-		"cancel": "Отмена",
-		"close": "Закрыть",
-		"finish": "Завершить",
-		"back": "Назад",
-		"send": "Отправить",
-		"send_message_button": "Отправить",
-    	"start_dialog_button": "Начать диалог",
-    	"finish_dialog_button": "Завершить диалог",
-		"choose_dialog_lang": "Выберите язык диалога",
-		"intro_message": "Пожалуйста, звполните необходимые поля",
-		"offline_message": "Сейчас мы оффлайн, пожалуйста, оставьте нам сообщение, мы свяжемся с Вами в ближайшее время",
-		"send_message_header": "Отправить сообщение",
-		"close_chat_header": "Спасибо, что обратились к нам!",
-		"send_dialog_label": "Отправить диалог на ваш email?",
-		"rate_agent": "Оценить работу оператора",
-		"rates": {
-			"excellent": "Отлично",
-			"good": "Хорошо",
-			"fair": "Нормально",
-			"bad": "Плохо"
-		},
-		"email_subjects": {
-			"dialog": "Ваш диалог на",
-			"complain": "Комментарий к диалогу от",
-			"request": "Новое сообщение от"
-		},
-		"required_error": {
-			"fields": "Пожалуйста, заполните все необходимые поля",
-			"email": "Пожалуйста, введите свой электронный адрес",
-			"tel": "Пожалуйста, введите свой номер телефона"
-		},
-		"init_pane": {
-			"choose_conn_type": "Пожалуйста, выберите способ соединения",
-			"call_agent_btn": "Вызов агента",
-			"chat_agent_btn": "Начать чат"
-		},
-		"call_pane": {
-			"confirm_access": "Пожалуйста, подтвердите доступ к микрофону",
-			"calling_agent": "Идет вызов",
-			"connected_with_agent": "Вызов соединен",
-			"call_ended": "Вызов завешен",
-			"call_failed": "Сбой вызова \n Пожалуйста, попробуйте позже",
-			"call_canceled": "Вызов отменен",
-			"end_call": "Заверший вызов",
-			"try_again": "Попробовать еще раз"
-		},
-		"form_submitted": "Форма отправлена, спасибо!",
-		"form_canceled": "Форма отклонена",
-		"forms": {
-			"description": {
-				"test": "Пожалуйста, заполните форму"
-			},
-			"pholder": {
-				"uname": "Ваше имя",
-				"email": "Ваш электронный адрес",
-				"phone": "Ваш телефон",
-				"subject": "Тема диалога",
-				"message": "Ваше сообщение здесь...",
-				"comment": "Пожалуйста, оставьте здесь свой комментарий..."
-			}
+		"ERRORS": {
+			"required": "Please fill in all required fields",
+			"email": "Please fill in your email",
+			"tel": "Please fill in your telephone number"
 		}
     }
-};
+}

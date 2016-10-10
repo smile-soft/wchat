@@ -1,3 +1,4 @@
+var debug = require('./debug');
 var events = {},
 JsSIP = require('./jssip.min.js'),
 // JsSIP = global.JsSIP,
@@ -15,11 +16,11 @@ function isWebrtcSupported(){
 }
 
 function initJsSIPEvents(){
-	sipClient.on('connected', function(e){ console.log('sip connected event: ', e); });
-	sipClient.on('disconnected', function(e){ console.log('sip disconnected event: ', e); });
-	sipClient.on('newMessage', function(e){ console.log('sip newMessage event: ', e); });
+	sipClient.on('connected', function(e){ debug.log('sip connected event: ', e); });
+	sipClient.on('disconnected', function(e){ debug.log('sip disconnected event: ', e); });
+	sipClient.on('newMessage', function(e){ debug.log('sip newMessage event: ', e); });
 	sipClient.on('newRTCSession', function(e){
-		console.log('sip newRTCSession event: ', e);
+		debug.log('sip newRTCSession event: ', e);
 		events.emit('webrtc/newRTCSession', e);
 		// if(e.session.direction === 'outgoing')
 		// 	events.emit('webrtc/outgoingCall', e);
@@ -28,35 +29,35 @@ function initJsSIPEvents(){
 		
 			sipSession = e.session;
 	});
-	sipClient.on('registered', function(e){ console.log('sip registered event: ', e); });
-	sipClient.on('unregistered', function(e){ console.log('sip unregistered event: ', e); });
-	sipClient.on('registrationFailed', function(e){ console.log('sip registrationFailed event: ', e); });
+	sipClient.on('registered', function(e){ debug.log('sip registered event: ', e); });
+	sipClient.on('unregistered', function(e){ debug.log('sip unregistered event: ', e); });
+	sipClient.on('registrationFailed', function(e){ debug.log('sip registrationFailed event: ', e); });
 
 	sipCallEvents = {
 		progress: function(e){
-			console.log('call progress event: ', e);
+			debug.log('call progress event: ', e);
 			events.emit('webrtc/progress', e);
 		},
 		failed: function(e){
-			console.log('call failed event:', e);
+			debug.log('call failed event:', e);
 			events.emit('webrtc/failed', e);
 		},
 		ended: function(e){
-			console.log('call ended event: ', e);
+			debug.log('call ended event: ', e);
 			events.emit('webrtc/ended', e);
 		},
 		confirmed: function(e){
-			console.log('call confirmed event: ', e);
+			debug.log('call confirmed event: ', e);
 			events.emit('webrtc/confirmed', e);
 		},
 		addstream: function(e){
-			console.log('call addstream event: ', e);
+			debug.log('call addstream event: ', e);
 			events.emit('webrtc/addstream', e);
 			var stream = e.stream;
 			options.audioRemote = JsSIP.rtcninja.attachMediaStream(options.audioRemote, stream);
 		}
 		// sdp: function(e){
-		// 	console.log('sdp: ', e);
+		// 	debug.log('sdp: ', e);
 		// }
 	};
 }
@@ -92,12 +93,12 @@ function terminate(){
 }
 
 function answer(){
-	console.log('answer: ',sipClient);
+	debug.log('answer: ',sipClient);
 	sipSession.answer();
 }
 
 function hold(){
-	console.log('hold: ', sipSession.isOnHold());
+	debug.log('hold: ', sipSession.isOnHold());
 	if(sipSession && sipSession.isOnHold().local) {
 		sipSession.unhold();
 	} else {
@@ -113,7 +114,7 @@ function createRemoteAudio(){
 }
 
 function init(opts){
-	console.log('Initiating WebRTC module:', opts);
+	debug.log('Initiating WebRTC module:', opts);
 	options = opts;
 
 	// !!get rid of this!!

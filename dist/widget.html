@@ -1,162 +1,367 @@
 <% var frases = translations[currLang]; %>
+<% var panels = frases.PANELS; %>
 <% var positionClass = defaults.position === 'right' ? 'position-right' : 'position-left' %>
 <div id="<%- defaults.prefix %>-wg-cont" class="<%- defaults.prefix %>-wg-cont <%- positionClass %>">
-	<div id="<%- defaults.prefix %>-wg-panes" class="<%- defaults.prefix %>-wg-panes" style="<% if(defaults.styles.width) { %>width: <%- defaults.styles.width %>;<% } %>">
+
+	<!-- ***** Panes container ***** -->
+	<div 
+		id="<%- defaults.prefix %>-wg-panes" 
+		class="<%- defaults.prefix %>-wg-panes" 
+		style="<% if(defaults.styles.width) { %>width: <%- defaults.styles.width %>;<% } %>">
+
+		<!-- ***** Top bar ***** -->
 		<div class="<%- defaults.prefix %>-top-bar">
-			<h4 class="<%- defaults.prefix %>-wg-title <%- defaults.prefix %>-uppercase"><%- defaults.title || frases.default_title %></h4>
+
+			<!-- Main title -->
+			<h4 class="<%- defaults.prefix %>-wg-title <%- defaults.prefix %>-uppercase">
+				<%- defaults.title || frases.TOP_BAR.title %>
+			</h4>
+
+			<!-- Action buttons (minimize, close) -->
 			<div class="<%- defaults.prefix %>-wg-minimize">
-				<a href="#" data-<%- defaults.prefix %>-handler="closeWidget">
+
+				<a 
+					href="#" 
+					data-<%- defaults.prefix %>-handler="closeWidget">
+					
 					<span style="font-weight: bold">_</span>
+				
 				</a>
-				<!-- <a href="#" data-<%- defaults.prefix %>-handler="openWindow">
-					<span class="<%- defaults.prefix %>-icon-arrow-up-left2"></span>
-				</a> -->
-				<a href="#" data-<%- defaults.prefix %>-handler="finish">
+				
+				<a 
+					href="#" 
+					data-<%- defaults.prefix %>-handler="finish">
+
 					<span class="<%- defaults.prefix %>-icon-remove"></span>
+
 				</a>
+
 			</div>
 		</div>
-		<div class="<%- defaults.prefix %>-wg-pane" data-<%- defaults.prefix %>-pane="chooseConnection">
-			<div class="<%- defaults.prefix %>-pane-header <%- defaults.prefix %>-dark" <% if(defaults.styles.intro.backgroundImage) { %> style="background-image: url(<%- defaults.server %><%- defaults.path %><%- defaults.styles.intro.backgroundImage %>)" <% } %>>
+		<!-- ***** Top bar ends ***** -->
+
+		<!-- ***** Connection types pane ***** -->
+		<div 
+			class="<%- defaults.prefix %>-wg-pane" 
+			data-<%- defaults.prefix %>-pane="chooseConnection">
+			
+			<!-- Panel's image container -->
+			<div 
+				class="<%- defaults.prefix %>-pane-header <%- defaults.prefix %>-dark" 
+				<% if(defaults.styles.intro.backgroundImage) { %> 
+					style="background-image: url(<%- defaults.server %><%- defaults.path %><%- defaults.styles.intro.backgroundImage %>)" 
+				<% } %>>
+
+				<!-- The text displayed on image -->
 				<div class="<%- defaults.prefix %>-backdrop-cont <%- defaults.prefix %>-white">
 					<br>
-					<p><%- frases.init_pane.choose_conn_type %></p>
+					<p><%- panels.CONNECTION_TYPES.choose_conn_type %></p>
 				</div>
+
 			</div>
 			<div class="<%- defaults.prefix %>-pane-body">
-				<form id="<%- defaults.prefix %>-init-form" name="<%- defaults.prefix %>InitForm">
-					<button 
-						type="button" 
-						class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
-						style="background-color: <%- defaults.styles.primary.backgroundColor %>; color: <%- defaults.styles.primary.color %>; border: 1px solid <%- defaults.styles.primary.backgroundColor %>;"
-						data-<%- defaults.prefix %>-handler="initCall">
-						<%- frases.init_pane.call_agent_btn %>
-					</button>
+
+				<form 
+					id="<%- defaults.prefix %>-init-form" 
+					name="<%- defaults.prefix %>InitForm">
+
+					<!-- Display call button if WebRTC is enabled and supported by the browser -->
+					<% if(defaults.webrtcEnabled) { %>
+						<button 
+							type="button" 
+							class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
+							style="
+								background-color: <%- defaults.styles.primary.backgroundColor %>; 
+								color: <%- defaults.styles.primary.color %>; 
+								border: 1px solid <%- defaults.styles.primary.backgroundColor %>;"
+							data-<%- defaults.prefix %>-handler="initCall">
+
+							<%- panels.CONNECTION_TYPES.call_agent_btn %>
+
+						</button>
+					<% } %>
+
+					<!-- Display callback button if callback task is configured in the settings -->
+					<% if(defaults.callback && defaults.callback.task) { %>
+						<button 
+							type="button" 
+							class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
+							style="
+								background-color: <%- defaults.styles.primary.backgroundColor %>; 
+								color: <%- defaults.styles.primary.color %>; 
+								border: 1px solid <%- defaults.styles.primary.backgroundColor %>;"
+							data-<%- defaults.prefix %>-handler="initCallback">
+
+							<%- panels.CONNECTION_TYPES.callback_btn %>
+
+						</button>
+					<% } %>
+
+					<!-- Init chat button -->
 					<button
 						type="button" 
 						class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
 						style="background-color: <%- defaults.styles.primary.backgroundColor %>; color: <%- defaults.styles.primary.color %>; border: 1px solid <%- defaults.styles.primary.backgroundColor %>;"
 						data-<%- defaults.prefix %>-handler="initChat">
-						<%- frases.init_pane.chat_agent_btn %>
+						<%- panels.CONNECTION_TYPES.chat_agent_btn %>
 					</button>
-					<a href="#" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-block" data-<%- defaults.prefix %>-handler="closeWidget"><%- frases.cancel %></a>
+
+					<!-- Close widget button -->
+					<a href="#" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-block" data-<%- defaults.prefix %>-handler="closeWidget"><%- panels.CONNECTION_TYPES.cancel %></a>
 				</form>
 			</div>
 		</div>
+		<!-- ***** Connection types pane ends ***** -->
+
+		<!-- ***** Intro pane. Displayed if configured in the settings object. ***** -->
 		<% if(defaults.intro.length) { %>
-		<div class="<%- defaults.prefix %>-wg-pane" data-<%- defaults.prefix %>-pane="credentials">
-			<div class="<%- defaults.prefix %>-pane-header <%- defaults.prefix %>-dark" <% if(defaults.styles.intro.backgroundImage) { %> style="background-image: url(<%- defaults.server %><%- defaults.path %><%- defaults.styles.intro.backgroundImage %>)" <% } %>>
-				<div class="<%- defaults.prefix %>-backdrop-cont <%- defaults.prefix %>-white">
-					<br>
-					<p><%- frases.intro_message %></p>
+			<div 
+				class="<%- defaults.prefix %>-wg-pane" 
+				data-<%- defaults.prefix %>-pane="credentials">
+
+				<!-- Panel's image container -->
+				<div 
+					class="<%- defaults.prefix %>-pane-header <%- defaults.prefix %>-dark" 
+					<% if(defaults.styles.intro.backgroundImage) { %> 
+						style="background-image: url(<%- defaults.server %><%- defaults.path %><%- defaults.styles.intro.backgroundImage %>)" 
+					<% } %>>
+
+					<!-- The text displayed on image -->
+					<div class="<%- defaults.prefix %>-backdrop-cont <%- defaults.prefix %>-white">
+						<br>
+						<p><%- panels.INTRO.intro_message %></p>
+					</div>
+
+				</div>
+
+				<div class="<%- defaults.prefix %>-pane-body">
+					<form 
+						id="<%- defaults.prefix %>-intro-form" 
+						name="<%- defaults.prefix %>IntroForm" 
+						data-validate-form="true">
+
+						<!-- Iterating over intro array, which is a list of fields and their properties -->
+						<% _.forEach(defaults.intro, function(item){ %>
+							<% if(item.name !== 'lang') { %>
+								<input 
+									type="<%= item.type || 'text' %>" 
+									placeholder="
+										<%= item.placeholder || panels.INTRO.PLACEHOLDERS[item.name] %> 
+										<% if(item.required){ %> * <% } %>" 
+									name="<%- item.name %>" 
+									<% if(item.save){ %> value="<%- credentials[item.name] %>" <% } %> 
+									<% if(item.required){ %> required <% } %>>
+							<% } %>
+
+							<% if(item.name === 'lang') { %>
+								<select name="lang">
+									<% _.forEach(languages, function(lang) { %>
+										<option 
+											value="<%- lang %>" 
+											<% if(lang === currLang) { %> selected <% } %> >
+											<%- translations[lang].lang %>
+										</option>
+									<% }); %>
+								</select>
+							<% } %>
+
+						<% }); %>
+
+						<!-- Init chat with intro properties -->
+						<button 
+							type="submit" 
+							class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
+							style="
+								background-color: <%- defaults.styles.primary.backgroundColor %>; 
+								color: <%- defaults.styles.primary.color %>; 
+								border: 1px solid <%- defaults.styles.primary.backgroundColor %>;">
+
+							<%- panels.INTRO.start_dialog_button %>
+									
+						</button>
+
+						<!-- Close widget button -->
+						<a href="#" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-block" data-<%- defaults.prefix %>-handler="closeWidget"><%- panels.INTRO.cancel %></a>
+					</form>
 				</div>
 			</div>
-			<div class="<%- defaults.prefix %>-pane-body">
-				<h4></h4>
-				<form id="<%- defaults.prefix %>-intro-form" name="<%- defaults.prefix %>IntroForm" data-validate-form="true">
-					<% _.forEach(defaults.intro, function(item){ %>
-						<% if(item.name !== 'lang') { %>
-							<input type="<%= item.type || 'text' %>" placeholder="<%= item.placeholder || frases.forms.pholder[item.name] %> <% if(item.required){ %>*<% } %>" name="<%- item.name %>" <% if(item.save){ %> value="<%- credentials[item.name] %>" <% } %> <% if(item.required){ %>required<% } %>>
-						<% } %>
-						<% if(item.name === 'lang') { %>
-							<select name="lang">
-								<% _.forEach(languages, function(lang) { %>
-									<option value="<%- lang %>" <% if(lang === currLang) { %> selected <% } %> ><%- translations[lang].lang %></option>
-								<% }); %>
-							</select>
-						<% } %>
-					<% }); %>
-					<button type="submit" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" style="background-color: <%- defaults.styles.primary.backgroundColor %>; color: <%- defaults.styles.primary.color %>; border: 1px solid <%- defaults.styles.primary.backgroundColor %>;"><%- frases.start_dialog_button %></button>
-					<a href="#" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-block" data-<%- defaults.prefix %>-handler="closeWidget"><%- frases.cancel %></a>
-				</form>
-			</div>
-		</div>
 		<% } %>
-		<div class="<%- defaults.prefix %>-wg-pane" data-<%- defaults.prefix %>-pane="messages">
-			<ul id="<%- defaults.prefix %>-messages-cont" class="<%- defaults.prefix %>-messages-cont" style="<% if(defaults.styles.height) { %>height: <%- defaults.styles.height %>;<% } %>"></ul>
+		<!-- ***** Intro pane ends ***** -->
+
+		<!-- ***** Messages pane ***** -->
+		<div  class="<%- defaults.prefix %>-wg-pane" data-<%- defaults.prefix %>-pane="messages">
+			
+			<!-- Messages container -->
+			<ul 
+				id="<%- defaults.prefix %>-messages-cont" 
+				class="<%- defaults.prefix %>-messages-cont" 
+				style="
+					<% if(defaults.styles.height) { %>
+						height: <%- defaults.styles.height %>;
+					<% } %>">
+					
+			</ul>
+
 			<div class="<%- defaults.prefix %>-write-cont">
+				
+				<!-- "Agent is typing" indicator -->
 				<div class="<%- defaults.prefix %>-loader">
 					<span></span>
 					<span></span>
 					<span></span>
 				</div>
-				<label class="<%- defaults.prefix %>-sendfile-cont" for="<%- defaults.prefix %>-file-select">
-					<input type="file" id="<%- defaults.prefix %>-file-select">
-					<span class="<%- defaults.prefix %>-icon-upload" style="color: <%- defaults.styles.primary.backgroundColor %>"><span>
+
+				<!-- "Attach file" button -->
+				<label 
+					class="<%- defaults.prefix %>-sendfile-cont" 
+					for="<%- defaults.prefix %>-file-select">
+
+					<input 
+						type="file" 
+						id="<%- defaults.prefix %>-file-select">
+					
+					<span 
+						class="<%- defaults.prefix %>-icon-upload" 
+						style="color: <%- defaults.styles.primary.backgroundColor %>">
+					<span>
+
 				</label>
-				<textarea id="<%- defaults.prefix %>-message-text" class="<%- defaults.prefix %>-msg-textarea" placeholder="<%- frases.forms.pholder.message %>" maxlength="1000"></textarea>
-				<a href="#" class="<%- defaults.prefix %>-sendmsg-btn <%- defaults.prefix %>-button" data-<%- defaults.prefix %>-handler="sendMessage">
-					<span class="<%- defaults.prefix %>-icon-paper-plane" style="color: <%- defaults.styles.primary.backgroundColor %>"></span>
+
+				<!-- Field for typing the user message -->
+				<textarea 
+					id="<%- defaults.prefix %>-message-text" 
+					class="<%- defaults.prefix %>-msg-textarea" 
+					placeholder="<%- panels.MESSAGES.PLACEHOLDERS.message %>" 
+					maxlength="1000">		
+				</textarea>
+				
+				<!-- "Send a message" button -->
+				<a 
+					href="#" 
+					class="<%- defaults.prefix %>-sendmsg-btn <%- defaults.prefix %>-button" 
+					data-<%- defaults.prefix %>-handler="sendMessage">
+
+					<span 
+						class="<%- defaults.prefix %>-icon-paper-plane" 
+						style="color: <%- defaults.styles.primary.backgroundColor %>">
+					</span>
 				</a>
+
 			</div>
 		</div>
-		<div class="<%- defaults.prefix %>-wg-pane" data-<%- defaults.prefix %>-pane="sendemail">
-			<div class="<%- defaults.prefix %>-pane-header <%- defaults.prefix %>-dark" <% if(defaults.styles.sendmail.backgroundImage) { %> style="background-image: url(<%- defaults.server %><%- defaults.path %><%- defaults.styles.sendmail.backgroundImage %>)" <% } %>>
+		<!-- ***** Messages pane ends ***** -->
+
+		<!-- ***** Offline pane ***** -->
+		<div 
+			class="<%- defaults.prefix %>-wg-pane" 
+			data-<%- defaults.prefix %>-pane="sendemail">
+
+			<!-- Panel's image container -->
+			<div 
+				class="<%- defaults.prefix %>-pane-header <%- defaults.prefix %>-dark" 
+				<% if(defaults.styles.sendmail.backgroundImage) { %> 
+					style="background-image: url(<%- defaults.server %><%- defaults.path %><%- defaults.styles.sendmail.backgroundImage %>)" 
+				<% } %>>
+
+				<!-- The text displayed on image -->
 				<div class="<%- defaults.prefix %>-backdrop-cont <%- defaults.prefix %>-dark">
 					<br><br>
-					<p><%- frases.offline_message %></p>
-					<!-- <ul class="<%- defaults.prefix %>-nav-list <%- defaults.prefix %>-social-list">
-						<li>
-							<a href="#">
-								<i>f</i>
-							</a>
-						</li>
-						<li>
-							<a href="#">
-								<i>g</i>
-							</a>
-						</li>
-						<li>
-							<a href="#">
-								<i>t</i>
-							</a>
-						</li>
-					</ul> -->
+					<p><%- panels.OFFLINE.offline_message %></p>
 				</div>
+
 			</div>
+
 			<div class="<%- defaults.prefix %>-pane-body">
-				<h4 class="<%- defaults.prefix %>-uppercase"><%- frases.send_message_header %></h4>
+				<h4 class="<%- defaults.prefix %>-uppercase"><%- panels.OFFLINE.send_message_header %></h4>
 				<form id="<%- defaults.prefix %>-sendmail-form" data-validate-form="true">
-					<input type="text" name="uname" placeholder="<%- frases.forms.pholder.uname %>">
-					<input type="email" name="email" placeholder="<%- frases.forms.pholder.email %> *" required>
-					<textarea name="text" placeholder="<%- frases.forms.pholder.message %>" maxlength="1500"></textarea>
-					<input type="file" name="file">
-					<button type="submit" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" style="background-color: <%- defaults.styles.primary.backgroundColor %>; color: <%- defaults.styles.primary.color %>; border: 1px solid <%- defaults.styles.primary.backgroundColor %>;"><%- frases.send_message_button %></button>
-					<a href="#" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-block" data-<%- defaults.prefix %>-handler="closeWidget"><%- frases.close %></a>
+					<input type="text" name="uname" placeholder="<%- panels.OFFLINE.PLACEHOLDERS.uname %>">
+					<input type="email" name="email" placeholder="<%- panels.OFFLINE.PLACEHOLDERS.email %> *" required>
+					<textarea name="text" placeholder="<%- panels.OFFLINE.PLACEHOLDERS.message %>" maxlength="1500"></textarea>
+
+					<input type="file" name="file" id="<%- defaults.prefix %>-contactfile" class="<%- defaults.prefix %>-inputfile" />
+					<label for="<%- defaults.prefix %>-contactfile"><%- panels.OFFLINE.choose_file %></label>
+
+					<!-- "Send offline message" button -->
+					<button 
+						type="submit" 
+						class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
+						style="
+							background-color: <%- defaults.styles.primary.backgroundColor %>; 
+							color: <%- defaults.styles.primary.color %>; 
+							border: 1px solid <%- defaults.styles.primary.backgroundColor %>;">
+
+						<%- panels.OFFLINE.send_message_button %>
+							
+					</button>
+
+					<!-- Close widget button -->
+					<a href="#" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-block" data-<%- defaults.prefix %>-handler="closeWidget"><%- panels.OFFLINE.close %></a>
 				</form>
 			</div>
 		</div>
-		<div class="<%- defaults.prefix %>-wg-pane" data-<%- defaults.prefix %>-pane="closechat">
-			<div class="<%- defaults.prefix %>-pane-header <%- defaults.prefix %>-white" <% if(defaults.styles.closeChat.backgroundImage) { %> style="background-image: url(<%- defaults.server %><%- defaults.path %><%- defaults.styles.closeChat.backgroundImage %>)" <% } %>>
+		<!-- ***** Offline pane ends ***** -->
+
+		<!-- ***** Close chat pane ***** -->
+		<div 
+			class="<%- defaults.prefix %>-wg-pane" 
+			data-<%- defaults.prefix %>-pane="closechat">
+
+			<!-- Panel's image container -->
+			<div 
+				class="<%- defaults.prefix %>-pane-header <%- defaults.prefix %>-white" 
+				<% if(defaults.styles.closeChat.backgroundImage) { %> 
+					style="background-image: url(<%- defaults.server %><%- defaults.path %><%- defaults.styles.closeChat.backgroundImage %>)" 
+				<% } %>>
+
+				<!-- The text displayed on image -->
 				<div class="<%- defaults.prefix %>-backdrop-cont <%- defaults.prefix %>-white">
 					<br>
-					<p><%- frases.close_chat_header %></p>
+					<p><%- panels.CLOSE_CHAT.close_chat_header %></p>
 				</div>
+
 			</div>
+
 			<div class="<%- defaults.prefix %>-pane-body">
 				<form id="<%- defaults.prefix %>-closechat-form" data-validate-form="true">
 					<label for="<%- defaults.prefix %>-send-dialog">
 						<input type="checkbox" name="sendDialog" id="<%- defaults.prefix %>-send-dialog" />
-						<span><%- frases.send_dialog_label %></span>
+						<span><%- panels.CLOSE_CHAT.send_dialog_label %></span>
 					</label>
-					<input type="email" name="email" placeholder="<%- frases.forms.pholder.email %>">
+					<input type="email" name="email" placeholder="<%- panels.CLOSE_CHAT.PLACEHOLDERS.email %>">
 					<select name="rating">
-						<option value="">--- <%- frases.rate_agent %> ---</option>
-						<option value="5"><%- frases.rates.excellent %></option>
-						<option value="4"><%- frases.rates.good %></option>
-						<option value="3"><%- frases.rates.fair %></option>
-						<option value="2"><%- frases.rates.bad %></option>
+						<option value="">--- <%- panels.CLOSE_CHAT.rate_agent %> ---</option>
+						<option value="5"><%- frases.AGENT_RATES.excellent %></option>
+						<option value="4"><%- frases.AGENT_RATES.good %></option>
+						<option value="3"><%- frases.AGENT_RATES.fair %></option>
+						<option value="2"><%- frases.AGENT_RATES.bad %></option>
 					</select>
-					<textarea placeholder="<%- frases.forms.pholder.comment %>" name="text" maxlength="1500"></textarea>
-					<button type="submit" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" style="background-color: <%- defaults.styles.primary.backgroundColor %>; color: <%- defaults.styles.primary.color %>; border: 1px solid <%- defaults.styles.primary.backgroundColor %>;"><%- frases.finish_dialog_button %></button>
-					<a href="#messages" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-block"><%- frases.back %></a>
+					<textarea placeholder="<%- panels.CLOSE_CHAT.PLACEHOLDERS.comment %>" name="text" maxlength="1500"></textarea>
+
+					<!-- End chat and close widget button -->
+					<button 
+						type="submit" 
+						class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
+						style="
+							background-color: <%- defaults.styles.primary.backgroundColor %>; 
+							color: <%- defaults.styles.primary.color %>; 
+							border: 1px solid <%- defaults.styles.primary.backgroundColor %>;">
+
+						<%- panels.CLOSE_CHAT.finish_dialog_button %>
+							
+					</button>
+
+					<!-- "Back to the chat" button -->
+					<a href="#messages" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-block"><%- panels.CLOSE_CHAT.back %></a>
 				</form>
 			</div>
 		</div>
+		<!-- ***** Close chat pane ends ***** -->
+
+		<!-- ***** Audio call pane ***** -->
 		<div class="<%- defaults.prefix %>-wg-pane" data-<%- defaults.prefix %>-pane="callAgent">
 			<div class="<%- defaults.prefix %>-pane-body">
-				<div id="<%- defaults.prefix %>-call-spinner">
-					<h3 class="<%- defaults.prefix %>-text-center"><%- frases.call_pane.confirm_access %></h3>
+				<div id="<%- defaults.prefix %>-call-spinner" class="<%- defaults.prefix %>-spinner-pane">
+					<h3 class="<%- defaults.prefix %>-text-center"><%- panels.AUDIO_CALL.confirm_access %></h3>
 					<h3 class="<%- defaults.prefix %>-text-center <%- defaults.prefix %>-loader <%- defaults.prefix %>-shown" style="position: relative;">
 						<span></span>
 						<span></span>
@@ -164,7 +369,7 @@
 					</h3>
 				</div>
 				<div id="<%- defaults.prefix %>-call-info" class="<%- defaults.prefix %>-hidden">
-					<h3 class="<%- defaults.prefix %>-text-center" id="<%- defaults.prefix %>-call-state"><%- frases.call_pane.calling_agent %></h3>
+					<h3 class="<%- defaults.prefix %>-text-center" id="<%- defaults.prefix %>-call-state"><%- panels.AUDIO_CALL.calling_agent %></h3>
 					<h3 class="<%- defaults.prefix %>-text-center" id="<%- defaults.prefix %>-call-timer">00:00</h3>
 				</div>
 				<form id="<%- defaults.prefix %>-call-control">
@@ -175,21 +380,90 @@
 						class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block <%- defaults.prefix %>-hidden"
 						style="background-color: <%- defaults.styles.primary.backgroundColor %>; color: <%- defaults.styles.primary.color %>; border: 1px solid <%- defaults.styles.primary.backgroundColor %>;"
 						data-<%- defaults.prefix %>-handler="initCall">
-						<%- frases.call_pane.try_again %>
+						<%- panels.AUDIO_CALL.try_again %>
 					</button>	
 					<button 
 						type="button"
 						class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-warn <%- defaults.prefix %>-block"
 						data-<%- defaults.prefix %>-handler="endCall">
-						<%- frases.call_pane.end_call %>
+
+						<%- panels.AUDIO_CALL.end_call %>
+
 					</button>
 				</form>
 			</div>
 		</div>
+		<!-- ***** Audio call pane ends ***** -->
+
+		<!-- ***** Callback pane ***** -->
+		<div 
+			class="<%- defaults.prefix %>-wg-pane" 
+			data-<%- defaults.prefix %>-pane="callback">
+
+			<div class="<%- defaults.prefix %>-pane-body">
+				<div id="<%- defaults.prefix %>-callback-spinner" class="<%- defaults.prefix %>-hidden <%- defaults.prefix %>-spinner-pane">
+					<h3 class="<%- defaults.prefix %>-text-center"><%- panels.CALLBACK.sending_request %></h3>
+					<h3 class="<%- defaults.prefix %>-text-center <%- defaults.prefix %>-loader <%- defaults.prefix %>-shown" style="position: relative;">
+						<span></span>
+						<span></span>
+						<span></span>
+					</h3>
+				</div>
+				<form id="<%- defaults.prefix %>-callback-settings">
+					<p class="<%- defaults.prefix %>-text-center"><%- panels.CALLBACK.title %></p>
+					<hr>
+					<label><%- panels.CALLBACK.LABELS.phone %></label>
+					<input type="tel" name="phone" placeholder="<%- panels.CALLBACK.PLACEHOLDERS.phone %>" required>
+					<label><%- panels.CALLBACK.LABELS.time %></label>
+					<select name="time">
+						<% _.forEach(panels.CALLBACK.TIME_POINTS, function(point) { %>
+							<option value="<%- point.minutes %>"><%- point.label %></option>
+						<% }); %>
+					</select>
+					<hr>
+
+					<button
+						type="submit"
+						class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block"
+						style="
+							background-color: <%- defaults.styles.primary.backgroundColor %>; 
+							color: <%- defaults.styles.primary.color %>; 
+							border: 1px solid <%- defaults.styles.primary.backgroundColor %>;"
+						data-<%- defaults.prefix %>-handler="setCallback">
+
+						<%- panels.CALLBACK.confirm_callback %>
+
+					</button>
+
+					<a href="#chooseConnection" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-block"><%- panels.CALLBACK.back %></a>
+				</form>
+			</div>
+		</div>
+		<!-- ***** Callback pane ends ***** -->
+
+		<!-- ***** Callback sent pane ***** -->
+		<div class="<%- defaults.prefix %>-wg-pane" data-<%- defaults.prefix %>-pane="callbackSent">
+			<div class="<%- defaults.prefix %>-pane-body">
+				<div id="<%- defaults.prefix %>-callback-sent">
+					<h3 class="<%- defaults.prefix %>-text-center <%- defaults.prefix %>-icon-check <%- defaults.prefix %>-text-success"></h3>
+					<p class="<%- defaults.prefix %>-text-center"><%- panels.CALLBACK.request_sent %></p>
+					<form>
+						<hr>
+						<a href="#chooseConnection" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-block"><%- panels.CALLBACK.back %></a>
+						<a href="#" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-block" data-<%- defaults.prefix %>-handler="closeWidget"><%- panels.CALLBACK.close %></a>
+					</form>
+				</div>
+			</div>
+		</div>
+		<!-- ***** Callback sent pane ends ***** -->
+
 	</div>
+	<!-- ***** Panes container ends ***** -->
+
+	<!-- ***** Floating button container ***** -->
 	<div id="<%- defaults.prefix %>-btn-cont" class="<%- defaults.prefix %>-btn-cont">
 		<div class="<%- defaults.prefix %>-wg-btn">
-			<span class="<%- defaults.prefix %>-unnotify-btn" id="<%- defaults.prefix %>-unnotify-btn"><%- frases.close %> x</span>
+			<span class="<%- defaults.prefix %>-unnotify-btn" id="<%- defaults.prefix %>-unnotify-btn"><%- frases.FLOATING_BUTTON.close %> x</span>
 			<div id="<%- defaults.prefix %>-lastmsg" class="<%- defaults.prefix %>-lastmsg"></div>
 			<a href="#" class="<%- defaults.prefix %>-btn-link">
 				<span class="<%- defaults.prefix %>-btn-icon"></span>
@@ -197,4 +471,6 @@
 			</a>
 		</div>
 	</div>
+	<!-- ***** Floating button container ends ***** -->
+
 </div>

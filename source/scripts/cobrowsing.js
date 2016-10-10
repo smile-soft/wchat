@@ -1,4 +1,5 @@
 var _ = require('./lodash');
+var debug = require('./debug');
 var remoteEvents = [];
 var localEvents = [];
 var initiated = false;
@@ -17,7 +18,7 @@ var cursorX = 0, cursorY = 0;
 var requestAF;
 
 function init(options){
-	if(initiated) return console.info('Cobrowsing already initiated');
+	if(initiated) return debug.info('Cobrowsing already initiated');
 
 	addEvent(document, 'keyup', eventsHandler);
 	addEvent(document, 'keydown', eventsHandler);
@@ -34,12 +35,12 @@ function init(options){
 	initiated = true;
 	updateInterval = setInterval(emitEvents, updateIntervalValue);
 
-	console.log('cobrowsing module initiated with parameters: ', options);
+	debug.log('cobrowsing module initiated with parameters: ', options);
 	emit('cobrowsing/init');
 }
 
 function shareBrowser(){
-    if(shared) return console.info('Browser already shared');
+    if(shared) return debug.info('Browser already shared');
     addEvent(document, 'scroll', eventsHandler);
     addEvent(document, 'select', eventsHandler);
     addEvent(document, 'mousemove', eventsHandler);
@@ -52,12 +53,12 @@ function shareBrowser(){
     updateStateInterval = setInterval(updateState, updateIntervalValue);
     clearInterval(updateInterval);
 
-    console.log('browser shared');
+    debug.log('browser shared');
     emit('cobrowsing/shared', { entity: entity });
 }
 
 function unshareBrowser(){
-	if(!shared) return console.info('Browser already unshared');
+	if(!shared) return debug.info('Browser already unshared');
 
     removeEvent(document, 'scroll', eventsHandler);
     removeEvent(document, 'select', eventsHandler);
@@ -72,7 +73,7 @@ function unshareBrowser(){
     clearInterval(updateStateInterval);
 
 	emit('cobrowsing/unshared', { entity: entity });
-    console.log('browser unshared');
+    debug.log('browser unshared');
 }
 
 function unshareAll(){
@@ -333,7 +334,7 @@ function eventsHandler(evt){
 		params.scy = e.screenY;
 	}
 
-	// console.log('eventsHandler: ', params);
+	// debug.log('eventsHandler: ', params);
 	localEvents.push(params);
 }
 
@@ -352,7 +353,7 @@ function updateEvents(result){
 		for(var i=0; i<result.events.length; i++) {
 			evt = result.events[i];
 
-			// if(evt.shared !== undefined) console.log('shared events', eventTimestamp, evt, result.init);
+			// if(evt.shared !== undefined) debug.log('shared events', eventTimestamp, evt, result.init);
 			if(evt.timestamp < eventTimestamp) continue;
 			if(evt.entity === entity) continue;
 					

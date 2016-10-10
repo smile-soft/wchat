@@ -1,10 +1,16 @@
 var url = require('url');
 var http = require('http');
+var debug = require('./debug');
 var cache = {};
+
+module.exports = {
+	post: post,
+	get: get
+};
 
 function post(postUrl, data, cb){
 
-	// console.log('post request: ', postUrl, data);
+	// debug.log('post request: ', postUrl, data);
 
 	var urlObj = url.parse(postUrl),
 		
@@ -31,7 +37,7 @@ function post(postUrl, data, cb){
 			body += chunk;
 		});
 		res.on('end', function() {
-			// console.log(body);
+			// debug.log(body);
 			if(body === '{}') {
 				// body = JSON.parse({result: 'OK'});
 				body = "{result: 'OK'}";
@@ -76,8 +82,3 @@ function get(selector, postUrl, cb){
 		cb(err);
 	});
 }
-
-module.exports = {
-	post: post,
-	get: get
-};

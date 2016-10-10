@@ -43,7 +43,7 @@ Wchat({ server: 'http://ipcc-server-domain.com:8880' })
 ```
 ### Getting Started
 1) Put all files from `dist` folder to the folder on the IPCC webserver. The default path is: *path-to-the-ipcc-directory>/web/ipcc/webchat*.
-**Note**: if you prefer to change the default directory for the webchat files, then change the path parameter in the module's options declaration.
+**Note**: if you prefer to change the default directory for the webchat files, then change the path property in the module's options declaration.
 
 2) Add a script tag to the webpages where the module should be loaded.
 ```html
@@ -96,13 +96,13 @@ Module emits the following events:
 #### `session/create`
 New session created.
 
-Parameters:
+Properties:
 - `sid`: current session ID
 
 #### `session/continue`
 Active session continues. Emits after module initiation, when current session is active.
 
-Parameters:
+Properties:
 - `entity`: could be `user` or `agent`
 
 #### `session/join`
@@ -114,19 +114,19 @@ Current session closed.
 #### `widget/load`
 Widget template is fully loaded, compiled and inserted to the DOM.
 
-Parameters: 
+Properties: 
 - `widget`: widget's DOM node
 
 #### `chat/start`
 Chat request was sent to the server and was accepted.
 
-Parameters:
+Properties:
 - `timeout`: time (in seconds) before the dialog would be closed
 
 #### `chat/close`
 Dialog closed.
 
-Parameters:
+Properties:
 - `rating`: agent's service rating that was set by the user
 
 #### `chat/send`
@@ -147,14 +147,14 @@ Agent is typing a message.
 #### `form/submit`
 Form submitted.
 
-Parameters: 
+Properties: 
 - `formElement`: form element
 - `formData`: serialized object, represented as an object of keys and values
 
 #### `form/reject`
 Form rejected.
 
-Parameters: 
+Properties: 
 - `formName`: the value of the name attribute of the form that was rejected
 
 #### `Error`
@@ -180,14 +180,14 @@ You can set which of the fields user must fill in before starting the dialog. Ex
 	name: 'lang'
 }]
 ```
-Parameters:
+Properties:
 - `name`: name of the field
 - `required`: the value of that field shouldn't be empty
 - `placeholder`: could be any string value. If not defined, then it will be set automatically.
 - `save`: if `true`, the value would be stored in the session's memory and autofilled during the active session
 
 ### Setting Offer
-Parameters:
+Properties:
 - `inSeconds`: time since module initiation, when the offer message will be shown to the user
 - `from`: string representation of the message sender
 - `text`: if not defined, the value will be a default tranlation key
@@ -210,7 +210,7 @@ Default values:
 	}
 }
 ```
-Parameters:
+Properties:
 - `width`: widget width
 - `height`: height of the messages container
 - `primary.backgroundColor`: the background color of the elements, that represent widget's color schema
@@ -241,14 +241,14 @@ Default values:
 	color: '#777'
 }
 ```
-Parameters:
+Properties:
 - `[widgetState].backgroundColor`: button background color depending on widget's state
 - `[widgetState].color`: button icon color depending on widget's state
 - `color`: if `[widgetState].color` is not specified, this value will be used
 
 ### Setting WebRTC
-Parameters:
-- `sip`: User Agent configuration object with mandatory and optional parameters. The full list of parameters you can find at: [http://jssip.net/documentation/2.0.x/api/ua_configuration_parameters/](http://jssip.net/documentation/2.0.x/api/ua_configuration_parameters/). The mandatory parameters are:
+Properties:
+- `sip`: User Agent configuration object with mandatory and optional Properties. The full list of Properties you can find at: [http://jssip.net/documentation/2.0.x/api/ua_configuration_Properties/](http://jssip.net/documentation/2.0.x/api/ua_configuration_Properties/). The mandatory Properties are:
 
    * `ws_servers`: domain name or ip address of the websocket server (the same as IPCC server). Example: *wss://ipcc-domain-name-or-ip-address.com*
 

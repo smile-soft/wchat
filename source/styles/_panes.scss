@@ -230,5 +230,46 @@
 			box-shadow: none;
 			resize: none;
 		}
+
+		.swc-inputfile {
+			width: 0.1px;
+			height: 0.1px;
+			opacity: 0;
+			overflow: hidden;
+			position: absolute;
+			z-index: -1;
+		}
+
+		.swc-inputfile + label {
+		    display: inline-block;
+			width: 100%;
+			margin-bottom: 10px;
+			padding: 6px 10px;
+		    font-size: 14px;
+		    font-weight: 600;
+		    color: #555;
+		    background-color: #fff;
+		    border: 1px solid #BBBBBB;
+		    border-radius: 4px;
+		    cursor: pointer;
+
+		    white-space: nowrap;
+		    overflow: hidden;
+		    text-overflow: ellipsis;
+		}
+
+		.swc-inputfile:hover + label {
+			background-color: #eee;
+		}
+
+		.swc-inputfile:focus + label {
+			outline: 1px dotted #000;
+			outline: -webkit-focus-ring-color auto 5px;
+		}
+	}
+
+	.swc-spinner-pane {
+		min-height: 200px;
+		padding-top: 50px;
 	}
 }

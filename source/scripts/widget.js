@@ -1085,10 +1085,10 @@ function constructWindow(windowObject){
 	title.textContent = frases[currLang].TOP_BAR.title;
 
 	// loader = windowObject.document.createElement('script');
-	// loader.src = defaults.server+defaults.path+'loader.js';
+	// loader.src = defaults.clientPath+'loader.js';
 
 	script = windowObject.document.createElement('script');
-	script.src = defaults.server+defaults.path+'wchat.min.js';
+	script.src = defaults.clientPath+'wchat.min.js';
 	script.charset = 'UTF-8';
 
 	head.appendChild(viewport);
@@ -1675,7 +1675,7 @@ function addWidgetStyles(){
 	
 	var link = document.createElement('link');
 		link.rel = 'stylesheet';
-		link.href = defaults.stylesPath || defaults.server+defaults.path+'main.css';
+		link.href = defaults.stylesPath || defaults.clientPath+'main.css';
 
 	document.head.appendChild(link);
 }

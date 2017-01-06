@@ -224,13 +224,19 @@ WchatAPI.prototype.getMessages = function(cb){
 			return cb(err);
 		}
 
-		if(body.result.messages) {
-			this.emit('message/new', body.result);
-		} else if(body.result.typing) {
+		// Do not show old messages
+		if(body.result.timestamp > storage.getState('msgTimestamp')) {
+			storage.saveState('msgTimestamp', body.result.timestamp);
+			if(body.result.messages) {
+				this.emit('message/new', body.result);
+			}
+		}
+
+		if(body.result.typing) {
 			this.emit('message/typing', body.result);
 		}
-		storage.saveState('msgTimestamp', body.result.timestamp);
 		if(cb) cb(null, body.result);
+
 	}.bind(this));
 };
 

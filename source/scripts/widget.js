@@ -269,7 +269,7 @@ function onSessionSuccess(){
 	// Wait while translations are loaded
 	_.poll(function(){
 
-		return (frases !== null);
+		return frases !== null;
 
 	}, function(){
 		
@@ -552,7 +552,7 @@ function getMessages(){
 	if(storage.getState('chat'))
 		noMessagesTimeout = setTimeout(getMessages, 60*1000);
 	
-	api.getMessages(function(result) {
+	api.getMessages(function() {
 		if(storage.getState('chat')) {
 			messagesTimeout = setTimeout(getMessages, defaults.getMessagesTimeout*1000);
 			clearTimeout(noMessagesTimeout);
@@ -1004,9 +1004,7 @@ function endCall(){
  */
 function openWidget(){
 	debug.log('open widget: ', storage.getState('sid'));
-	var url = defaults.clientPath+'window.html',
-		opts = {},
-		optsEncoded = '';
+	var opts = {};
 	
 	if(!widgetWindow || widgetWindow.closed) {
 

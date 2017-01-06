@@ -145,9 +145,7 @@
 							<% if(item.name !== 'lang') { %>
 								<input 
 									type="<%= item.type || 'text' %>" 
-									placeholder="
-										<%= item.placeholder || panels.INTRO.PLACEHOLDERS[item.name] %> 
-										<% if(item.required){ %> * <% } %>" 
+									placeholder="<%= item.placeholder || panels.INTRO.PLACEHOLDERS[item.name] %> <% if(item.required){ %> * <% } %>" 
 									name="<%- item.name %>" 
 									<% if(item.save){ %> value="<%- credentials[item.name] %>" <% } %> 
 									<% if(item.required){ %> required <% } %>>
@@ -232,8 +230,7 @@
 					id="<%- defaults.prefix %>-message-text" 
 					class="<%- defaults.prefix %>-msg-textarea" 
 					placeholder="<%- panels.MESSAGES.PLACEHOLDERS.message %>" 
-					maxlength="1000">		
-				</textarea>
+					maxlength="1000"></textarea>
 				
 				<!-- "Send a message" button -->
 				<a 

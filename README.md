@@ -65,12 +65,13 @@ langFromUrl	  | Boolean | false	  | Experimental. This feature parses page url t
 widget            | Boolean | true        | Whether the webchat widget should be opened within the main tab (if `true`) or in a separate window (if `false`)
 position          | String  | right       | Widget position on the page. Option is actual if `widget` is set to true. Possible values are `right` and `left`
 hideOfflineButton | Boolean | false       | If set to `true`, then widget's button will be hidden when there are no registered IPCC agents that could serve current task
-intro             | Array   | []          | If defined, then the user must introduce him/herself before starting a dialog. [Read more](#setting-intro)
-offer             | Object  | false       | When set, the predefined message will be shown to the user after a certain number of minutes. [Read more](#setting-offer)
-styles            | Obejct  |             | A basic widget styles. [Read more](#setting-styles)
-buttonStyles      | Object  |             | A set of widget's button styles. [Read more](#setting-button-styles)
+intro             | Array   | []          | If defined, then the user must introduce him/herself before starting a dialog. [Read more](#intro-setting)
+offer             | Object  | false       | When set, the predefined message will be shown to the user after a certain number of minutes. [Read more](#offer-setting)
+styles            | Obejct  |             | A basic widget styles. [Read more](#widget-styles)
+buttonStyles      | Object  |             | A set of widget's button styles. [Read more](#button-styles)
 path              | String  | /ipcc/webchat | Absolute path to the module's folder on the web server
-webrtc		  | Object  |		  | Settings for the WebRTC call feature. [Read more](#setting-webrtc)
+webrtc		  | Object  |		  | Settings for the WebRTC call feature. [Read more](#webrtc-setting)
+callback		| Object |			| Settings for the Callback feature. [Read more](#callback-setting)
 
 ### API
 Module's API exposes the following methods:
@@ -160,7 +161,7 @@ Properties:
 #### `Error`
 Erro was emitted.
 
-### Setting Intro
+### Intro Setting
 You can set which of the fields user must fill in before starting the dialog. Example values:
 ```
 [{
@@ -186,13 +187,13 @@ Properties:
 - `placeholder`: could be any string value. If not defined, then it will be set automatically.
 - `save`: if `true`, the value would be stored in the session's memory and autofilled during the active session
 
-### Setting Offer
+### Offer Setting
 Properties:
 - `inSeconds`: time since module initiation, when the offer message will be shown to the user
 - `from`: string representation of the message sender
 - `text`: if not defined, the value will be a default tranlation key
 
-### Setting Styles
+### Widget Styles
 Default values:
 ```
 {
@@ -218,7 +219,7 @@ Properties:
 - `intro.backgroundImage`: url of the background image on the `intro` pane
 - `sendmail.backgroundImage`: url of the background image on the `sendmail` pane
 
-### Setting Button Styles
+### Button Styles
 Default values:
 ```
 {
@@ -246,7 +247,7 @@ Properties:
 - `[widgetState].color`: button icon color depending on widget's state
 - `color`: if `[widgetState].color` is not specified, this value will be used
 
-### Setting WebRTC
+### WebRTC Setting
 Properties:
 - `sip`: User Agent configuration object with mandatory and optional Properties. The full list of Properties you can find at: [http://jssip.net/documentation/2.0.x/api/ua_configuration_Properties/](http://jssip.net/documentation/2.0.x/api/ua_configuration_Properties/). The mandatory Properties are:
 
@@ -259,6 +260,10 @@ Properties:
 - `hotline`: Destination of the call. String assosiated with the record in the IPCC routing table.
 
 **Note**: WebRTC feature will not work on insecure origins. To use this feature, you should consider switching your application to a secure origin, such as HTTPS. See https://goo.gl/rStTGz for more details.
+
+### Callback Setting
+Properties:
+- `task`: Callback task name in the following format: 'task_group'.'task_name'.
 
 ### Browser Support
 * Google Chrome (latest)

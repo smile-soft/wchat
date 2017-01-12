@@ -7,6 +7,7 @@ var _ = require('./lodash');
 var frases = null;
 var cobrowsing = require('./cobrowsing');
 var WebRTC = require('./webrtc');
+var audio = require('./audio-control');
 var serverUrl = {};
 var forms;
 var api;
@@ -93,7 +94,8 @@ widgetState = {
 	initiated: false,
 	active: false,
 	state: '', // "online" | "offline" | "timeout",
-	share: false
+	share: false,
+	sounds: true
 },
 dialog = [],
 
@@ -130,6 +132,9 @@ function Widget(options){
 
 	addWidgetStyles();
 	serverUrl = require('url').parse(defaults.server, true);
+
+	// Enabling audio module
+	audio.init(defaults.clientPath+'sounds/');
 
 	api = new core(options)
 	.on('session/create', onSessionSuccess)
@@ -560,15 +565,19 @@ function getMessages(){
 	});
 }
 
-function sendMessage(message){
-	api.sendMessage(message);
+function sendMessage(params, cb){
+	api.sendMessage(params, function(err) {
+		if(!err && widgetState.sounds) audio.play('message_sent');
+	});
+
 	newMessage({ messages: [{
 		from: storage.getState('credentials', 'session').uname,
 		time: Date.now(),
-		text: message,
+		text: params.message,
 		hidden: true,
 		className: defaults.prefix+'-msg-undelivered'
 	}] });
+
 	if(chatTimeout) clearTimeout(chatTimeout);
 }
 
@@ -579,6 +588,7 @@ function newMessage(result){
 		els = [],
 		text,
 		compiled,
+		playSound = false,
 		defaultUname = false,
 		credentials = storage.getState('credentials', 'session') || {},
 		aname = storage.getState('aname', 'session'),
@@ -630,9 +640,12 @@ function newMessage(result){
 			storage.saveState('aname', message.from, 'session');
 		}
 
+		if(message.entity !== 'user') playSound = true;
+
 	});
 
 	messagesCont.scrollTop = messagesCont.scrollHeight;
+	if(playSound) playNewMsgTone();
 }
 
 function clearUndelivered(){
@@ -642,6 +655,10 @@ function clearUndelivered(){
 			msg.classList.add(defaults.prefix+'-hidden');
 		});
 	}
+}
+
+function playNewMsgTone() {
+	audio.play('new_message');
 }
 
 /**
@@ -921,12 +938,12 @@ function initCallState(state){
 	} else if(state === 'ringing') {
 		setTimer(timer, 'init', 0);
 		timer.classList.remove(defaults.prefix+'-hidden');
-		// playRingTone();
+		audio.play('ringout_loop', true);
 
 	} else if(state === 'connected') {
 		textState.innerText = frases[currLang].PANELS.AUDIO_CALL.connected_with_agent;
 		setTimer(timer, 'start', 0);
-		// stopRingTone();
+		audio.stop();
 
 	} else if(state === 'ended') {
 		textState.innerText = frases[currLang].PANELS.AUDIO_CALL.call_ended;
@@ -944,6 +961,7 @@ function initCallState(state){
 		timer.classList.add(defaults.prefix+'-hidden');
 		tryAgain.classList.remove(defaults.prefix+'-hidden');
 		initCallState('oncallend');
+		audio.play('busy');
 
 	} else if(state === 'oncall') {
 		window.onbeforeunload = function(){
@@ -1305,7 +1323,7 @@ function wgSendMessage(){
 
 	msg = _.trim(textarea.value);
 	if(msg) {
-		sendMessage(msg);
+		sendMessage({ message: msg });
 		textarea.value = '';
 		removeWgState('type-extend');
 	}
@@ -1348,7 +1366,7 @@ function wgSendFile(e){
 		if(err) {
 			alert('File was not sent');
 		} else {
-			api.sendMessage(result.filedata, result.filename);
+			api.sendMessage({ message: result.filedata, file: result.filename });
 		}
 	});
 }

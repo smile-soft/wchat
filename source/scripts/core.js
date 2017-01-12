@@ -247,20 +247,22 @@ WchatAPI.prototype.getMessages = function(cb){
  * or dataURL in case of file transfer
  * @param  {String} file - (Optional) file name
  */
-WchatAPI.prototype.sendMessage = function(text, file){
-	var params = {
+WchatAPI.prototype.sendMessage = function(params, cb){
+	var data = {
 		sid: storage.getState('sid'),
-		text: text
+		text: params.message
 	};
-	if(file) params.file = file;
+	if(params.file) data.file = file;
 	request.post(this.options.serverUrl, {
 		method: 'setMessage',
-		params: params
+		params: data
 	}, function(err, res, body){
 		if(err) {
-			this.emit('Error', err, { method: 'sendMessage', params: params });
-			return cb(err);
+			this.emit('Error', err, { method: 'sendMessage', params: data });
+			if(cb) cb(err);
+			return;
 		}
+		cb();
 	});
 };
 

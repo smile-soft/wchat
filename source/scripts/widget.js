@@ -913,7 +913,7 @@ function initCallState(state){
 		initCallState('oncall');
 
 	} else if(state === 'confirmed') {
-		textState.innerText = frases[currLang].AUDIO_CALL.calling_agent;
+		textState.innerText = frases[currLang].PANELS.AUDIO_CALL.calling_agent;
 		info.classList.remove(defaults.prefix+'-hidden');
 		spinner.classList.add(defaults.prefix+'-hidden');
 		tryAgain.classList.add(defaults.prefix+'-hidden');
@@ -924,20 +924,20 @@ function initCallState(state){
 		// playRingTone();
 
 	} else if(state === 'connected') {
-		textState.innerText = frases[currLang].AUDIO_CALL.connected_with_agent;
+		textState.innerText = frases[currLang].PANELS.AUDIO_CALL.connected_with_agent;
 		setTimer(timer, 'start', 0);
 		// stopRingTone();
 
 	} else if(state === 'ended') {
-		textState.innerText = frases[currLang].AUDIO_CALL.call_ended;
+		textState.innerText = frases[currLang].PANELS.AUDIO_CALL.call_ended;
 		setTimer(timer, 'stop');
 		initCallState('oncallend');
 		
 	} else if(state === 'failed' || state === 'canceled') {
 		if(state === 'failed') {
-			textState.innerText = frases[currLang].AUDIO_CALL.call_failed;
+			textState.innerText = frases[currLang].PANELS.AUDIO_CALL.call_failed;
 		} else {
-			textState.innerText = frases[currLang].AUDIO_CALL.call_canceled;
+			textState.innerText = frases[currLang].PANELS.AUDIO_CALL.call_canceled;
 		}
 		info.classList.remove(defaults.prefix+'-hidden');
 		spinner.classList.add(defaults.prefix+'-hidden');

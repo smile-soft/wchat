@@ -255,8 +255,6 @@ Properties:
 
    * `uri`: SIP URI associated to the User Agent. Example: "sip:online@ipcc-doamin-name-org-ip-address.com"
 
-   * `register`: Indicate if SIP User Agent should register automatically when starting. This value should be set to `false`.
-
 - `hotline`: Destination of the call. String assosiated with the record in the IPCC routing table.
 
 **Note**: WebRTC feature will not work on insecure origins. To use this feature, you should consider switching your application to a secure origin, such as HTTPS. See https://goo.gl/rStTGz for more details.

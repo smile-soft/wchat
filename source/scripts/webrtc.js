@@ -116,6 +116,7 @@ function createRemoteAudio(){
 function init(opts){
 	debug.log('Initiating WebRTC module:', opts);
 	options = opts;
+	if(options.sip.register === undefined) options.sip.register = false;
 
 	// !!get rid of this!!
 	events.emit = opts.emit;

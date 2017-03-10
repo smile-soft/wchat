@@ -111,7 +111,7 @@ WchatAPI.prototype.createSession = function(pageUrl){
 		params: {
 			url: (pageUrl || url.href)
 		}
-	}, function (err, res, body){
+	}, function (err, body){
 		if(err) {
 			this.emit('Error', err, { method: 'createSession', params: { pageUrl: pageUrl } });
 			return;
@@ -144,7 +144,7 @@ WchatAPI.prototype.updateEvents = function(events, cb){
 			events: events
 		}
 	};
-	request.post(this.options.serverUrl, params, function (err, res, body){
+	request.post(this.options.serverUrl, params, function (err, body){
 		if(err) {
 			this.emit('Error', err, params);
 			return cb(err); // TODO: handle error
@@ -173,7 +173,7 @@ WchatAPI.prototype.getLanguages = function(cb){
 		params: {
 			sid: storage.getState('sid')
 		}
-	}, function (err, res, body){
+	}, function (err, body){
 		if(err) {
 			this.emit('Error', err, { method: 'getLanguages' });
 			return cb(err);
@@ -190,10 +190,13 @@ WchatAPI.prototype.getLanguages = function(cb){
  */
 WchatAPI.prototype.chatRequest = function(params, cb){
 	params.sid = storage.getState('sid');
+
+	debug.log('chatRequest params: ', params);
+
 	request.post(this.options.serverUrl, {
 		method: 'chatRequest',
 		params: params
-	}, function (err, res, body){
+	}, function (err, body){
 		if(err) {
 			this.emit('Error', err, { method: 'chatRequest', params: params });
 			if(cb) cb(err);
@@ -218,7 +221,7 @@ WchatAPI.prototype.getMessages = function(cb){
 			sid: storage.getState('sid'),
 			timestamp: storage.getState('msgTimestamp')
 		}
-	}, function (err, res, body){
+	}, function (err, body){
 		if(err) {
 			this.emit('Error', err, { method: 'getMessages' });
 			return cb(err);
@@ -252,17 +255,17 @@ WchatAPI.prototype.sendMessage = function(params, cb){
 		sid: storage.getState('sid'),
 		text: params.message
 	};
-	if(params.file) data.file = file;
+	if(params.file) data.file = params.file;
 	request.post(this.options.serverUrl, {
 		method: 'setMessage',
 		params: data
-	}, function(err, res, body){
+	}, function(err, body){
 		if(err) {
 			this.emit('Error', err, { method: 'sendMessage', params: data });
 			if(cb) cb(err);
 			return;
 		}
-		cb();
+		if(cb) cb();
 	});
 };
 
@@ -279,7 +282,7 @@ WchatAPI.prototype.closeChat = function(rating){
 		}
 	};
 	if(rating) reqParams.params.rating = rating;
-	request.post(this.options.serverUrl, reqParams, function (err, res, body){
+	request.post(this.options.serverUrl, reqParams, function (err, body){
 		if(err) {
 			this.emit('Error', err, reqParams);
 			return;
@@ -310,7 +313,7 @@ WchatAPI.prototype.sendEmail = function(params, cb){
 	request.post(this.options.serverUrl, {
 		method: 'sendMail',
 		params: params
-	}, function (err, res, body){
+	}, function (err, body){
 		if(err) {
 			this.emit('Error', err, { method: 'sendEmail', params: params });
 			if(cb) cb(err);
@@ -334,7 +337,7 @@ WchatAPI.prototype.requestCallback = function(params, cb){
 	request.post(this.options.serverUrl, {
 		method: 'requestCallback',
 		params: params
-	}, function(err, res, body){
+	}, function(err, body){
 		if(err) {
 			this.emit('Error', err, { method: 'requestCallback', params: params });
 			return cb(err);
@@ -356,7 +359,7 @@ WchatAPI.prototype.disjoinSession = function(sid){
 		params: {
 			sid: sid
 		}
-	}, function (err, res, body){
+	}, function (err, body){
 		if(err) {
 			this.emit('Error', err, { method: 'disjoinSession', params: { sid: sid } });
 			return;
@@ -380,7 +383,7 @@ WchatAPI.prototype.switchShareState = function(state, url){
 			sid: storage.getState('sid'),
 			url: url
 		}
-	}, function(err, res, body){
+	}, function(err, body){
 		if(err) {
 			this.emit('Error', err, { method: 'switchShareState', params: { state: state } });
 			return;
@@ -416,7 +419,7 @@ WchatAPI.prototype.updateUrl = function(url){
 			sid: storage.getState('sid'),
 			url: url
 		}
-	}, function(err, res, body){
+	}, function(err, body){
 		if(err) {
 			this.emit('Error', err, { method: 'updateUrl', params: { url: url } });
 			return;
@@ -431,7 +434,7 @@ WchatAPI.prototype.linkFollowed = function(url){
 			sid: storage.getState('sid'),
 			url: url
 		}
-	}, function (err, res, body){
+	}, function (err, body){
 		if(err) {
 			this.emit('Error', err, { method: 'linkFollowed', params: { url: url } });
 			return;

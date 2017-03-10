@@ -64,6 +64,9 @@
     			"end_call": "Завершити виклик",
     			"try_again": "Спробувати ще раз"
     		},
+            "AUDIO_CALL_FALLBACK": {
+                "DOWNLOAD_MSG": "Щоб зробити виклик, скачайте і запустіть call.jnlp файл"
+            },
             "CALLBACK": {
                 "title": "Введіть ваш номер телефону, ми передзвонимо на протязі зазначеного часу.",
                 "confirm_callback": "Підтвердити",
@@ -189,6 +192,9 @@
     			"end_call": "Заверший вызов",
     			"try_again": "Попробовать еще раз"
     		},
+            "AUDIO_CALL_FALLBACK": {
+                "DOWNLOAD_MSG": "Чтобы сделать вызов, скачайте и запустите call.jnlp файл"
+            },
             "CALLBACK": {
                 "title": "Введите номер телефона, мы перезвоним в течение указанного времени.",
                 "confirm_callback": "Подтвердить",
@@ -314,6 +320,9 @@
 				"end_call": "End call",
 				"try_again": "Try again"
 			},
+            "AUDIO_CALL_FALLBACK": {
+                "DOWNLOAD_MSG": "To make a call download and launch call.jnlp file"
+            },
             "CALLBACK": {
                 "title": "Enter your phone number, we will call back within the specified time.",
                 "confirm_callback": "Confirm",

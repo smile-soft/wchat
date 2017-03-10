@@ -81,7 +81,8 @@ var defaults = {
 	// webrtc options
 	webrtc: {
 		sip: {},
-		hotline: ''
+		hotline: '',
+		fallback: false
 	},
 	webrtcEnabled: false,
 	callback: {
@@ -234,8 +235,12 @@ var publicApi = {
 	initWidgetState: initWidgetState,
 	openWidget: openWidget,
 	initChat: initChat,
+	initCall: initCall,
 	getWidgetElement: getWidgetElement,
 	isWebrtcSupported: WebRTC.isSupported,
+	getWidgetState: function() {
+		return widgetState;
+	},
 	getEntity: function(){ return storage.getState('entity', 'session'); },
 	on: function(evt, listener) {
 		api.on(evt, listener);
@@ -876,6 +881,10 @@ function initCall(){
 	// WebRTC.audiocall('sip:'+defaults.webrtc.hotline+'@'+serverUrl.host);
 }
 
+function initFallbackCall(){
+	switchPane('callAgentFallback');
+}
+
 function initCallback(){
 	switchPane('callback');
 }
@@ -1250,6 +1259,8 @@ function wgClickHandler(e){
 		api.emit('form/reject', { formName: _.findParent(targ, 'form').name });
 	} else if(handler === 'initCall') {
 		initCall();
+	} else if(handler === 'initFallbackCall') {
+		initFallbackCall();
 	} else if(handler === 'initCallback') {
 		initCallback();
 	} else if(handler === 'setCallback') {
@@ -1401,8 +1412,9 @@ function changeWgState(params){
 
 	widgetState.state = params.state;
 	addWgState(params.state);
-	// api.emit('widget/statechange', { state: params.state });
 	setButtonStyle(params.state);
+	api.emit('widget/statechange', { state: params.state });
+	
 }
 
 // TODO: This is not a good solution or maybe not a good implementation
@@ -1625,7 +1637,7 @@ function parseMessage(text, file, entity){
 	} else {
 		return {
 			type: 'text',
-			content: text.split(" ").map(convertLinks).join(" ")
+			content: text.replace(/\n/g, ' <br> ').split(" ").map(convertLinks).join(" ").replace(' <br> ', '<br>')
 		};
 	}
 }

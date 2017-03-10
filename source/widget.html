@@ -66,7 +66,7 @@
 					name="<%- defaults.prefix %>InitForm">
 
 					<!-- Display call button if WebRTC is enabled and supported by the browser -->
-					<% if(defaults.webrtcEnabled) { %>
+					<% if(defaults.webrtcEnabled) { %> 
 						<button 
 							type="button" 
 							class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
@@ -75,6 +75,22 @@
 								color: <%- defaults.styles.primary.color %>; 
 								border: 1px solid <%- defaults.styles.primary.backgroundColor %>;"
 							data-<%- defaults.prefix %>-handler="initCall">
+
+							<%- panels.CONNECTION_TYPES.call_agent_btn %>
+
+						</button>
+					<% } %>
+
+					<!-- If WebRTC is not supported and fallback is set -->
+					<% if(!defaults.webrtcEnabled && defaults.webrtc.fallback && defaults.webrtc.fallback.sipCall) { %> 
+						<button 
+							type="button" 
+							class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
+							style="
+								background-color: <%- defaults.styles.primary.backgroundColor %>; 
+								color: <%- defaults.styles.primary.color %>; 
+								border: 1px solid <%- defaults.styles.primary.backgroundColor %>;"
+							data-<%- defaults.prefix %>-handler="initFallbackCall">
 
 							<%- panels.CONNECTION_TYPES.call_agent_btn %>
 
@@ -391,6 +407,22 @@
 			</div>
 		</div>
 		<!-- ***** Audio call pane ends ***** -->
+
+		<!-- ***** Audio call fallback pane ***** -->
+		<div class="<%- defaults.prefix %>-wg-pane" data-<%- defaults.prefix %>-pane="callAgentFallback">
+			<div class="<%- defaults.prefix %>-pane-body">
+				<div class="<%- defaults.prefix %>-text-center">
+					<h3><%- panels.AUDIO_CALL_FALLBACK.DOWNLOAD_MSG %></h3>
+					<br>
+					<a href="<%- defaults.webrtc.fallback.sipCall %>">call.jnlp</a>
+				</div>
+				<form>
+					<hr>
+					<a href="#chooseConnection" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-block"><%- panels.CALLBACK.back %></a>
+				</form>
+			</div>
+		</div>
+		<!-- ***** Audio call fallback pane ends ***** -->
 
 		<!-- ***** Callback pane ***** -->
 		<div 

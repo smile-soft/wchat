@@ -134,7 +134,7 @@ WchatAPI.prototype.joinSession = function(sid, url){
 **/
 WchatAPI.prototype.updateEvents = function(events, cb){
 	var sessionId = storage.getState('sid'), params;
-	if(!sessionId) return;
+	if(!sessionId) return cb();
 	
 	params = {
 		method: 'updateEvents',
@@ -168,10 +168,13 @@ WchatAPI.prototype.updateEvents = function(events, cb){
  * languages weren't set in Admin Studio
  */
 WchatAPI.prototype.getLanguages = function(cb){
+	var sessionId = storage.getState('sid');
+	if(!sessionId) return cb(true);
+
 	request.post(this.options.serverUrl, {
 		method: 'getLanguages',
 		params: {
-			sid: storage.getState('sid')
+			sid: sessionId
 		}
 	}, function (err, body){
 		if(err) {

@@ -114,6 +114,7 @@
 					<% } %>
 
 					<!-- Init chat button -->
+					<% if(defaults.chat) { %>
 					<button
 						type="button" 
 						class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
@@ -121,6 +122,7 @@
 						data-<%- defaults.prefix %>-handler="initChat">
 						<%- panels.CONNECTION_TYPES.chat_agent_btn %>
 					</button>
+					<% } %>
 
 					<!-- Close widget button -->
 					<a href="#" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-block" data-<%- defaults.prefix %>-handler="closeWidget"><%- panels.CONNECTION_TYPES.cancel %></a>

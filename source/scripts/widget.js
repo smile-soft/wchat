@@ -23,7 +23,12 @@ var defaults = {
 	intro: false,
 	// whether or not to add widget to the webpage
 	widget: true,
+	// enable chat feature
+	chat: true,
+	// enable cobrowsing feature
+	cobrowsing: false,
 	// DOM element that opens a widget
+	reCreateSession: true,
 	buttonElement: null,
 	title: '',
 	lang: 'en',
@@ -101,10 +106,11 @@ widgetState = {
 dialog = [],
 
 // available dialog languages
-langs = [],
+langs,
 currLang = '',
 messagesTimeout,
 noMessagesTimeout,
+getLanguagesInterval,
 chatTimeout,
 // Container for messages
 messagesCont,
@@ -142,7 +148,9 @@ function Widget(options){
 	.on('session/continue', onSessionSuccess)
 	.on('session/join', onSessionJoin)
 	.on('session/init', onSessionInit);
-	// .on('chat/languages', onNewLanguages);
+	// .on('chat/languages', function() {
+	// 	changeWgState({ state: getWidgetState() });
+	// });
 	
 	if(defaults.widget) {
 		api.on('chat/start', startChat)
@@ -207,8 +215,9 @@ function Widget(options){
 			debug.warn('getUserMedia() no longer works on insecure origins. To use this feature, you should consider switching your application to a secure origin, such as HTTPS. See https://goo.gl/rStTGz for more details.');
 		}
 	}
-		
+	
 	setSessionTimeoutHandler();
+	getLanguages();
 
 	// load translations
 	request.get('frases', defaults.clientPath+'translations.json', function (err, result){
@@ -273,43 +282,57 @@ function initWebrtcModule(opts){
 	WebRTC.init(opts);
 }
 
-// Session is either created or continues
-function onSessionSuccess(){
+function initSession() {
+	
+	if(!defaults.chat && !defaults.webrtcEnabled && !defaults.callback.task) return false;
 
-	// Wait while translations are loaded
-	_.poll(function(){
+	// set current user language
+	currLang = currLang || detectLanguage();
+	setSessionTimeoutHandler();
+	
+	getLanguages();
+	getLanguagesInterval = setInterval(getLanguages, defaults.checkStatusTimeout*1000);
 
-		return frases !== null;
+	// If page loaded and "widget" property is set - load widget
+	if(defaults.widget && !widgetState.initiated && isBrowserSupported()) {
+		loadWidget();
+	}
 
-	}, function(){
-		
-		// set current user language
-		currLang = currLang || detectLanguage();
-		setSessionTimeoutHandler();
+	// If timeout was occured, init chat after a session is created
+	if(hasWgState('timeout')) {
+		removeWgState('timeout');
+	}
 
-		// If page loaded and "widget" property is set - load widget
-		if(defaults.widget && !widgetState.initiated && isBrowserSupported()) {
-			loadWidget();
-		}
+	// if window is not a opened window
+	if(!defaults.external) {
+		// api.updateUrl(window.location.href);
 
-		// If timeout was occured, init chat after a session is created
-		if(hasWgState('timeout')) {
-			removeWgState('timeout');
-			getLanguages();
-		}
-
-		// if window is not a opened window
-		if(!defaults.external) {
-			api.updateUrl(window.location.href);
-
+		if(defaults.cobrowsing) {
 			initCobrowsingModule({
 				url: window.location.href,
 				entity: storage.getState('entity', 'session'),
 				widget: '#'+defaults.prefix+'-wg-cont'
 			});
 		}
+	}
 
-		api.emit('session/init', {options: defaults, url: global.location.href });
+	api.emit('session/init', {options: defaults, url: global.location.href });
+}
+
+// Session is either created or continues
+function onSessionSuccess(){
+
+	// Wait while translations are loaded
+	_.poll(function(){
+
+		return (frases !== null);
+
+	}, function() {
+		initSession()
+		// if window is not a opened window
+		if(!defaults.external) {
+			api.updateUrl(window.location.href);
+		}
 
 	}, function(){
 		
@@ -364,14 +387,16 @@ function onWidgetLoad(widget){
 	if(defaults.buttonElement) 
 		defaults.buttonElement.addEventListener('click', publicApi.openWidget, false);
 
-	api.once('chat/languages', initWidget);
-	getLanguages();
+	initWidget();
+
+	// api.once('chat/languages', initWidget);
+	// getLanguages();
 	// initWidget();
 }
 
 function initCobrowsingModule(params){
 	// init cobrowsing module only on main window
-	if(defaults.external) return;
+	if(defaults.external || cobrowsing.isInitiated()) return;
 
 	api.on('cobrowsing/init', function(){
 		if(storage.getState('shared', 'session') || params.entity === 'agent') cobrowsing.share();
@@ -380,7 +405,7 @@ function initCobrowsingModule(params){
 	api.on('cobrowsing/event', function(params){
 		api.updateEvents(params.events, function(err, result){
 			if(err) return;
-			cobrowsing.updateEvents(result);
+			if(result) cobrowsing.updateEvents(result);
 		});
 	});
 
@@ -399,7 +424,7 @@ function initCobrowsingModule(params){
 
 	api.on('cobrowsing/unshared', function(params){
 		storage.saveState('shared', false, 'session');
-		api.updateEvents([{ entity: params.entity, url: params.url, shared: false }], function(err, resul){
+		api.updateEvents([{ entity: params.entity, url: params.url, shared: false }], function(err){
 			// if(err) return;
 			if(params.entity === 'user') api.switchShareState(false, window.location.href);
 			else cobrowsing.unshareAll();
@@ -422,41 +447,31 @@ function getLanguages(){
 	api.getLanguages(function (err, body){
 		if(err) return;
 		if(body) onNewLanguages(body.result);
-		setTimeout(getLanguages, defaults.checkStatusTimeout*1000);
+		// getLanguagesTimeout = setTimeout(getLanguages, defaults.checkStatusTimeout*1000);
 	});
 }
 
 function onNewLanguages(languages){
 	// debug.log('languages: ', languages);
-	var state = languages.length ? 'online' : 'offline',
-	options = '', selected;
+	var state = languages.length ? 'online' : 'offline';
 
-	// if(hasWgState(state)) return;
-	if(widgetState.state === state) return;
-	
 	langs = languages;
 
-	if(widget && defaults.intro.length) {
-		// Add languages to the template
-		langs.forEach(function(lang) {
-			if(frases[lang] && frases[lang].lang) {
-				selected = lang === currLang ? 'selected' : '';
-				options += '<option value="'+lang+'" '+selected+' >'+frases[lang].lang+'</option>';
-			}
-		});
-		global[defaults.prefix+'IntroForm'].lang.innerHTML = options;
-	}
+	// if(hasWgState(state)) return;
+	// if(widgetState.state === state) return;
 
 	changeWgState({ state: state });
 	api.emit('chat/languages', languages);
 }
 
 function initWidget(){
+	var options = '', selected;
+
 	// debug.log('Init widget!');
 	widgetState.initiated = true;
 
 	setListeners(widget);
-	changeWgState({ state: widgetState.state });
+	changeWgState({ state: getWidgetState() });
 
 	if(defaults.hideOfflineButton) {
 		addWgState('no-button');
@@ -476,6 +491,17 @@ function initWidget(){
 	// if webrtc supported by the browser and ws_servers parameter is set - change button icon
 	if(defaults.webrtcEnabled) {
 		addWgState('webrtc-enabled');
+	}
+
+	if(widget && defaults.intro.length) {
+		// Add languages to the template
+		langs.forEach(function(lang) {
+			if(frases[lang] && frases[lang].lang) {
+				selected = lang === currLang ? 'selected' : '';
+				options += '<option value="'+lang+'" '+selected+' >'+frases[lang].lang+'</option>';
+			}
+		});
+		global[defaults.prefix+'IntroForm'].lang.innerHTML = options;
 	}
 
 	// Widget is initiated
@@ -860,7 +886,7 @@ function setSessionTimeoutHandler(){
 			closeChat();
 		}
 		if(widget) {
-			// addWgState('timeout');
+			addWgState('timeout');
 			closeWidget();
 		}
 		changeWgState({ state: 'timeout' });
@@ -869,9 +895,14 @@ function setSessionTimeoutHandler(){
 		setButtonStyle('timeout');
 		storage.removeState('sid');
 
-		if(params && params.method === 'updateEvents') {
+		// if(params && params.method === 'updateEvents') {
+		clearInterval(getLanguagesInterval);
+		clearTimeout(messagesTimeout);
+
+		if(defaults.reCreateSession) {
 			initModule();
 		}
+		// }
 	});
 }
 
@@ -1319,10 +1350,18 @@ function initWidgetState(){
 		if(storage.getState('call', 'cache')) {
 			showWidget();
 		} else {
-			switchPane('chooseConnection');
+			if(!defaults.chat && !defaults.callback.task) {
+				initCall();
+			} else {
+				switchPane('chooseConnection');
+			}
 		}
 	} else if(defaults.callback.task) {
-		switchPane('chooseConnection');
+		if(!defaults.chat && !defaults.webrtcEnabled) {
+			switchPane('callback');
+		} else {
+			switchPane('chooseConnection');
+		}
 	} else {
 		initChat();
 	}
@@ -1415,6 +1454,10 @@ function changeWgState(params){
 	setButtonStyle(params.state);
 	api.emit('widget/statechange', { state: params.state });
 	
+}
+
+function getWidgetState() {
+	return widgetState.state ? widgetState.state : (langs.length ? 'online' : 'offline');
 }
 
 // TODO: This is not a good solution or maybe not a good implementation

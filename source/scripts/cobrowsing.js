@@ -17,6 +17,10 @@ var checkEvery = _.debounce(unshareBrowser, 30000);
 var cursorX = 0, cursorY = 0;
 var requestAF;
 
+function isInitiated() {
+	return initiated;
+}
+
 function init(options){
 	if(initiated) return debug.info('Cobrowsing already initiated');
 
@@ -548,6 +552,7 @@ function removeEvent(obj, evType, fn) {
 
 module.exports = {
 	init: init,
+	isInitiated: isInitiated,
 	share: shareBrowser,
 	unshare: unshareBrowser,
 	unshareAll: unshareAll,

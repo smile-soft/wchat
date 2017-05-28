@@ -41,7 +41,7 @@ function get(selector, url, cb){
 function XmlHttpRequest(method, url, data, callback){
 	var xhr, response, requestTimer;
 
-	xhr = getXmlHttp();
+	xhr = new XMLHttpRequest();
 	xhr.open(method, url, true);
 
 	requestTimer = setTimeout(function(){
@@ -67,13 +67,5 @@ function XmlHttpRequest(method, url, data, callback){
 		xhr.send(data);
 	} else {
 		xhr.send();
-	}
-}
-
-function getXmlHttp(){
-	if(window.XMLHttpRequest){
-		return new XMLHttpRequest();
-	} else{
-		return new ActiveXObject("Microsoft.XMLHTTP");
 	}
 }

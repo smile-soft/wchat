@@ -78,7 +78,7 @@ var defaults = {
 	// absolute path to the css flie
 	stylesPath: '',
 	// in seconds
-	checkStatusTimeout: 30,
+	checkStatusTimeout: 10,
 	// in seconds
 	getMessagesTimeout: 1,
 	// displayed in the email template
@@ -106,7 +106,7 @@ widgetState = {
 dialog = [],
 
 // available dialog languages
-langs,
+langs = null,
 currLang = '',
 messagesTimeout,
 noMessagesTimeout,
@@ -283,8 +283,12 @@ function initWebrtcModule(opts){
 }
 
 function initSession() {
+
+	debug.log('initSession:', defaults.chat, defaults.webrtcEnabled, defaults.callback.task);
 	
 	if(!defaults.chat && !defaults.webrtcEnabled && !defaults.callback.task) return false;
+
+	debug.log('session initiated');
 
 	// set current user language
 	currLang = currLang || detectLanguage();
@@ -324,7 +328,7 @@ function onSessionSuccess(){
 
 	// Wait while translations are loaded
 	_.poll(function(){
-
+		debug.log('poll: ', frases);
 		return (frases !== null);
 
 	}, function() {
@@ -445,6 +449,7 @@ function getWidgetElement(){
 
 function getLanguages(){
 	api.getLanguages(function (err, body){
+		debug.log('getLanguages: ', err, body);
 		if(err) return;
 		if(body) onNewLanguages(body.result);
 		// getLanguagesTimeout = setTimeout(getLanguages, defaults.checkStatusTimeout*1000);
@@ -880,7 +885,8 @@ function onAgentTyping(opts){
 function setSessionTimeoutHandler(){
 	if(api.listenerCount('session/timeout') >= 1) return;
 	api.once('session/timeout', function (params){
-		// debug.log('Session timeout!', params);
+		debug.log('Session timeout:', defaults);
+		debug.log('Session timeout:', params);
 
 		if(storage.getState('chat') === true) {
 			closeChat();
@@ -1457,7 +1463,7 @@ function changeWgState(params){
 }
 
 function getWidgetState() {
-	return widgetState.state ? widgetState.state : (langs.length ? 'online' : 'offline');
+	return widgetState.state ? widgetState.state : ((langs &&langs.length) ? 'online' : 'offline');
 }
 
 // TODO: This is not a good solution or maybe not a good implementation

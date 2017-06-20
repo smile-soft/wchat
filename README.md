@@ -247,19 +247,19 @@ Properties:
 - `[widgetState].color`: button icon color depending on widget's state
 - `color`: if `[widgetState].color` is not specified, this value will be used
 
-### WebRTC Setting
+### WebRTC Settings
 Properties:
 - `sip`: User Agent configuration object with mandatory and optional Properties. The full list of Properties you can find at: [http://jssip.net/documentation/2.0.x/api/ua_configuration_Properties/](http://jssip.net/documentation/2.0.x/api/ua_configuration_Properties/). The mandatory Properties are:
 
    * `ws_servers`: domain name or ip address of the websocket server (the same as IPCC server). Example: *wss://ipcc-domain-name-or-ip-address.com*
 
-   * `uri`: SIP URI associated to the User Agent. Example: "sip:online@ipcc-doamin-name-org-ip-address.com"
+   * `uri`: SIP URI associated to the User Agent. Example: "sip:online@ipcc-domain-name-org-ip-address.com"
 
 - `hotline`: Destination of the call. String assosiated with the record in the IPCC routing table.
 
-**Note**: WebRTC feature will not work on insecure origins. To use this feature, you should consider switching your application to a secure origin, such as HTTPS. See https://goo.gl/rStTGz for more details.
+**Note**: WebRTC feature will not work on insecure origins. To use this feature, you should consider switching your application to a secure origin, such as HTTPS. See https://goo.gl/rStTGz for more details. Also, you neet to obtain and install valid SSL certificate (self-signed certificates will not work) on IPCC server.
 
-### Callback Setting
+### Callback Settings
 Properties:
 - `task`: Callback task name in the following format: 'task_group'.'task_name'.
 

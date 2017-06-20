@@ -39,9 +39,9 @@ function get(selector, url, cb){
  * Send request to the server via XMLHttpRequest
  */
 function XmlHttpRequest(method, url, data, callback){
-	var xhr, response, requestTimer, err;
+	var xhr, response, requestTimer;
 
-	xhr = getXmlHttp();
+	xhr = new XMLHttpRequest();
 	xhr.open(method, url, true);
 
 	requestTimer = setTimeout(function(){
@@ -54,12 +54,10 @@ function XmlHttpRequest(method, url, data, callback){
 			if(xhr.response) {
 				response = method === 'POST' ? JSON.parse(xhr.response) : xhr.response;
 				if(response.error) {
-					err = response.error;
-					callback(err);
+					return callback(response.error);
 				}
-				if(callback) {
-					callback(null, response);
-				}
+
+				callback(null, response);
 			}
 		}
 	};
@@ -69,13 +67,5 @@ function XmlHttpRequest(method, url, data, callback){
 		xhr.send(data);
 	} else {
 		xhr.send();
-	}
-}
-
-function getXmlHttp(){
-	if(window.XMLHttpRequest){
-		return new XMLHttpRequest();
-	} else{
-		return new ActiveXObject("Microsoft.XMLHTTP");
 	}
 }

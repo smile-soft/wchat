@@ -26,7 +26,7 @@ Wchat({
 	}
 }).initModule();
 ```
-#### Initiate module and set widget option to false
+#### Initiate module without widget icon
 ```js
 var wchat = Wchat({ server: 'http://ipcc-server-domain.com:8880', widget: false })
 document.getElementById('openWidget').addEventListener('click', wchat.openWidget, false);
@@ -42,7 +42,7 @@ Wchat({ server: 'http://ipcc-server-domain.com:8880' })
 .initModule();
 ```
 ### Getting Started
-1) Put all files from `dist` folder to the folder on the IPCC webserver. The default path is: *path-to-the-ipcc-directory>/web/ipcc/webchat*.
+1) Please ensure that all files from `dist` folder exist on the IPCC webserver and available for reading. The default files path is: *path-to-the-ipcc-directory>/web/ipcc/webchat*.
 **Note**: if you prefer to change the default directory for the webchat files, then change the path property in the module's options declaration.
 
 2) Add a script tag to the webpages where the module should be loaded.

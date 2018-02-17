@@ -7,9 +7,12 @@ var rename = require('gulp-rename');
 var copy = require('gulp-copy');
 var notify = require('gulp-notify');
 var imagemin = require('gulp-imagemin');
+var template = require('gulp-lodash-template');
+var concat = require('gulp-concat');
 var browserify = require('browserify');
 var argv = require('yargs').argv;
 var gulpif = require('gulp-if');
+var nameSpace = 'Wchat';
 
 var basePath = {
 	src: 'source/',
@@ -21,7 +24,7 @@ var srcAssets = {
 	scripts: basePath.src + 'scripts/',
 	styles: basePath.src + 'styles/',
 	images: basePath.src + 'images/',
-	partials: basePath.src + 'partials/',
+	templates: basePath.src + 'templates/',
 	sounds: basePath.src + 'sounds/',
 	fonts: basePath.src + 'fonts/'
 };
@@ -30,15 +33,15 @@ var destAssets = {
 	scripts: basePath.dest + 'scripts/',
 	styles: basePath.dest + '/',
 	images: basePath.dest + 'images/',
-	partials: basePath.dest + 'partials/',
+	templates: basePath.dest + 'templates/',
 	sounds: basePath.dest + 'sounds/',
 	fonts: basePath.dest + 'fonts/'
 };
 
 
-gulp.task('browserify', function() {
+gulp.task('bundle', function() {
 	var bundleStream = browserify(srcAssets.scripts+'main.js', {
-		standalone: 'Wchat',
+		standalone: nameSpace,
 		debug: true
 	}).bundle();
 
@@ -49,7 +52,7 @@ gulp.task('browserify', function() {
 	.pipe(streamify(uglify()))
 	.pipe(rename({suffix: '.min'}))
 	.pipe(gulp.dest(basePath.dest))
-	.pipe(notify({ message: 'browserify task complete' }));
+	.pipe(notify({ message: 'bundle task complete' }));
 });
 
 gulp.task('styles', function() {
@@ -65,9 +68,14 @@ gulp.task('images', function() {
 	.pipe(gulp.dest(destAssets.images));
 });
 
-gulp.task('partials', function() {
-	return gulp.src(srcAssets.partials+'*')
-	.pipe(gulp.dest(destAssets.partials));
+gulp.task('templates', function() {
+	return gulp.src(srcAssets.templates+'*.html')
+	.pipe(template({
+		commonjs: true
+	}))
+	.pipe(concat('templates.js'))
+	.pipe(gulp.dest(srcAssets.scripts))
+	.pipe(notify({ message: 'templates task complete' }));
 });
 
 gulp.task('sounds', function() {
@@ -82,11 +90,11 @@ gulp.task('fonts', function() {
 
 gulp.task('cp', function() {
 
-	gulp.src(basePath.src+'*.js')
-	.pipe(gulp.dest(basePath.dest));
+	// gulp.src(basePath.src+'*.js')
+	// .pipe(gulp.dest(basePath.dest));
 
-	gulp.src(basePath.src+'*.html')
-	.pipe(gulp.dest(basePath.dest));
+	// gulp.src(basePath.src+'*.html')
+	// .pipe(gulp.dest(basePath.dest));
 
 	gulp.src(basePath.src+'translations.json')
 	.pipe(gulp.dest(basePath.dest));
@@ -94,15 +102,15 @@ gulp.task('cp', function() {
 	gulp.src(basePath.src+'forms.json')
 	.pipe(gulp.dest(basePath.dest));
 
-	gulp.start('partials', 'sounds', 'fonts');
+	gulp.start('sounds', 'fonts');
 });
 
 gulp.task('build', function() {
-	gulp.start('browserify', 'styles', 'images', 'partials', 'cp', 'fonts');
+	gulp.start('styles', 'images', 'templates', 'cp', 'fonts', 'bundle');
 });
 
 gulp.task('default', function() {
-	gulp.start('browserify', 'styles');
+	gulp.start('bundle');
 });
 
 gulp.task('test', function() {

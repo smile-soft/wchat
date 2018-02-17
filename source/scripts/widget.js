@@ -6,6 +6,7 @@ var debug = require('./debug');
 var _ = require('./lodash');
 var frases = null;
 var cobrowsing = require('./cobrowsing');
+var templates = require('./templates');
 var WebRTC = require('./webrtc');
 var audio = require('./audio-control');
 var serverUrl = {};
@@ -231,9 +232,9 @@ function Widget(options){
 		forms = JSON.parse(result).forms;
 	});
 
-	request.get('forms_tmp', defaults.clientPath+'partials/forms.html', function (err, template){
-		if(err) return api.emit('Error', err);
-	});
+	// request.get('forms_tmp', defaults.clientPath+'partials/forms.html', function (err, template){
+	// 	if(err) return api.emit('Error', err);
+	// });
 
 	return publicApi;
 }
@@ -364,25 +365,25 @@ function onSessionJoin(params){
 
 function loadWidget(cb){
 	// debug.log('load widget!');
-	var compiled;
-	request.get('widget_tmp', defaults.clientPath+'widget.html', function (err, body){
-		if(err) return;
-		compiled = compileTemplate(body, {
-			defaults: defaults,
-			languages: langs,
-			translations: frases,
-			currLang: currLang || defaults.lang,
-			credentials: storage.getState('credentials', 'session') || {},
-			_: _
-		});
-
-		// Widget variable assignment
-		widget = domify(compiled);
-		// document.body.insertBefore(widget, document.body.firstChild);
-		document.body.appendChild(widget);
-		api.emit('widget/load', widget);
-
+	// var compiled;
+	// request.get('widget_tmp', defaults.clientPath+'widget.html', function (err, body){
+		// if(err) return;
+	compiled = compileTemplate('widget', {
+		defaults: defaults,
+		languages: langs,
+		translations: frases,
+		currLang: currLang || defaults.lang,
+		credentials: storage.getState('credentials', 'session') || {},
+		_: _
 	});
+
+	// Widget variable assignment
+	widget = domify(compiled);
+	// document.body.insertBefore(widget, document.body.firstChild);
+	document.body.appendChild(widget);
+	api.emit('widget/load', widget);
+
+	// });
 }
 
 function onWidgetLoad(widget){
@@ -643,24 +644,26 @@ function newMessage(result){
 		text = parseMessage(message.text, message.file, message.entity);
 
 		if(text.type === 'form') {
-			request.get('forms_tmp', defaults.clientPath+'partials/forms.html', function (err, template){
-				if(err) return cb(err);
+			// request.get('forms_tmp', defaults.clientPath+'partials/forms.html', function (err, template){
+			// 	if(err) return cb(err);
 
-				compiled = compileTemplate(template, {
-					defaults: defaults,
-					message: message,
-					form: text.content,
-					credentials: credentials,
-					frases: frases[(currLang || defaults.lang)],
-					_: _
-				});
-				if(global[text.content.name]) closeForm({ formName: text.content.name });
-				messagesCont.insertAdjacentHTML('beforeend', '<li>'+compiled+'</li>');
-				messagesCont.scrollTop = messagesCont.scrollHeight;
+			compiled = compileTemplate('forms', {
+				defaults: defaults,
+				message: message,
+				form: text.content,
+				credentials: credentials,
+				frases: frases[(currLang || defaults.lang)],
+				_: _
 			});
+
+			if(global[text.content.name]) closeForm({ formName: text.content.name });
+			messagesCont.insertAdjacentHTML('beforeend', '<li>'+compiled+'</li>');
+			messagesCont.scrollTop = messagesCont.scrollHeight;
+			// });
 		} else {
 			message.text = text.content;
-			compiled = compileTemplate(messageTemplate(), message);
+			compiled = compileTemplate('message', { defaults: defaults, message: message });
+			debug.log('newMessage compiled: ', message, compiled);
 			messagesCont.insertAdjacentHTML('beforeend', '<li '+(message.className ? 'class="'+message.className+'"' : '' )+'>'+compiled+'</li>');
 
 			if(index === result.messages.length-1) {
@@ -721,18 +724,18 @@ function onLastMessage(message){
 
 function compileEmail(content, cb) {
 	var compiled;
-	request.get('email_tmp', defaults.clientPath+'partials/email.html', function (err, body){
-		if(err) return cb(err);
+	// request.get('email_tmp', defaults.clientPath+'partials/email.html', function (err, body){
+	// 	if(err) return cb(err);
 
-		compiled = compileTemplate(body, {
-			defaults: defaults,
-			content: content,
-			frases: frases[(currLang || defaults.lang)],
-			_: _
-		});
-
-		if(cb) return cb(null, compiled);
+	compiled = compileTemplate('email', {
+		defaults: defaults,
+		content: content,
+		frases: frases[(currLang || defaults.lang)],
+		_: _
 	});
+
+	if(cb) return cb(null, compiled);
+	// });
 }
 
 function sendDialog(params){
@@ -747,11 +750,14 @@ function sendDialog(params){
 function sendComplain(params){
 	var body = [];
 	// TODO: explain...
-	var complain = compileTemplate(messageTemplate(), {
-		from: frases[currLang].EMAIL_SUBJECTS.complain+' '+params.email,
-		text: params.text,
-		entity: '',
-		time: ''
+	var complain = compileTemplate('message', {
+		defaults: defaults,
+		message: {
+			from: frases[currLang].EMAIL_SUBJECTS.complain+' '+params.email,
+			text: params.text,
+			entity: '',
+			time: ''
+		}
 	});
 
 	body = body.concat(
@@ -771,11 +777,14 @@ function sendComplain(params){
 
 function sendRequest(params, cb) {
 	// TODO: explain...
-	var msg = compileTemplate(messageTemplate(), {
-		from: frases[currLang].EMAIL_SUBJECTS.request+' '+params.uname+' ('+params.email+')',
-		text: params.text,
-		entity: '',
-		time: ''
+	var msg = compileTemplate('message', {
+		defaults: defaults,
+		message: {
+			from: frases[currLang].EMAIL_SUBJECTS.request+' '+params.uname+' ('+params.email+')',
+			text: params.text,
+			entity: '',
+			time: ''
+		}
 	});
 
 	compileEmail(msg, function(err, result) {
@@ -1598,7 +1607,7 @@ function messageTemplate(){
 // }
 
 function compileTemplate(template, data){
-	var compiled = _.template(template);
+	var compiled = templates[template];
 	return compiled(data);
 }
 

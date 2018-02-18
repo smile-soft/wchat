@@ -617,7 +617,8 @@ function newMessage(result){
 	result.messages.forEach(function(message, index) {
 		
 		message.entity = message.from === uname ? 'user' : 'agent';
-		message.from = (message.entity === 'user' && defaultUname) ? frases[currLang].default_user_name : message.from;
+		// message.from = (message.entity === 'user' && defaultUname) ? frases[currLang].default_user_name : message.from;
+		message.from = (message.entity === 'user' && defaultUname) ? '' : message.from;
 		message.time = message.time ? parseTime(message.time) : parseTime(Date.now());
 
 		text = parseMessage(message.text, message.file, message.entity);

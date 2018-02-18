@@ -57,6 +57,7 @@
 		cursor: pointer;
 		background-color: #fff;
 		border-radius: $border-radius;
+		box-shadow: 0 5px 35px rgba(0, 0, 0, 0.15);
 		border: 1px solid #eee;
 		overflow: auto;
 
@@ -91,7 +92,7 @@
 	.swc-unnotify-btn {
 		// display: none;
 		position: absolute;
-		width: 70px;
+		width: 85px;
 	    top: -70px;
 	    margin: 5px;
 	    padding: 5px 10px;

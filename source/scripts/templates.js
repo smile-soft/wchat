@@ -211,7 +211,7 @@ __e( defaults.prefix ) +
 '-message-from">' +
 __e( message.from ) +
 '</span>\n\t\t<p>' +
-__e( message.text ) +
+((__t = ( message.text )) == null ? '' : __t) +
 '</p>\n\t</div>\n\t<br>\n\t<span class="' +
 __e( defaults.prefix ) +
 '-message-time"> ' +

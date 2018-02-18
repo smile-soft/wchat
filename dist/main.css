@@ -469,6 +469,7 @@
     cursor: pointer;
     background-color: #fff;
     border-radius: 15px;
+    box-shadow: 0 5px 35px rgba(0, 0, 0, 0.15);
     border: 1px solid #eee;
     overflow: auto; }
     .swc-btn-cont .swc-lastmsg .swc-message-time {
@@ -486,7 +487,7 @@
     color: #222; }
   .swc-btn-cont .swc-unnotify-btn {
     position: absolute;
-    width: 70px;
+    width: 85px;
     top: -70px;
     margin: 5px;
     padding: 5px 10px;
@@ -823,7 +824,7 @@
 .swc-loader {
   display: none;
   position: absolute;
-  right: 10px;
+  left: 10px;
   bottom: 100%;
   margin-bottom: 10px; }
   .swc-loader span:nth-last-child(1) {

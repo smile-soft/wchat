@@ -1,9 +1,11 @@
 
 $wg-height: 400px;
-$wg-width: 270px;
+$wg-width: 320px;
 $btn-width: 55px;
 $btn-height: 55px;
 $font-stack: "Trebuchet MS", Helvetica, sans-serif;
+$border-radius: 15px;
+$box-shadow: 0 5px 35px rgba(0,0,0,.15);
 
 $btn-icon-call: '\e904';
 
@@ -31,7 +33,8 @@ $btn-color-chat: rgba(175,229,255,0.8);
 $btn-icon-chat: '\e903';
 $btn-icon-color-chat: '';
 
-$btn-icon-color: #777;
+$btn-icon-color: rgb(70,70,70);
+$btn-border-radius: 0 20px 20px 20px;
 $primary-color: #33C3F0;
 $warn-color: #d95353;
 $secondary-color: #BBBBBB;
@@ -67,9 +70,13 @@ $secondary-color: #BBBBBB;
 .swc-wg-cont {
 	font: 14px $font-stack;
 	position: fixed;
-	bottom: 0;
+	bottom: 20px;
 	z-index: 99999;
 	@include transition(height 0.4s ease-in-out 0.4s);
+
+	@include bp-small {
+		bottom: 0;
+	}
 
 	&.position-right {
 		right: 10px;
@@ -82,7 +89,7 @@ $secondary-color: #BBBBBB;
 		}
 		.swc-lastmsg,
 		.swc-unnotify-btn {
-			left: 0;
+			right: 65px;
 		}
 	}
 	&.position-left {
@@ -96,7 +103,7 @@ $secondary-color: #BBBBBB;
 		}
 		.swc-lastmsg,
 		.swc-unnotify-btn {
-			right: 0;
+			left: 65px;
 		}
 	}
 
@@ -155,8 +162,8 @@ $secondary-color: #BBBBBB;
 	}
 
 	&.active {
-		border: 1px solid #eee;
-		background-color: #f7f7f7;
+		// border: 1px solid #eee;
+		// background-color: #f7f7f7;
 		@include animation(show 0.2s ease-in-out);
 
 		/* Larger than mobile */
@@ -227,8 +234,8 @@ $secondary-color: #BBBBBB;
 	&.notified {
 
 		.swc-wg-btn {
-			width: 290px;
-			overflow: auto;
+			// width: 290px;
+			// overflow: auto;
 			// background-color: #FDFA81 !important;
 			// background-color: $btn-color-notified !important;
 
@@ -241,8 +248,8 @@ $secondary-color: #BBBBBB;
 		}
 		.swc-lastmsg {
 			display: block;
-			width: 230px;
-			@include animation(newMessageNoify 1s ease-in-out);
+			width: 220px;
+			@include animation(newMessageNoify 0.4s ease-in-out);
 		}
 		.swc-unnotify-btn {
 			opacity: 1;

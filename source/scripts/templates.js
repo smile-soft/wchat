@@ -198,15 +198,7 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-' +
 __e( message.entity ) +
-'-msg">\n\t<span class="' +
-__e( defaults.prefix ) +
-'-message-from">' +
-__e( message.from ) +
-'</span>\n\t<span class="' +
-__e( defaults.prefix ) +
-'-message-time"> ' +
-__e( message.time ) +
-'</span>\n\t<br>\n\t<p class="' +
+'-msg">\n\t<div class="' +
 __e( defaults.prefix ) +
 '-message-content" \n\t\t';
  if(message.entity === "user") { ;
@@ -214,9 +206,17 @@ __p += ' \n\t\t\tstyle="border-color:';
  defaults.styles.primary.backgroundColor ;
 __p += '" \n\t\t';
  } ;
-__p += '\n\t>\n\t\t' +
+__p += '\n\t>\n\t\t<span class="' +
+__e( defaults.prefix ) +
+'-message-from">' +
+__e( message.from ) +
+'</span>\n\t\t<p>' +
 __e( message.text ) +
-'\t\n\t</p>\n</div>';
+'</p>\n\t</div>\n\t<br>\n\t<span class="' +
+__e( defaults.prefix ) +
+'-message-time"> ' +
+__e( message.time ) +
+'</span>\n</div>';
 
 }
 return __p
@@ -855,17 +855,19 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-btn-cont">\n\t\t<div class="' +
 __e( defaults.prefix ) +
-'-wg-btn">\n\t\t\t<span class="' +
+'-wg-btn">\n\t\t\t<div class="' +
+__e( defaults.prefix ) +
+'-lastmsg-cont">\n\t\t\t\t<span class="' +
 __e( defaults.prefix ) +
 '-unnotify-btn" id="' +
 __e( defaults.prefix ) +
 '-unnotify-btn">' +
 __e( frases.FLOATING_BUTTON.close ) +
-' x</span>\n\t\t\t<div id="' +
+' x</span>\n\t\t\t\t<div id="' +
 __e( defaults.prefix ) +
 '-lastmsg" class="' +
 __e( defaults.prefix ) +
-'-lastmsg"></div>\n\t\t\t<a href="#" class="' +
+'-lastmsg">\n\t\t\t\t</div>\t\n\t\t\t</div>\n\t\t\t<a href="#" class="' +
 __e( defaults.prefix ) +
 '-btn-link">\n\t\t\t\t<span class="' +
 __e( defaults.prefix ) +

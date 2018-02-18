@@ -494,8 +494,11 @@
 	<!-- ***** Floating button container ***** -->
 	<div id="<%- defaults.prefix %>-btn-cont" class="<%- defaults.prefix %>-btn-cont">
 		<div class="<%- defaults.prefix %>-wg-btn">
-			<span class="<%- defaults.prefix %>-unnotify-btn" id="<%- defaults.prefix %>-unnotify-btn"><%- frases.FLOATING_BUTTON.close %> x</span>
-			<div id="<%- defaults.prefix %>-lastmsg" class="<%- defaults.prefix %>-lastmsg"></div>
+			<div class="<%- defaults.prefix %>-lastmsg-cont">
+				<span class="<%- defaults.prefix %>-unnotify-btn" id="<%- defaults.prefix %>-unnotify-btn"><%- frases.FLOATING_BUTTON.close %> x</span>
+				<div id="<%- defaults.prefix %>-lastmsg" class="<%- defaults.prefix %>-lastmsg">
+				</div>	
+			</div>
 			<a href="#" class="<%- defaults.prefix %>-btn-link">
 				<span class="<%- defaults.prefix %>-btn-icon"></span>
 			</a>

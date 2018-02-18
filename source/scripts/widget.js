@@ -69,7 +69,7 @@ var defaults = {
 			backgroundColor: 'rgba(253,250,129,0.8)',
 			color: ''
 		},
-		color: '#777'
+		color: 'rgb(70,70,70)'
 	},
 	widgetWindowOptions: 'left=10,top=10,width=350,height=550,resizable',
 	// absolute path to the wchat folder
@@ -163,7 +163,7 @@ function Widget(options){
 
 		.on('form/submit', onFormSubmit)
 		.on('form/reject', closeForm)
-		.on('widget/load', onWidgetLoad);
+		.on('widget/load', initWidget);
 		// .on('widget/init', onWidgetInit);
 		// .on('widget/statechange', changeWgState);
 	}
@@ -231,10 +231,6 @@ function Widget(options){
 		if(err) return api.emit('Error', err);
 		forms = JSON.parse(result).forms;
 	});
-
-	// request.get('forms_tmp', defaults.clientPath+'partials/forms.html', function (err, template){
-	// 	if(err) return api.emit('Error', err);
-	// });
 
 	return publicApi;
 }
@@ -364,10 +360,7 @@ function onSessionJoin(params){
 }
 
 function loadWidget(cb){
-	// debug.log('load widget!');
-	// var compiled;
-	// request.get('widget_tmp', defaults.clientPath+'widget.html', function (err, body){
-		// if(err) return;
+	
 	compiled = compileTemplate('widget', {
 		defaults: defaults,
 		languages: langs,
@@ -379,24 +372,9 @@ function loadWidget(cb){
 
 	// Widget variable assignment
 	widget = domify(compiled);
-	// document.body.insertBefore(widget, document.body.firstChild);
 	document.body.appendChild(widget);
 	api.emit('widget/load', widget);
 
-	// });
-}
-
-function onWidgetLoad(widget){
-	debug.log('widget loaded!');
-	
-	if(defaults.buttonElement) 
-		defaults.buttonElement.addEventListener('click', publicApi.openWidget, false);
-
-	initWidget();
-
-	// api.once('chat/languages', initWidget);
-	// getLanguages();
-	// initWidget();
 }
 
 function initCobrowsingModule(params){
@@ -476,6 +454,7 @@ function initWidget(){
 	// debug.log('Init widget!');
 	widgetState.initiated = true;
 
+	setStyles();
 	setListeners(widget);
 	changeWgState({ state: getWidgetState() });
 
@@ -644,8 +623,6 @@ function newMessage(result){
 		text = parseMessage(message.text, message.file, message.entity);
 
 		if(text.type === 'form') {
-			// request.get('forms_tmp', defaults.clientPath+'partials/forms.html', function (err, template){
-			// 	if(err) return cb(err);
 
 			compiled = compileTemplate('forms', {
 				defaults: defaults,
@@ -659,8 +636,8 @@ function newMessage(result){
 			if(global[text.content.name]) closeForm({ formName: text.content.name });
 			messagesCont.insertAdjacentHTML('beforeend', '<li>'+compiled+'</li>');
 			messagesCont.scrollTop = messagesCont.scrollHeight;
-			// });
 		} else {
+			if(!message.text) return;
 			message.text = text.content;
 			compiled = compileTemplate('message', { defaults: defaults, message: message });
 			debug.log('newMessage compiled: ', message, compiled);
@@ -684,7 +661,7 @@ function newMessage(result){
 	});
 
 	messagesCont.scrollTop = messagesCont.scrollHeight;
-	if(playSound) playNewMsgTone();
+	// if(playSound) playNewMsgTone();
 }
 
 function clearUndelivered(){
@@ -711,23 +688,20 @@ function onLastMessage(message){
 	if(!widgetState.active) {
 		lastMsg = document.getElementById(defaults.prefix+'-lastmsg');
 
-		PrefixedEvent(lastMsg, 'animationend', ["webkit", "moz", "MS", "o", ""], function(e) {
-			btn.children[0].style.height = e.target.scrollHeight + 'px';
-		});
+		// PrefixedEvent(lastMsg, 'animationend', ["webkit", "moz", "MS", "o", ""], function(e) {
+		// 	btn.children[0].style.height = e.target.scrollHeight + 'px';
+		// });
 
 		lastMsg.innerHTML = message;
 		// changeWgState({ state: 'notified' });
 		addWgState('notified');
 		setButtonStyle('notified');
+
 	}
 }
 
 function compileEmail(content, cb) {
-	var compiled;
-	// request.get('email_tmp', defaults.clientPath+'partials/email.html', function (err, body){
-	// 	if(err) return cb(err);
-
-	compiled = compileTemplate('email', {
+	var compiled = compileTemplate('email', {
 		defaults: defaults,
 		content: content,
 		frases: frases[(currLang || defaults.lang)],
@@ -735,7 +709,6 @@ function compileEmail(content, cb) {
 	});
 
 	if(cb) return cb(null, compiled);
-	// });
 }
 
 function sendDialog(params){
@@ -1273,6 +1246,9 @@ function setListeners(widget){
 	// addEvent(sendMsgBtn, 'click', wgSendMessage);
 	addEvent(fileSelect, 'change', wgSendFile);
 	addEvent(textField, 'keypress', wgTypingHandler);
+
+	if(defaults.buttonElement) 
+		defaults.buttonElement.addEventListener('click', publicApi.openWidget, false);
 }
 
 /********************************
@@ -1339,7 +1315,7 @@ function btnClickHandler(e){
 	if(targ.id === defaults.prefix+'-unnotify-btn') {
 		removeWgState('notified');
 		// reset button height
-		resetStyles(btn.children[0]);
+		// resetStyles(btn.children[0]);
 		setButtonStyle(widgetState.state);
 		return;
 	}
@@ -1475,6 +1451,15 @@ function getWidgetState() {
 	return widgetState.state ? widgetState.state : ((langs &&langs.length) ? 'online' : 'offline');
 }
 
+function setStyles() {
+	var wgBtn = widget.querySelector('.'+defaults.prefix+'-wg-btn');
+
+	console.log('setStyles: ', wgBtn, defaults.buttonStyles);
+
+	wgBtn.style.borderRadius = defaults.buttonStyles.borderRadius;
+	wgBtn.style.boxShadow = defaults.buttonStyles.boxShadow;
+}
+
 // TODO: This is not a good solution or maybe not a good implementation
 function setButtonStyle(state) {
 	// debug.log('setButtonStyle: ', state);
@@ -1505,7 +1490,7 @@ function showWidget(){
 	removeWgState('notified');
 
 	// reset button height
-	resetStyles(btn.children[0]);
+	// resetStyles(btn.children[0]);
 	setButtonStyle(widgetState.state);
 
 	messagesCont.scrollTop = messagesCont.scrollHeight;
@@ -1586,25 +1571,6 @@ function getFileContent(element, cb){
 	};
 	reader.readAsDataURL(file);
 }
-
-function messageTemplate(){
-	var str = '<div class="'+defaults.prefix+'-message '+defaults.prefix+'-<%=entity %>-msg">' +
-					'<span class="'+defaults.prefix+'-message-from"><%=from %></span>' +
-					'<span class="'+defaults.prefix+'-message-time"> <%= time %></span>' +
-					'<br>' +
-					'<p class="'+defaults.prefix+'-message-content" <% if(entity === "user") { %> style="border-color:'+defaults.styles.primary.backgroundColor+'" <% } %>><%=text %></p>' +
-				'</div>';
-				// '</li>';
-	return str;
-}
-
-// function agentIsTypingTemplate(){
-// 	var str = '<div id="'+defaults.prefix+'-agent-typing" class="'+defaults.prefix+'-agent-typing">' +
-// 					'<span><%=aname %></span>' +
-// 					'<span> <%= text %></span>' +
-// 				'</div>';
-// 	return str;
-// }
 
 function compileTemplate(template, data){
 	var compiled = templates[template];
@@ -1753,9 +1719,9 @@ function validateForm(form){
 	return valid;
 }
 
-function resetStyles(element){
-	element.removeAttribute('style');
-}
+// function resetStyles(element){
+// 	element.removeAttribute('style');
+// }
 
 function addWidgetStyles(){
 	

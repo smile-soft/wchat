@@ -419,11 +419,15 @@
 .swc-btn-cont {
   display: inline-block;
   position: absolute;
-  bottom: 20px;
+  bottom: 0;
   z-index: 100; }
+  @media only screen and (max-width: 750px) {
+    .swc-btn-cont {
+      bottom: 20px; } }
   .swc-btn-cont .swc-wg-btn {
     display: inline-block;
-    border-radius: 20px;
+    box-shadow: 0 5px 35px rgba(0, 0, 0, 0.15);
+    border-radius: 0 20px 20px 20px;
     width: 55px;
     height: 55px;
     max-height: 100px;
@@ -449,7 +453,7 @@
       font-size: 36px;
       left: 7.7px;
       top: 8.7px;
-      color: #777;
+      color: #464646;
       -webkit-transition: color 0.4s;
       -moz-transition: color 0.4s;
       -ms-transition: color 0.4s;
@@ -458,11 +462,17 @@
   .swc-btn-cont .swc-lastmsg {
     display: none;
     position: absolute;
+    bottom: 0;
     width: 0;
-    height: 100%;
+    max-height: 100px;
     padding: 10px 0 10px 15px;
     cursor: pointer;
+    background-color: #fff;
+    border-radius: 15px;
+    border: 1px solid #eee;
     overflow: auto; }
+    .swc-btn-cont .swc-lastmsg .swc-message-time {
+      display: none; }
   .swc-btn-cont .swc-message span {
     margin: 0 0 5px 5px;
     font-size: 14px;
@@ -476,7 +486,8 @@
     color: #222; }
   .swc-btn-cont .swc-unnotify-btn {
     position: absolute;
-    bottom: 100%;
+    width: 70px;
+    top: -70px;
     margin: 5px;
     padding: 5px 10px;
     border-radius: 50px;
@@ -523,12 +534,19 @@
   display: none;
   position: relative;
   bottom: 0;
-  width: 270px;
+  width: 320px;
   max-width: 100%;
   max-height: 100%;
+  border: 1px solid #eee;
+  background-color: #f7f7f7;
+  border-radius: 15px;
+  box-shadow: 0 5px 35px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
   /* Larger than mobile */ }
   @media only screen and (max-width: 750px) {
     .swc-wg-panes {
+      border-radius: 0;
+      box-shadow: none;
       height: 100%;
       width: 100%; } }
   .swc-wg-panes .swc-wg-pane {
@@ -581,16 +599,20 @@
       .swc-wg-panes .swc-wg-pane .swc-messages-cont li {
         margin: 15px 0; }
         .swc-wg-panes .swc-wg-pane .swc-messages-cont li .swc-message {
-          -webkit-animation: newMessage 0.2s ease-in-out;
-          -moz-animation: newMessage 0.2s ease-in-out;
-          -ms-animation: newMessage 0.2s ease-in-out;
-          -o-animation: newMessage 0.2s ease-in-out;
-          animation: newMessage 0.2s ease-in-out; }
-          .swc-wg-panes .swc-wg-pane .swc-messages-cont li .swc-message span {
+          -webkit-animation: newMessage 0.4s ease-in-out;
+          -moz-animation: newMessage 0.4s ease-in-out;
+          -ms-animation: newMessage 0.4s ease-in-out;
+          -o-animation: newMessage 0.4s ease-in-out;
+          animation: newMessage 0.4s ease-in-out; }
+          .swc-wg-panes .swc-wg-pane .swc-messages-cont li .swc-message .swc-message-from {
             font-size: 14px;
+            font-weight: 600;
             color: #555; }
-          .swc-wg-panes .swc-wg-pane .swc-messages-cont li .swc-message span:first-child {
-            font-weight: 600; }
+          .swc-wg-panes .swc-wg-pane .swc-messages-cont li .swc-message .swc-message-time {
+            margin: 0 10px;
+            font-weight: 600;
+            font-size: 11px;
+            color: #aaa; }
         .swc-wg-panes .swc-wg-pane .swc-messages-cont li .swc-message-content {
           display: inline-block;
           font-size: 14px;
@@ -604,14 +626,16 @@
           overflow: hidden; }
           .swc-wg-panes .swc-wg-pane .swc-messages-cont li .swc-message-content img {
             max-width: 180px; }
-        .swc-wg-panes .swc-wg-pane .swc-messages-cont li .swc-agent-msg {
+          .swc-wg-panes .swc-wg-pane .swc-messages-cont li .swc-message-content p {
+            margin: 0; }
+        .swc-wg-panes .swc-wg-pane .swc-messages-cont li .swc-user-msg {
           text-align: right; }
-          .swc-wg-panes .swc-wg-pane .swc-messages-cont li .swc-agent-msg .swc-message-content {
+          .swc-wg-panes .swc-wg-pane .swc-messages-cont li .swc-user-msg .swc-message-content {
             border-top-right-radius: 0;
             border-color: #BBBBBB; }
-        .swc-wg-panes .swc-wg-pane .swc-messages-cont li .swc-user-msg {
+        .swc-wg-panes .swc-wg-pane .swc-messages-cont li .swc-agent-msg {
           text-align: left; }
-          .swc-wg-panes .swc-wg-pane .swc-messages-cont li .swc-user-msg .swc-message-content {
+          .swc-wg-panes .swc-wg-pane .swc-messages-cont li .swc-agent-msg .swc-message-content {
             border-top-left-radius: 0; }
     .swc-wg-panes .swc-wg-pane .swc-write-cont {
       position: absolute;
@@ -836,13 +860,16 @@
 .swc-wg-cont {
   font: 14px "Trebuchet MS", Helvetica, sans-serif;
   position: fixed;
-  bottom: 0;
+  bottom: 20px;
   z-index: 99999;
   -webkit-transition: height 0.4s ease-in-out 0.4s;
   -moz-transition: height 0.4s ease-in-out 0.4s;
   -ms-transition: height 0.4s ease-in-out 0.4s;
   -o-transition: height 0.4s ease-in-out 0.4s;
   transition: height 0.4s ease-in-out 0.4s; }
+  @media only screen and (max-width: 750px) {
+    .swc-wg-cont {
+      bottom: 0; } }
   .swc-wg-cont.position-right {
     right: 10px;
     transform-origin: right bottom; }
@@ -852,7 +879,7 @@
       float: right; }
     .swc-wg-cont.position-right .swc-lastmsg,
     .swc-wg-cont.position-right .swc-unnotify-btn {
-      left: 0; }
+      right: 65px; }
   .swc-wg-cont.position-left {
     left: 10px;
     transform-origin: left bottom; }
@@ -862,7 +889,7 @@
       float: left; }
     .swc-wg-cont.position-left .swc-lastmsg,
     .swc-wg-cont.position-left .swc-unnotify-btn {
-      right: 0; }
+      left: 65px; }
   .swc-wg-cont * {
     box-sizing: border-box; }
   .swc-wg-cont h3, .swc-wg-cont h4, .swc-wg-cont h5 {
@@ -900,8 +927,6 @@
   .swc-wg-cont a.swc-button {
     text-decoration: none; }
   .swc-wg-cont.active {
-    border: 1px solid #eee;
-    background-color: #f7f7f7;
     -webkit-animation: show 0.2s ease-in-out;
     -moz-animation: show 0.2s ease-in-out;
     -ms-animation: show 0.2s ease-in-out;
@@ -937,19 +962,16 @@
     content: ""; }
   .swc-wg-cont.online .swc-wg-pane {
     padding-top: 40px; }
-  .swc-wg-cont.notified .swc-wg-btn {
-    width: 290px;
-    overflow: auto; }
-    .swc-wg-cont.notified .swc-wg-btn .swc-btn-icon:before {
-      content: "" !important; }
+  .swc-wg-cont.notified .swc-wg-btn .swc-btn-icon:before {
+    content: "" !important; }
   .swc-wg-cont.notified .swc-lastmsg {
     display: block;
-    width: 230px;
-    -webkit-animation: newMessageNoify 1s ease-in-out;
-    -moz-animation: newMessageNoify 1s ease-in-out;
-    -ms-animation: newMessageNoify 1s ease-in-out;
-    -o-animation: newMessageNoify 1s ease-in-out;
-    animation: newMessageNoify 1s ease-in-out; }
+    width: 220px;
+    -webkit-animation: newMessageNoify 0.4s ease-in-out;
+    -moz-animation: newMessageNoify 0.4s ease-in-out;
+    -ms-animation: newMessageNoify 0.4s ease-in-out;
+    -o-animation: newMessageNoify 0.4s ease-in-out;
+    animation: newMessageNoify 0.4s ease-in-out; }
   .swc-wg-cont.notified .swc-unnotify-btn {
     opacity: 1;
     -webkit-transform: translateY(0);

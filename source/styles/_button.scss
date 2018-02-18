@@ -1,12 +1,17 @@
 .swc-btn-cont {
 	display: inline-block;
 	position: absolute;
-	bottom: 20px;
+	bottom: 0;
 	z-index: 100;
+
+	@include bp-small {
+		bottom: 20px;
+	}
 
 	.swc-wg-btn {
 		display: inline-block;
-		border-radius: 20px;
+		box-shadow: $box-shadow;
+		border-radius: $btn-border-radius;
 		width: $btn-width;
 		height: $btn-height;
 		max-height: 100px;
@@ -44,11 +49,20 @@
 	.swc-lastmsg {
 		display: none;
 		position: absolute;
+		bottom: 0;
 		width: 0;
-		height: 100%;
+		max-height: 100px;
+		// height: 100%;
 		padding: 10px 0 10px 15px;
 		cursor: pointer;
+		background-color: #fff;
+		border-radius: $border-radius;
+		border: 1px solid #eee;
 		overflow: auto;
+
+		.swc-message-time {
+			display: none;
+		}
 	}
 
 	.swc-message {
@@ -77,7 +91,8 @@
 	.swc-unnotify-btn {
 		// display: none;
 		position: absolute;
-	    bottom: 100%;
+		width: 70px;
+	    top: -70px;
 	    margin: 5px;
 	    padding: 5px 10px;
 	    border-radius: 50px;

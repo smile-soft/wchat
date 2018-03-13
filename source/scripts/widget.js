@@ -43,13 +43,13 @@ var defaults = {
 			color: '#FFFFFF'
 		},
 		intro: {
-			backgroundImage: "images/bgr-02.jpg"
+			// backgroundImage: "images/bgr-02.jpg"
 		},
 		sendmail: {
-			backgroundImage: "images/bgr-01.jpg"
+			// backgroundImage: "images/bgr-01.jpg"
 		},
 		closeChat: {
-			backgroundImage: "images/bgr-02.jpg"
+			// backgroundImage: "images/bgr-02.jpg"
 		}
 	},
 	buttonStyles: {
@@ -136,7 +136,7 @@ function Widget(options){
 
 	debug.log('Widget: ', options);
 
-	defaults.clientPath = defaults.clientPath || (defaults.server + defaults.path);
+	defaults.clientPath = options.clientPath || (defaults.server + defaults.path);
 
 	addWidgetStyles();
 	serverUrl = require('url').parse(defaults.server, true);

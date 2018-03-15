@@ -426,7 +426,7 @@
       bottom: 20px; } }
   .swc-btn-cont .swc-wg-btn {
     display: inline-block;
-    box-shadow: 0 5px 35px rgba(0, 0, 0, 0.15);
+    box-shadow: 0px 0px 20px 6px rgba(0, 0, 0, 0.15);
     border-radius: 0 20px 20px 20px;
     width: 55px;
     height: 55px;
@@ -464,8 +464,8 @@
     position: absolute;
     bottom: 0;
     width: 0;
-    max-height: 100px;
-    padding: 10px 0 10px 15px;
+    max-height: 90px;
+    padding: 10px;
     cursor: pointer;
     background-color: #fff;
     border-radius: 15px;
@@ -491,6 +491,7 @@
     top: -70px;
     margin: 5px;
     padding: 5px 10px;
+    text-align: center;
     border-radius: 50px;
     background-color: #777;
     color: #fff;
@@ -512,24 +513,33 @@
 .swc-top-bar {
   position: absolute;
   width: 100%;
+  height: 60px;
   top: 0;
   padding: 5px 10px;
-  background-color: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 5px 20px 5px rgba(0, 0, 0, 0.15);
   color: #fff;
   z-index: 100; }
   .swc-top-bar h3 {
     margin: 0; }
   .swc-top-bar .swc-wg-title {
-    float: left; }
+    width: 225px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; }
+  .swc-top-bar .swc-wg-state-cont .swc-wg-state-icon {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%; }
   .swc-top-bar .swc-wg-minimize {
-    float: right;
-    margin-top: 5px; }
+    position: absolute;
+    top: 9px;
+    right: 5px; }
     .swc-top-bar .swc-wg-minimize a {
       text-decoration: none;
       font-size: 16px;
       margin-left: 2px;
-      padding: 5px;
-      color: #fff; }
+      padding: 10px; }
 
 .swc-wg-panes {
   display: none;
@@ -538,10 +548,9 @@
   width: 320px;
   max-width: 100%;
   max-height: 100%;
-  border: 1px solid #eee;
   background-color: #f7f7f7;
   border-radius: 15px;
-  box-shadow: 0 5px 35px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 5px 35px 20px rgba(0, 0, 0, 0.15);
   overflow: hidden;
   /* Larger than mobile */ }
   @media only screen and (max-width: 750px) {
@@ -553,9 +562,9 @@
   .swc-wg-panes .swc-wg-pane {
     position: relative;
     display: none;
+    padding-top: 60px;
     width: 100%;
-    height: 100%;
-    overflow-y: auto; }
+    height: 100%; }
     .swc-wg-panes .swc-wg-pane[data-swc-pane="messages"] {
       padding-bottom: 50px; }
     .swc-wg-panes .swc-wg-pane.active {
@@ -564,23 +573,12 @@
       font-weight: 100; }
     .swc-wg-panes .swc-wg-pane .swc-backdrop-cont {
       position: relative;
-      min-height: 120px;
       padding: 10px; }
-      .swc-wg-panes .swc-wg-pane .swc-backdrop-cont.swc-dark {
-        background-color: #333;
-        background-color: rgba(0, 0, 0, 0.5);
-        box-shadow: 0 -30px 100px -30px #333 inset;
-        color: #fff; }
-      .swc-wg-panes .swc-wg-pane .swc-backdrop-cont.swc-white {
-        background-color: #fff;
-        background-color: rgba(255, 255, 255, 0.6);
-        color: #333; }
     .swc-wg-panes .swc-wg-pane .swc-social-list {
       position: relative;
       margin-top: 25px; }
     .swc-wg-panes .swc-wg-pane .swc-pane-header {
       position: relative;
-      min-height: 120px;
       overflow: hidden;
       background-size: cover;
       background-position: center;
@@ -591,8 +589,8 @@
       padding: 10px;
       border-top: 1px solid #eee; }
     .swc-wg-panes .swc-wg-pane .swc-messages-cont {
-      height: 400px;
-      padding: 0 10px 0;
+      height: 450px;
+      padding: 0 10px 50px;
       overflow-y: auto; }
       @media only screen and (max-width: 750px) {
         .swc-wg-panes .swc-wg-pane .swc-messages-cont {
@@ -605,11 +603,15 @@
           -ms-animation: newMessage 0.4s ease-in-out;
           -o-animation: newMessage 0.4s ease-in-out;
           animation: newMessage 0.4s ease-in-out; }
+          .swc-wg-panes .swc-wg-pane .swc-messages-cont li .swc-message .swc-message-from,
+          .swc-wg-panes .swc-wg-pane .swc-messages-cont li .swc-message .swc-message-time {
+            display: block; }
           .swc-wg-panes .swc-wg-pane .swc-messages-cont li .swc-message .swc-message-from {
             font-size: 14px;
             font-weight: 600;
             color: #555; }
           .swc-wg-panes .swc-wg-pane .swc-messages-cont li .swc-message .swc-message-time {
+            display: block;
             margin: 0 10px;
             font-weight: 600;
             font-size: 11px;
@@ -646,7 +648,20 @@
       width: 100%;
       background-color: #fff;
       z-index: 100;
-      text-align: center; }
+      text-align: center;
+      box-shadow: 0 5px 20px 5px rgba(0, 0, 0, 0.15); }
+      .swc-wg-panes .swc-wg-pane .swc-write-cont .swc-end-dialog-btn {
+        position: absolute;
+        top: -30px;
+        width: 100%; }
+        .swc-wg-panes .swc-wg-pane .swc-write-cont .swc-end-dialog-btn a {
+          position: relative;
+          margin: auto;
+          padding: 5px 25px;
+          background-color: #fff;
+          color: #555;
+          border-radius: 20px;
+          box-shadow: 0 5px 20px 5px rgba(0, 0, 0, 0.15); }
       .swc-wg-panes .swc-wg-pane .swc-write-cont .swc-sendmsg-btn,
       .swc-wg-panes .swc-wg-pane .swc-write-cont .swc-sendfile-cont {
         display: table-cell;
@@ -791,6 +806,9 @@
       display: block;
       width: 100%; }
 
+.swc-no-scroll {
+  overflow: hidden; }
+
 .swc-uppercase {
   text-transform: uppercase; }
 
@@ -925,6 +943,8 @@
     margin-bottom: 35px;
     border-width: 0;
     border-top: 1px solid #E1E1E1; }
+  .swc-wg-cont a {
+    color: #428bca; }
   .swc-wg-cont a.swc-button {
     text-decoration: none; }
   .swc-wg-cont.active {
@@ -952,17 +972,17 @@
       display: block; }
   .swc-wg-cont.offline .swc-wg-btn .swc-btn-icon:before {
     content: ""; }
+  .swc-wg-cont.offline .swc-wg-state-cont .swc-wg-state-icon {
+    background-color: #f7f7f7; }
   .swc-wg-cont.online .swc-top-bar {
     background-color: #fff;
     color: #333; }
-    .swc-wg-cont.online .swc-top-bar .swc-wg-minimize a {
-      color: #333; }
   .swc-wg-cont.online .swc-wg-btn .swc-btn-icon:before {
     content: ""; }
   .swc-wg-cont.online.webrtc-enabled .swc-btn-icon:before {
     content: ""; }
-  .swc-wg-cont.online .swc-wg-pane {
-    padding-top: 40px; }
+  .swc-wg-cont.online .swc-wg-state-cont .swc-wg-state-icon {
+    background-color: #1eff1e; }
   .swc-wg-cont.notified .swc-wg-btn .swc-btn-icon:before {
     content: "" !important; }
   .swc-wg-cont.notified .swc-lastmsg {

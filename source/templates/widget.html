@@ -10,28 +10,35 @@
 		style="<% if(defaults.styles.width) { %>width: <%- defaults.styles.width %>;<% } %>">
 
 		<!-- ***** Top bar ***** -->
-		<div class="<%- defaults.prefix %>-top-bar">
+		<div 
+			class="<%- defaults.prefix %>-top-bar" 
+			style="background: <%- defaults.styles.primary.backgroundColor %>; color: <%- defaults.styles.primary.color %>;">
 
 			<!-- Main title -->
 			<h4 class="<%- defaults.prefix %>-wg-title <%- defaults.prefix %>-uppercase">
 				<%- defaults.title || frases.TOP_BAR.title %>
 			</h4>
 
+			<div class="<%- defaults.prefix %>-wg-state-cont">
+				<span class="<%- defaults.prefix %>-wg-state-icon"> </span>
+				<span class="<%- defaults.prefix %>-wg-state"></span>
+			</div>
+
 			<!-- Action buttons (minimize, close) -->
 			<div class="<%- defaults.prefix %>-wg-minimize">
 
-				<a 
+				<!--<a 
 					href="#" 
 					data-<%- defaults.prefix %>-handler="closeWidget">
 					
 					<span style="font-weight: bold">_</span>
 				
-				</a>
+				</a>-->
 				
 				<a 
 					href="#" 
-					data-<%- defaults.prefix %>-handler="finish">
-
+					style="color: <%- defaults.styles.primary.color %>"
+					data-<%- defaults.prefix %>-handler="closeWidget"
 					<span class="<%- defaults.prefix %>-icon-remove"></span>
 
 				</a>
@@ -71,9 +78,9 @@
 							type="button" 
 							class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
 							style="
-								background-color: <%- defaults.styles.primary.backgroundColor %>; 
+								background: <%- defaults.styles.primary.backgroundColor %>; 
 								color: <%- defaults.styles.primary.color %>; 
-								border: 1px solid <%- defaults.styles.primary.backgroundColor %>;"
+								border: 1px solid <%- defaults.styles.primary.color %>;"
 							data-<%- defaults.prefix %>-handler="initCall">
 
 							<%- panels.CONNECTION_TYPES.call_agent_btn %>
@@ -87,9 +94,9 @@
 							type="button" 
 							class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
 							style="
-								background-color: <%- defaults.styles.primary.backgroundColor %>; 
+								background: <%- defaults.styles.primary.backgroundColor %>; 
 								color: <%- defaults.styles.primary.color %>; 
-								border: 1px solid <%- defaults.styles.primary.backgroundColor %>;"
+								border: 1px solid <%- defaults.styles.primary.color %>;"
 							data-<%- defaults.prefix %>-handler="initFallbackCall">
 
 							<%- panels.CONNECTION_TYPES.call_agent_btn %>
@@ -103,9 +110,9 @@
 							type="button" 
 							class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
 							style="
-								background-color: <%- defaults.styles.primary.backgroundColor %>; 
+								background: <%- defaults.styles.primary.backgroundColor %>; 
 								color: <%- defaults.styles.primary.color %>; 
-								border: 1px solid <%- defaults.styles.primary.backgroundColor %>;"
+								border: 1px solid <%- defaults.styles.primary.color %>;"
 							data-<%- defaults.prefix %>-handler="initCallback">
 
 							<%- panels.CONNECTION_TYPES.callback_btn %>
@@ -118,7 +125,7 @@
 					<button
 						type="button" 
 						class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
-						style="background-color: <%- defaults.styles.primary.backgroundColor %>; color: <%- defaults.styles.primary.color %>; border: 1px solid <%- defaults.styles.primary.backgroundColor %>;"
+						style="background: <%- defaults.styles.primary.backgroundColor %>; color: <%- defaults.styles.primary.color %>; border: 1px solid <%- defaults.styles.primary.color %>;"
 						data-<%- defaults.prefix %>-handler="initChat">
 						<%- panels.CONNECTION_TYPES.chat_agent_btn %>
 					</button>
@@ -188,9 +195,9 @@
 							type="submit" 
 							class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
 							style="
-								background-color: <%- defaults.styles.primary.backgroundColor %>; 
+								background: <%- defaults.styles.primary.backgroundColor %>; 
 								color: <%- defaults.styles.primary.color %>; 
-								border: 1px solid <%- defaults.styles.primary.backgroundColor %>;">
+								border: 1px solid <%- defaults.styles.primary.color %>;">
 
 							<%- panels.INTRO.start_dialog_button %>
 									
@@ -220,6 +227,11 @@
 
 			<div class="<%- defaults.prefix %>-write-cont">
 				
+				<!-- End dialog button -->
+				<div class="<%- defaults.prefix %>-end-dialog-btn">
+					<a href="#" data-<%- defaults.prefix %>-handler="finish"><%- panels.MESSAGES.end_dialog %></a>
+				</div>
+
 				<!-- "Agent is typing" indicator -->
 				<div class="<%- defaults.prefix %>-loader">
 					<span></span>
@@ -280,7 +292,6 @@
 
 				<!-- The text displayed on image -->
 				<div class="<%- defaults.prefix %>-backdrop-cont <%- defaults.prefix %>-dark">
-					<br><br>
 					<p><%- panels.OFFLINE.offline_message %></p>
 				</div>
 
@@ -301,9 +312,9 @@
 						type="submit" 
 						class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
 						style="
-							background-color: <%- defaults.styles.primary.backgroundColor %>; 
+							background: <%- defaults.styles.primary.backgroundColor %>; 
 							color: <%- defaults.styles.primary.color %>; 
-							border: 1px solid <%- defaults.styles.primary.backgroundColor %>;">
+							border: 1px solid <%- defaults.styles.primary.color %>;">
 
 						<%- panels.OFFLINE.send_message_button %>
 							
@@ -357,9 +368,9 @@
 						type="submit" 
 						class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
 						style="
-							background-color: <%- defaults.styles.primary.backgroundColor %>; 
+							background: <%- defaults.styles.primary.backgroundColor %>; 
 							color: <%- defaults.styles.primary.color %>; 
-							border: 1px solid <%- defaults.styles.primary.backgroundColor %>;">
+							border: 1px solid <%- defaults.styles.primary.color %>;">
 
 						<%- panels.CLOSE_CHAT.finish_dialog_button %>
 							
@@ -393,7 +404,7 @@
 						id="<%- defaults.prefix %>-tryagain-btn"
 						type="button"
 						class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block <%- defaults.prefix %>-hidden"
-						style="background-color: <%- defaults.styles.primary.backgroundColor %>; color: <%- defaults.styles.primary.color %>; border: 1px solid <%- defaults.styles.primary.backgroundColor %>;"
+						style="background: <%- defaults.styles.primary.backgroundColor %>; color: <%- defaults.styles.primary.color %>; border: 1px solid <%- defaults.styles.primary.color %>;"
 						data-<%- defaults.prefix %>-handler="initCall">
 						<%- panels.AUDIO_CALL.try_again %>
 					</button>	
@@ -457,9 +468,9 @@
 						type="submit"
 						class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block"
 						style="
-							background-color: <%- defaults.styles.primary.backgroundColor %>; 
+							background: <%- defaults.styles.primary.backgroundColor %>; 
 							color: <%- defaults.styles.primary.color %>; 
-							border: 1px solid <%- defaults.styles.primary.backgroundColor %>;"
+							border: 1px solid <%- defaults.styles.primary.color %>;"
 						data-<%- defaults.prefix %>-handler="setCallback">
 
 						<%- panels.CALLBACK.confirm_callback %>
@@ -495,7 +506,7 @@
 	<div id="<%- defaults.prefix %>-btn-cont" class="<%- defaults.prefix %>-btn-cont">
 		<div class="<%- defaults.prefix %>-wg-btn">
 			<div class="<%- defaults.prefix %>-lastmsg-cont">
-				<span class="<%- defaults.prefix %>-unnotify-btn" id="<%- defaults.prefix %>-unnotify-btn"><%- frases.FLOATING_BUTTON.close %> x</span>
+				<span class="<%- defaults.prefix %>-unnotify-btn" id="<%- defaults.prefix %>-unnotify-btn"><%- frases.FLOATING_BUTTON.close %></span>
 				<div id="<%- defaults.prefix %>-lastmsg" class="<%- defaults.prefix %>-lastmsg">
 				</div>	
 			</div>

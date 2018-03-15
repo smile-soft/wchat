@@ -4,7 +4,12 @@
     	"default_user_name": "Ви",
     	"default_offer": "Ласкаво просимо, потрібна допомога?",    	
     	"TOP_BAR": {
-    		"title": "Онлайн чат"
+    		"title": "Онлайн чат",
+            "close": "Закрити",
+            "STATUS": {
+                "online": "Онлайн",
+                "offline": "Офлайн"
+            }
     	},
     	"PANELS": {
     		"CONNECTION_TYPES": {
@@ -27,6 +32,7 @@
     			}
     		},
     		"MESSAGES": {
+                "end_dialog": "Закінчити диалог",
     			"PLACEHOLDERS": {
     				"message": "Ваше повідомлення тут..."
     			}
@@ -132,7 +138,12 @@
     	"default_user_name": "Вы",
     	"default_offer": "Добро пожаловать, нужна помощь?",
     	"TOP_BAR": {
-    		"title": "Онлайн чат"
+    		"title": "Онлайн чат",
+            "close": "Закрыть",
+            "STATUS": {
+                "online": "Онлайн",
+                "offline": "Офлайн"
+            }
     	},
     	"PANELS": {
     		"CONNECTION_TYPES": {
@@ -155,6 +166,7 @@
     			}
     		},
     		"MESSAGES": {
+                "end_dialog": "Завершить диалог",
     			"PLACEHOLDERS": {
     				"message": "Ваше сообщение здесь..."
     			}
@@ -260,7 +272,12 @@
 		"default_user_name": "You",
 		"default_offer": "Welcome, need some help?",
 		"TOP_BAR": {
-			"title": "Live chat"
+			"title": "Live chat",
+            "close": "Close",
+            "STATUS": {
+                "online": "Online",
+                "offline": "Offline"
+            }
 		},
 		"PANELS": {
 			"CONNECTION_TYPES": {
@@ -283,6 +300,7 @@
 				}
 			},
 			"MESSAGES": {
+                "end_dialog": "End dialog",
 				"PLACEHOLDERS": {
 					"message": "Your message here..."
 				}
@@ -302,7 +320,7 @@
 			"CLOSE_CHAT": {
 				"close_chat_header": "Thank you for reaching us!",
 				"send_dialog_label": "Send dialog to your email?",
-				"finish_dialog_button": "Finish dialog",
+				"finish_dialog_button": "End dialog",
 				"rate_agent": "Rate agent service",
 				"back": "Back",
 				"PLACEHOLDERS": {

@@ -39,7 +39,7 @@ var defaults = {
 	offer: false,
 	styles: {
 		primary: {
-			backgroundColor: '#555555',
+			backgroundColor: '#74b9ff',
 			color: '#FFFFFF'
 		},
 		intro: {
@@ -75,9 +75,11 @@ var defaults = {
 	// absolute path to the wchat folder
 	path: '/ipcc/webchat/',
 	// absolute path to the clients files. If not set, files requested from defaults.server + defaults.path.
-	clientPath: '',
+	clientPath: 'https://cdn.smile-soft.com/wchat/v1/',
 	// absolute path to the css flie
 	stylesPath: '',
+	// absolute path to the translations.json flie
+	translationsPath: '',
 	// in seconds
 	checkStatusTimeout: 10,
 	// in seconds
@@ -136,7 +138,7 @@ function Widget(options){
 
 	debug.log('Widget: ', options);
 
-	defaults.clientPath = options.clientPath || (defaults.server + defaults.path);
+	defaults.clientPath = (options.clientPath || defaults.clientPath) || (defaults.server + defaults.path);
 
 	addWidgetStyles();
 	serverUrl = require('url').parse(defaults.server, true);
@@ -221,7 +223,7 @@ function Widget(options){
 	getLanguages();
 
 	// load translations
-	request.get('frases', defaults.clientPath+'translations.json', function (err, result){
+	request.get('frases', (defaults.translationsPath || defaults.clientPath)+'translations.json', function (err, result){
 		if(err) return api.emit('Error', err);
 		frases = JSON.parse(result);
 	});
@@ -344,7 +346,7 @@ function onSessionSuccess(){
 			return api.emit('Error', 'Module wasn\'t initiated due to network errors');
 		}
 
-	}, 60000);		
+	}, 60000);
 
 }
 
@@ -1248,6 +1250,10 @@ function setListeners(widget){
 	addEvent(fileSelect, 'change', wgSendFile);
 	addEvent(textField, 'keypress', wgTypingHandler);
 
+	addEvent(widget, 'mouseenter', onMouseEnter);
+	addEvent(widget, 'mouseleave', onMouseLeave);
+
+
 	if(defaults.buttonElement) 
 		defaults.buttonElement.addEventListener('click', publicApi.openWidget, false);
 }
@@ -1255,6 +1261,14 @@ function setListeners(widget){
 /********************************
  * Widget event handlers *
  ********************************/
+
+function onMouseEnter() {
+	document.body.classList.add(defaults.prefix+'-no-scroll');
+}
+
+function onMouseLeave() {
+	document.body.classList.remove(defaults.prefix+'-no-scroll');
+}
 
 function wgClickHandler(e){
 	var targ = e.target,
@@ -1441,6 +1455,9 @@ function changeWgState(params){
 		
 	}
 
+	var state = document.querySelector('.'+defaults.prefix+'-wg-state');
+	if(state) state.textContent = frases[currLang].TOP_BAR.STATUS[params.state];
+
 	widgetState.state = params.state;
 	addWgState(params.state);
 	setButtonStyle(params.state);
@@ -1468,7 +1485,7 @@ function setButtonStyle(state) {
 	var wgBtn = widget.querySelector('.'+defaults.prefix+'-wg-btn'),
 		btnIcon = widget.querySelector('.'+defaults.prefix+'-btn-icon');
 
-	wgBtn.style.backgroundColor = defaults.buttonStyles[state].backgroundColor;
+	wgBtn.style.background = defaults.buttonStyles[state].backgroundColor;
 	btnIcon.style.color = defaults.buttonStyles[state].color || defaults.buttonStyles.color;
 }
 

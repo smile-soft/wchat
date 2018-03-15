@@ -1,12 +1,10 @@
 <div class="<%- defaults.prefix %>-message <%- defaults.prefix %>-<%- message.entity %>-msg">
+	<span class="<%- defaults.prefix %>-message-from"><%- message.from %></span>
 	<div class="<%- defaults.prefix %>-message-content" 
 		<% if(message.entity === "user") { %> 
 			style="border-color:<% defaults.styles.primary.backgroundColor %>" 
-		<% } %>
-	>
-		<span class="<%- defaults.prefix %>-message-from"><%- message.from %></span>
+		<% } %>>
 		<p><%= message.text %></p>
 	</div>
-	<br>
 	<span class="<%- defaults.prefix %>-message-time"> <%- message.time %></span>
 </div>

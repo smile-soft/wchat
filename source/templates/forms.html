@@ -1,7 +1,5 @@
 <div class="<%- defaults.prefix %>-message <%- defaults.prefix %>-<%- message.entity %>-msg">
 	<span class="<%- defaults.prefix %>-message-from"><%- message.from %></span>
-	<span class="<%- defaults.prefix %>-message-time"> <%- message.time %></span>
-	<br>
 	<div class="<%- defaults.prefix %>-message-content" <% if(message.entity === "user") { %> style="border-color:'<%- defaults.styles.primary.backgroundColor %>" <% } %>>
 		<% if(form.description) { %>
 			<p><%= frases.FORMS.DESCRIPTIONS[form.description] || form.description %></p>
@@ -34,4 +32,5 @@
 				data-<%- defaults.prefix %>-handler="rejectForm"><%- frases.FORMS.cancel %></button>
 		</form>
 	</div>
+	<span class="<%- defaults.prefix %>-message-time"> <%- message.time %></span>
 </div>

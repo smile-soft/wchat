@@ -40,7 +40,7 @@ __e( prefix ) +
 __e( prefix ) +
 '-message-time {\n                position: relative;\n                float: right;\n            }\n            .copyright {\n                margin-top: 5px;\n                font-size: 12px;\n                font-style: italic;\n                color: #CCCCCC;\n                text-align: right;\n            }\n\n        </style>\n    </head>\n    <body>\n        <center class="wrapper">\n            <div class="webkit">\n                <!--[if (gte mso 9)|(IE)]>\n                <table width="500" align="center" cellpadding="0" cellspacing="0" border="0">\n                <tr>\n                <td>\n                <![endif]-->\n                <table class="outer" align="center" cellpadding="0" cellspacing="0" border="0">\n                    <tr>\n                        <td class="one-column">\n                            <table width="100%">\n                                <tr>\n                                    <td class="inner contents">\n                                        ' +
 ((__t = ( content )) == null ? '' : __t) +
-'\n                                    </td>\n                                </tr>\n                                <tr>\n                                    <td>\n                                        <p class="copyright">Copyright (c) 2016 SmileSoft</p>\n                                    </td>\n                                </tr>\n                            </table>\n                        </td>\n                    </tr>\n                </table>\n                <!--[if (gte mso 9)|(IE)]>\n                </td>\n                </tr>\n                </table>\n                <![endif]-->\n            </div>\n        </center>\n    </body>\n</html>';
+'\n                                    </td>\n                                </tr>\n                            </table>\n                        </td>\n                    </tr>\n                </table>\n                <!--[if (gte mso 9)|(IE)]>\n                </td>\n                </tr>\n                </table>\n                <![endif]-->\n            </div>\n        </center>\n    </body>\n</html>';
 
 }
 return __p
@@ -75,11 +75,7 @@ __e( message.entity ) +
 __e( defaults.prefix ) +
 '-message-from">' +
 __e( message.from ) +
-'</span>\n\t<span class="' +
-__e( defaults.prefix ) +
-'-message-time"> ' +
-__e( message.time ) +
-'</span>\n\t<br>\n\t<div class="' +
+'</span>\n\t<div class="' +
 __e( defaults.prefix ) +
 '-message-content" ';
  if(message.entity === "user") { ;
@@ -167,7 +163,11 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-handler="rejectForm">' +
 __e( frases.FORMS.cancel ) +
-'</button>\n\t\t</form>\n\t</div>\n</div>';
+'</button>\n\t\t</form>\n\t</div>\n\t<span class="' +
+__e( defaults.prefix ) +
+'-message-time"> ' +
+__e( message.time ) +
+'</span>\n</div>';
 
 }
 return __p
@@ -198,7 +198,11 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-' +
 __e( message.entity ) +
-'-msg">\n\t<div class="' +
+'-msg">\n\t<span class="' +
+__e( defaults.prefix ) +
+'-message-from">' +
+__e( message.from ) +
+'</span>\n\t<div class="' +
 __e( defaults.prefix ) +
 '-message-content" \n\t\t';
  if(message.entity === "user") { ;
@@ -206,13 +210,9 @@ __p += ' \n\t\t\tstyle="border-color:';
  defaults.styles.primary.backgroundColor ;
 __p += '" \n\t\t';
  } ;
-__p += '\n\t>\n\t\t<span class="' +
-__e( defaults.prefix ) +
-'-message-from">' +
-__e( message.from ) +
-'</span>\n\t\t<p>' +
+__p += '>\n\t\t<p>' +
 ((__t = ( message.text )) == null ? '' : __t) +
-'</p>\n\t</div>\n\t<br>\n\t<span class="' +
+'</p>\n\t</div>\n\t<span class="' +
 __e( defaults.prefix ) +
 '-message-time"> ' +
 __e( message.time ) +
@@ -263,21 +263,33 @@ __p += 'width: ' +
 __e( defaults.styles.width ) +
 ';';
  } ;
-__p += '">\n\n\t\t<!-- ***** Top bar ***** -->\n\t\t<div class="' +
+__p += '">\n\n\t\t<!-- ***** Top bar ***** -->\n\t\t<div \n\t\t\tclass="' +
 __e( defaults.prefix ) +
-'-top-bar">\n\n\t\t\t<!-- Main title -->\n\t\t\t<h4 class="' +
+'-top-bar" \n\t\t\tstyle="background: ' +
+__e( defaults.styles.primary.backgroundColor ) +
+'; color: ' +
+__e( defaults.styles.primary.color ) +
+';">\n\n\t\t\t<!-- Main title -->\n\t\t\t<h4 class="' +
 __e( defaults.prefix ) +
 '-wg-title ' +
 __e( defaults.prefix ) +
 '-uppercase">\n\t\t\t\t' +
 __e( defaults.title || frases.TOP_BAR.title ) +
-'\n\t\t\t</h4>\n\n\t\t\t<!-- Action buttons (minimize, close) -->\n\t\t\t<div class="' +
+'\n\t\t\t</h4>\n\n\t\t\t<div class="' +
 __e( defaults.prefix ) +
-'-wg-minimize">\n\n\t\t\t\t<a \n\t\t\t\t\thref="#" \n\t\t\t\t\tdata-' +
+'-wg-state-cont">\n\t\t\t\t<span class="' +
 __e( defaults.prefix ) +
-'-handler="closeWidget">\n\t\t\t\t\t\n\t\t\t\t\t<span style="font-weight: bold">_</span>\n\t\t\t\t\n\t\t\t\t</a>\n\t\t\t\t\n\t\t\t\t<a \n\t\t\t\t\thref="#" \n\t\t\t\t\tdata-' +
+'-wg-state-icon"> </span>\n\t\t\t\t<span class="' +
 __e( defaults.prefix ) +
-'-handler="finish">\n\n\t\t\t\t\t<span class="' +
+'-wg-state"></span>\n\t\t\t</div>\n\n\t\t\t<!-- Action buttons (minimize, close) -->\n\t\t\t<div class="' +
+__e( defaults.prefix ) +
+'-wg-minimize">\n\n\t\t\t\t<!--<a \n\t\t\t\t\thref="#" \n\t\t\t\t\tdata-' +
+__e( defaults.prefix ) +
+'-handler="closeWidget">\n\t\t\t\t\t\n\t\t\t\t\t<span style="font-weight: bold">_</span>\n\t\t\t\t\n\t\t\t\t</a>-->\n\t\t\t\t\n\t\t\t\t<a \n\t\t\t\t\thref="#" \n\t\t\t\t\tstyle="color: ' +
+__e( defaults.styles.primary.color ) +
+'"\n\t\t\t\t\tdata-' +
+__e( defaults.prefix ) +
+'-handler="closeWidget"\n\t\t\t\t\t<span class="' +
 __e( defaults.prefix ) +
 '-icon-remove"></span>\n\n\t\t\t\t</a>\n\n\t\t\t</div>\n\t\t</div>\n\t\t<!-- ***** Top bar ends ***** -->\n\n\t\t<!-- ***** Connection types pane ***** -->\n\t\t<div \n\t\t\tclass="' +
 __e( defaults.prefix ) +
@@ -315,12 +327,12 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-button-primary ' +
 __e( defaults.prefix ) +
-'-block" \n\t\t\t\t\t\t\tstyle="\n\t\t\t\t\t\t\t\tbackground-color: ' +
+'-block" \n\t\t\t\t\t\t\tstyle="\n\t\t\t\t\t\t\t\tbackground: ' +
 __e( defaults.styles.primary.backgroundColor ) +
 '; \n\t\t\t\t\t\t\t\tcolor: ' +
 __e( defaults.styles.primary.color ) +
 '; \n\t\t\t\t\t\t\t\tborder: 1px solid ' +
-__e( defaults.styles.primary.backgroundColor ) +
+__e( defaults.styles.primary.color ) +
 ';"\n\t\t\t\t\t\t\tdata-' +
 __e( defaults.prefix ) +
 '-handler="initCall">\n\n\t\t\t\t\t\t\t' +
@@ -335,12 +347,12 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-button-primary ' +
 __e( defaults.prefix ) +
-'-block" \n\t\t\t\t\t\t\tstyle="\n\t\t\t\t\t\t\t\tbackground-color: ' +
+'-block" \n\t\t\t\t\t\t\tstyle="\n\t\t\t\t\t\t\t\tbackground: ' +
 __e( defaults.styles.primary.backgroundColor ) +
 '; \n\t\t\t\t\t\t\t\tcolor: ' +
 __e( defaults.styles.primary.color ) +
 '; \n\t\t\t\t\t\t\t\tborder: 1px solid ' +
-__e( defaults.styles.primary.backgroundColor ) +
+__e( defaults.styles.primary.color ) +
 ';"\n\t\t\t\t\t\t\tdata-' +
 __e( defaults.prefix ) +
 '-handler="initFallbackCall">\n\n\t\t\t\t\t\t\t' +
@@ -355,12 +367,12 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-button-primary ' +
 __e( defaults.prefix ) +
-'-block" \n\t\t\t\t\t\t\tstyle="\n\t\t\t\t\t\t\t\tbackground-color: ' +
+'-block" \n\t\t\t\t\t\t\tstyle="\n\t\t\t\t\t\t\t\tbackground: ' +
 __e( defaults.styles.primary.backgroundColor ) +
 '; \n\t\t\t\t\t\t\t\tcolor: ' +
 __e( defaults.styles.primary.color ) +
 '; \n\t\t\t\t\t\t\t\tborder: 1px solid ' +
-__e( defaults.styles.primary.backgroundColor ) +
+__e( defaults.styles.primary.color ) +
 ';"\n\t\t\t\t\t\t\tdata-' +
 __e( defaults.prefix ) +
 '-handler="initCallback">\n\n\t\t\t\t\t\t\t' +
@@ -375,12 +387,12 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-button-primary ' +
 __e( defaults.prefix ) +
-'-block" \n\t\t\t\t\t\tstyle="background-color: ' +
+'-block" \n\t\t\t\t\t\tstyle="background: ' +
 __e( defaults.styles.primary.backgroundColor ) +
 '; color: ' +
 __e( defaults.styles.primary.color ) +
 '; border: 1px solid ' +
-__e( defaults.styles.primary.backgroundColor ) +
+__e( defaults.styles.primary.color ) +
 ';"\n\t\t\t\t\t\tdata-' +
 __e( defaults.prefix ) +
 '-handler="initChat">\n\t\t\t\t\t\t' +
@@ -475,12 +487,12 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-button-primary ' +
 __e( defaults.prefix ) +
-'-block" \n\t\t\t\t\t\t\tstyle="\n\t\t\t\t\t\t\t\tbackground-color: ' +
+'-block" \n\t\t\t\t\t\t\tstyle="\n\t\t\t\t\t\t\t\tbackground: ' +
 __e( defaults.styles.primary.backgroundColor ) +
 '; \n\t\t\t\t\t\t\t\tcolor: ' +
 __e( defaults.styles.primary.color ) +
 '; \n\t\t\t\t\t\t\t\tborder: 1px solid ' +
-__e( defaults.styles.primary.backgroundColor ) +
+__e( defaults.styles.primary.color ) +
 ';">\n\n\t\t\t\t\t\t\t' +
 __e( panels.INTRO.start_dialog_button ) +
 '\n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t</button>\n\n\t\t\t\t\t\t<!-- Close widget button -->\n\t\t\t\t\t\t<a href="#" class="' +
@@ -509,7 +521,13 @@ __e( defaults.styles.height ) +
  } ;
 __p += '">\n\t\t\t\t\t\n\t\t\t</ul>\n\n\t\t\t<div class="' +
 __e( defaults.prefix ) +
-'-write-cont">\n\t\t\t\t\n\t\t\t\t<!-- "Agent is typing" indicator -->\n\t\t\t\t<div class="' +
+'-write-cont">\n\t\t\t\t\n\t\t\t\t<!-- End dialog button -->\n\t\t\t\t<div class="' +
+__e( defaults.prefix ) +
+'-end-dialog-btn">\n\t\t\t\t\t<a href="#" data-' +
+__e( defaults.prefix ) +
+'-handler="finish">' +
+__e( panels.MESSAGES.end_dialog ) +
+'</a>\n\t\t\t\t</div>\n\n\t\t\t\t<!-- "Agent is typing" indicator -->\n\t\t\t\t<div class="' +
 __e( defaults.prefix ) +
 '-loader">\n\t\t\t\t\t<span></span>\n\t\t\t\t\t<span></span>\n\t\t\t\t\t<span></span>\n\t\t\t\t</div>\n\n\t\t\t\t<!-- "Attach file" button -->\n\t\t\t\t<label \n\t\t\t\t\tclass="' +
 __e( defaults.prefix ) +
@@ -557,7 +575,7 @@ __p += '>\n\n\t\t\t\t<!-- The text displayed on image -->\n\t\t\t\t<div class="'
 __e( defaults.prefix ) +
 '-backdrop-cont ' +
 __e( defaults.prefix ) +
-'-dark">\n\t\t\t\t\t<br><br>\n\t\t\t\t\t<p>' +
+'-dark">\n\t\t\t\t\t<p>' +
 __e( panels.OFFLINE.offline_message ) +
 '</p>\n\t\t\t\t</div>\n\n\t\t\t</div>\n\n\t\t\t<div class="' +
 __e( defaults.prefix ) +
@@ -587,12 +605,12 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-button-primary ' +
 __e( defaults.prefix ) +
-'-block" \n\t\t\t\t\t\tstyle="\n\t\t\t\t\t\t\tbackground-color: ' +
+'-block" \n\t\t\t\t\t\tstyle="\n\t\t\t\t\t\t\tbackground: ' +
 __e( defaults.styles.primary.backgroundColor ) +
 '; \n\t\t\t\t\t\t\tcolor: ' +
 __e( defaults.styles.primary.color ) +
 '; \n\t\t\t\t\t\t\tborder: 1px solid ' +
-__e( defaults.styles.primary.backgroundColor ) +
+__e( defaults.styles.primary.color ) +
 ';">\n\n\t\t\t\t\t\t' +
 __e( panels.OFFLINE.send_message_button ) +
 '\n\t\t\t\t\t\t\t\n\t\t\t\t\t</button>\n\n\t\t\t\t\t<!-- Close widget button -->\n\t\t\t\t\t<a href="#" class="' +
@@ -655,12 +673,12 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-button-primary ' +
 __e( defaults.prefix ) +
-'-block" \n\t\t\t\t\t\tstyle="\n\t\t\t\t\t\t\tbackground-color: ' +
+'-block" \n\t\t\t\t\t\tstyle="\n\t\t\t\t\t\t\tbackground: ' +
 __e( defaults.styles.primary.backgroundColor ) +
 '; \n\t\t\t\t\t\t\tcolor: ' +
 __e( defaults.styles.primary.color ) +
 '; \n\t\t\t\t\t\t\tborder: 1px solid ' +
-__e( defaults.styles.primary.backgroundColor ) +
+__e( defaults.styles.primary.color ) +
 ';">\n\n\t\t\t\t\t\t' +
 __e( panels.CLOSE_CHAT.finish_dialog_button ) +
 '\n\t\t\t\t\t\t\t\n\t\t\t\t\t</button>\n\n\t\t\t\t\t<!-- "Back to the chat" button -->\n\t\t\t\t\t<a href="#messages" class="' +
@@ -715,12 +733,12 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-block ' +
 __e( defaults.prefix ) +
-'-hidden"\n\t\t\t\t\t\tstyle="background-color: ' +
+'-hidden"\n\t\t\t\t\t\tstyle="background: ' +
 __e( defaults.styles.primary.backgroundColor ) +
 '; color: ' +
 __e( defaults.styles.primary.color ) +
 '; border: 1px solid ' +
-__e( defaults.styles.primary.backgroundColor ) +
+__e( defaults.styles.primary.color ) +
 ';"\n\t\t\t\t\t\tdata-' +
 __e( defaults.prefix ) +
 '-handler="initCall">\n\t\t\t\t\t\t' +
@@ -801,12 +819,12 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-button-primary ' +
 __e( defaults.prefix ) +
-'-block"\n\t\t\t\t\t\tstyle="\n\t\t\t\t\t\t\tbackground-color: ' +
+'-block"\n\t\t\t\t\t\tstyle="\n\t\t\t\t\t\t\tbackground: ' +
 __e( defaults.styles.primary.backgroundColor ) +
 '; \n\t\t\t\t\t\t\tcolor: ' +
 __e( defaults.styles.primary.color ) +
 '; \n\t\t\t\t\t\t\tborder: 1px solid ' +
-__e( defaults.styles.primary.backgroundColor ) +
+__e( defaults.styles.primary.color ) +
 ';"\n\t\t\t\t\t\tdata-' +
 __e( defaults.prefix ) +
 '-handler="setCallback">\n\n\t\t\t\t\t\t' +
@@ -863,7 +881,7 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-unnotify-btn">' +
 __e( frases.FLOATING_BUTTON.close ) +
-' x</span>\n\t\t\t\t<div id="' +
+'</span>\n\t\t\t\t<div id="' +
 __e( defaults.prefix ) +
 '-lastmsg" class="' +
 __e( defaults.prefix ) +

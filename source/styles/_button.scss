@@ -10,7 +10,7 @@
 
 	.swc-wg-btn {
 		display: inline-block;
-		box-shadow: $box-shadow;
+		box-shadow: 0px 0px 20px 6px rgba(0, 0, 0, 0.15);
 		border-radius: $btn-border-radius;
 		width: $btn-width;
 		height: $btn-height;
@@ -51,9 +51,9 @@
 		position: absolute;
 		bottom: 0;
 		width: 0;
-		max-height: 100px;
+		max-height: 90px;
 		// height: 100%;
-		padding: 10px 0 10px 15px;
+		padding: 10px;
 		cursor: pointer;
 		background-color: #fff;
 		border-radius: $border-radius;
@@ -96,6 +96,7 @@
 	    top: -70px;
 	    margin: 5px;
 	    padding: 5px 10px;
+	    text-align: center;
 	    border-radius: 50px;
 	    background-color: #777;
 	    color: #fff;

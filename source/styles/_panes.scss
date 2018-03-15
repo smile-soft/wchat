@@ -2,9 +2,11 @@
 	// display: none;
 	position: absolute;
 	width: 100%;
+	height: $header-height;
 	top: 0;
 	padding: 5px 10px;
-	background-color: rgba(0,0,0,0.5);
+	// background-color: rgba(0,0,0,0.5);
+	box-shadow: 0 5px 20px 5px rgba(0, 0, 0, 0.15);
 	color: #fff;
 	z-index: 100;
 	@extend %clearfix;
@@ -14,19 +16,32 @@
 	}
 
 	.swc-wg-title {
-		float: left;
+		width: 225px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.swc-wg-state-cont {
+		.swc-wg-state-icon {
+			display: inline-block;
+			width: 9px;
+			height: 9px;
+			border-radius: 50%;
+		}
 	}
 	
 	.swc-wg-minimize {
-		float: right;
-		margin-top: 5px;
+		position: absolute;
+		top: 9px;
+		right: 5px;
 
 		a {
 			text-decoration: none;
 			font-size: 16px;
 			margin-left: 2px;
-			padding: 5px;
-			color: #fff;
+			padding: 10px;
+			// color: #fff;
 		}
 	}
 }
@@ -38,7 +53,7 @@
 	width: $wg-width;
 	max-width: 100%;
 	max-height: 100%;
-	border: 1px solid #eee;
+	// border: 1px solid #eee;
 	background-color: #f7f7f7;
 	border-radius: $border-radius;
 	box-shadow: $box-shadow;
@@ -56,9 +71,10 @@
 	.swc-wg-pane {
 		position: relative;
 		display: none;
+		padding-top: $header-height;
 		width: 100%;
 		height: 100%;
-		overflow-y: auto;
+		// overflow-y: auto;
 		// max-height: 100%;
 		// padding-bottom: 20px;
 		// background-color: #f7f7f7;
@@ -78,20 +94,20 @@
 		.swc-backdrop-cont {
 			position: relative;
 			// height: 100%;
-			min-height: 120px;
+			// min-height: 120px;
 			padding: 10px;
 
-			&.swc-dark {
-				background-color: #333;
-				background-color: rgba(0,0,0,.5);
-				box-shadow: 0 -30px 100px -30px #333 inset;
-				color: #fff;
-			}
-			&.swc-white {
-				background-color: #fff;
-				background-color: rgba(255,255,255,.6);
-				color: #333;
-			}
+			// &.swc-dark {
+			// 	background-color: #333;
+			// 	background-color: rgba(0,0,0,.5);
+			// 	box-shadow: 0 -30px 100px -30px #333 inset;
+			// 	color: #fff;
+			// }
+			// &.swc-white {
+			// 	background-color: #fff;
+			// 	background-color: rgba(255,255,255,.6);
+			// 	color: #333;
+			// }
 		}
 
 		.swc-social-list {
@@ -101,7 +117,7 @@
 
 		.swc-pane-header {
 			position: relative;
-			min-height: 120px;
+			// min-height: 120px;
 			overflow: hidden;
 			background-size: cover;
 			background-position: center;
@@ -121,7 +137,7 @@
 		.swc-messages-cont {
 			height: $wg-height;
 			// margin-bottom: 40px;
-			padding: 0 10px 0;
+			padding: 0 10px 50px;
 			overflow-y: auto;
 
 			@include bp-small {
@@ -136,6 +152,11 @@
 
 					@include animation(newMessage 0.4s ease-in-out);
 
+					.swc-message-from,
+					.swc-message-time {
+						display: block;
+					}					
+
 				    .swc-message-from {
 						font-size: 14px;
 						font-weight: 600;
@@ -143,6 +164,7 @@
 				    }
 
 				    .swc-message-time {
+				    	display: block;
 				    	margin: 0 10px;
 				    	font-weight: 600;
 				    	font-size: 11px;
@@ -207,6 +229,23 @@
 			background-color: #fff;
 			z-index: 100;
 			text-align: center;
+			box-shadow: 0 5px 20px 5px rgba(0, 0, 0, 0.15);
+
+			.swc-end-dialog-btn {
+				position: absolute;
+				top: -30px;
+				width: 100%;
+
+				a {
+					position: relative;
+					margin: auto;
+					padding: 5px 25px;
+					background-color: #fff;
+					color: #555;
+					border-radius: 20px;
+					box-shadow: 0 5px 20px 5px rgba(0, 0, 0, 0.15);
+				}
+			}
 
 			.swc-sendmsg-btn,
 			.swc-sendfile-cont {

@@ -9,7 +9,7 @@ var cobrowsing = require('./cobrowsing');
 var templates = require('./templates');
 var WebRTC = require('./webrtc');
 var audio = require('./audio-control');
-var serverUrl = {};
+// var serverUrl = {};
 var forms;
 var api;
 
@@ -19,6 +19,8 @@ var defaults = {
 	// Change it only if the default prefix 
 	// matches with existed classes or ids on the website
 	prefix: 'swc',
+	// Init module on page load
+	autoStart: true,
 	// whether or not to ask user 
 	// to introduce him self before the chat session
 	intro: false,
@@ -26,11 +28,16 @@ var defaults = {
 	widget: true,
 	// enable chat feature
 	chat: true,
+	// channels settings
+	channels: {
+		webrtc: {},
+		callback: {}
+	},
 	// enable cobrowsing feature
 	cobrowsing: false,
-	// DOM element that opens a widget
+	// DOM element[s] selector that opens a widget
+	buttonSelector: "",
 	reCreateSession: true,
-	buttonElement: null,
 	title: '',
 	lang: 'en',
 	langFromUrl: false,
@@ -81,161 +88,59 @@ var defaults = {
 	// absolute path to the translations.json flie
 	translationsPath: '',
 	// in seconds
-	checkStatusTimeout: 10,
+	// checkStatusTimeout: 10,
 	// in seconds
-	getMessagesTimeout: 1,
+	// getMessagesTimeout: 1,
 	// displayed in the email template
 	host: window.location.host,
 	// webrtc options
-	webrtc: {
-		sip: {},
-		hotline: '',
-		fallback: false
-	},
+	// webrtc: {
+	// 	sip: {},
+	// 	hotline: '',
+	// 	fallback: false
+	// },
 	webrtcEnabled: false,
-	callback: {
-		task: ''
-	}
-},
+	// callback: {
+	// 	task: ''
+	// }
+};
+
+var globalSettings = "WchatSettings";
 
 // Current widget state
-widgetState = {
+var widgetState = {
 	initiated: false,
 	active: false,
 	state: '', // "online" | "offline" | "timeout",
 	share: false,
 	sounds: true
-},
-dialog = [],
+};
+
+var dialog = [];
 
 // available dialog languages
-langs = null,
-currLang = '',
-messagesTimeout,
-noMessagesTimeout,
-getLanguagesInterval,
-chatTimeout,
+var langs = [];
+var currLang = '';
+// var messagesTimeout;
+// var noMessagesTimeout;
+// var getLanguagesInterval;
+var chatTimeout;
+var mouseFocused = false;
 // Container for messages
-messagesCont,
+// var messagesCont;
 // Widget dom element
-widget,
+var widget;
 
 // Widget in a separate window
-widgetWindow,
+var widgetWindow;
 // Widget panes elements
-panes,
-agentIsTypingTimeout,
-userIsTypingTimeout,
-timerUpdateInterval,
-pollTurns = 1;
-// ringTone = null,
-// ringToneInterval = null;
-
-function Widget(options){
-
-	_.merge(defaults, options || {});
-	// _.assign(defaults, options || {});
-
-	debug.log('Widget: ', options);
-
-	defaults.clientPath = (options.clientPath || defaults.clientPath) || (defaults.server + defaults.path);
-
-	addWidgetStyles();
-	serverUrl = require('url').parse(defaults.server, true);
-
-	// Enabling audio module
-	audio.init(defaults.clientPath+'sounds/');
-
-	api = new core(options)
-	.on('session/create', onSessionSuccess)
-	.on('session/continue', onSessionSuccess)
-	.on('session/join', onSessionJoin)
-	.on('session/init', onSessionInit);
-	// .on('chat/languages', function() {
-	// 	changeWgState({ state: getWidgetState() });
-	// });
-	
-	if(defaults.widget) {
-		api.on('chat/start', startChat)
-		.on('chat/close', onChatClose)
-		.on('chat/timeout', onChatTimeout)
-		.on('message/new', clearUndelivered)
-		.on('message/new', newMessage)
-		.on('message/typing', onAgentTyping)
-
-		.on('form/submit', onFormSubmit)
-		.on('form/reject', closeForm)
-		.on('widget/load', initWidget);
-		// .on('widget/init', onWidgetInit);
-		// .on('widget/statechange', changeWgState);
-	}
-
-	if(defaults.webrtc.sip.ws_servers !== undefined && WebRTC.isSupported()) {
-		if(window.location.protocol === 'https:' && serverUrl.protocol === 'https:'){
-			// set flag to indicate that webrtc feature is supported and enabled
-			defaults.webrtcEnabled = true;
-
-			// set webrtc event handlers
-			api.on('webrtc/newRTCSession', function(){
-				initCallState('newRTCSession');
-			});
-			api.on('webrtc/progress', function(e){
-				if(e.response.status_code === 180) {
-					initCallState('ringing');
-				} else {
-					initCallState('confirmed');
-				}
-			});
-			api.on('webrtc/addstream', function(){
-				initCallState('connected');
-			});
-			api.on('webrtc/ended', function(){
-				initCallState('ended');
-			});
-			api.on('webrtc/failed', function(e){
-				if(e.cause === 'Canceled'){
-					initCallState('canceled');
-				} else {
-					initCallState('failed');
-				}
-			});
-
-			// ringTone audio element plays ringTone sound when calling to agent
-			// ringTone = document.createElement('audio');
-			// ringTone.src = defaults.clientPath+'sounds/ringout.wav';
-			// document.body.appendChild(ringTone);
-
-			// initiate webrtc module with parameters
-			initWebrtcModule({
-				sip: defaults.webrtc.sip,
-				emit: publicApi.emit,
-				on: publicApi.on
-			});
-		} else {
-			// webrtc is supported by the browser, but the current web page
-			// is located on insecure origins, therefore the webrtc is not supported
-			debug.warn('WebRTC feature is disabled');
-			debug.warn('getUserMedia() no longer works on insecure origins. To use this feature, you should consider switching your application to a secure origin, such as HTTPS. See https://goo.gl/rStTGz for more details.');
-		}
-	}
-	
-	setSessionTimeoutHandler();
-	getLanguages();
-
-	// load translations
-	request.get('frases', (defaults.translationsPath || defaults.clientPath)+'translations.json', function (err, result){
-		if(err) return api.emit('Error', err);
-		frases = JSON.parse(result);
-	});
-	
-	// load forms
-	request.get('forms_json', defaults.clientPath+'forms.json', function (err, result){
-		if(err) return api.emit('Error', err);
-		forms = JSON.parse(result).forms;
-	});
-
-	return publicApi;
-}
+// var panes;
+var agentIsTypingTimeout;
+var userIsTypingTimeout;
+var timerUpdateInterval;
+var pollTurns = 1;
+// var ringTone = null,
+// var ringToneInterval = null;
 
 var publicApi = {
 
@@ -271,8 +176,134 @@ var publicApi = {
 	}
 };
 
+module.exports = {
+	module: Widget,
+	api: publicApi
+};
+
+// Initiate the module with the global settings
+if(global[globalSettings] && global[globalSettings].autoStart !== false && defaults.autoStart) {
+	if(document.readyState === "complete" || document.readyState === "interactive") {
+	    Widget(global[globalSettings]);
+	} else {
+        document.addEventListener('DOMContentLoaded', function() { Widget(global[globalSettings]); }, false);
+	}
+}
+
+function Widget(options){
+
+	if(widgetState.initiated) return publicApi;
+
+	_.merge(defaults, options || {});
+	// _.assign(defaults, options || {});
+
+	debug.log('Widget: ', options);
+
+	defaults.clientPath = options.clientPath ? options.clientPath : (defaults.clientPath || (defaults.server + defaults.path));
+
+	addWidgetStyles();
+	if(defaults.buttonSelector) 
+		setHandlers(defaults.buttonSelector);
+	
+	// serverUrl = require('url').parse(defaults.server, true);
+
+	// Enabling audio module
+	audio.init(defaults.clientPath+'sounds/');
+
+	api = new core(options)
+	.on('session/create', onSessionSuccess)
+	.on('session/continue', onSessionSuccess)
+	.on('session/join', onSessionJoin)
+	.on('session/init', onSessionInit);
+	// .on('chat/languages', function() {
+	// 	changeWgState({ state: getWidgetState() });
+	// });	
+
+	if(defaults.widget) {
+		api.on('chat/start', startChat)
+		.on('chat/close', onChatClose)
+		.on('chat/timeout', onChatTimeout)
+		.on('message/new', clearUndelivered)
+		.on('message/new', newMessage)
+		.on('message/typing', onAgentTyping)
+		.on('callback/create', onCallbackRequested)
+		.on('form/submit', onFormSubmit)
+		.on('form/reject', closeForm)
+		.on('widget/load', initWidget);
+		// .on('widget/init', onWidgetInit);
+		// .on('widget/statechange', changeWgState);
+	}
+
+	if(WebRTC.isSupported() && defaults.channels.webrtc && defaults.channels.webrtc.sip && defaults.channels.webrtc.sip.ws_servers !== undefined) {
+		if(window.location.protocol === 'https:'){
+		// if(window.location.protocol === 'https:' && serverUrl.protocol === 'https:'){
+			// set flag to indicate that webrtc feature is supported and enabled
+			defaults.webrtcEnabled = true;
+
+			// set webrtc event handlers
+			api.on('webrtc/newRTCSession', function(){
+				initCallState('newRTCSession');
+			});
+			api.on('webrtc/progress', function(e){
+				if(e.response.status_code === 180) {
+					initCallState('ringing');
+				} else {
+					initCallState('confirmed');
+				}
+			});
+			api.on('webrtc/addstream', function(){
+				initCallState('connected');
+			});
+			api.on('webrtc/ended', function(){
+				initCallState('ended');
+			});
+			api.on('webrtc/failed', function(e){
+				if(e.cause === 'Canceled'){
+					initCallState('canceled');
+				} else {
+					initCallState('failed');
+				}
+			});
+
+			// ringTone audio element plays ringTone sound when calling to agent
+			// ringTone = document.createElement('audio');
+			// ringTone.src = defaults.clientPath+'sounds/ringout.wav';
+			// document.body.appendChild(ringTone);
+
+			// initiate webrtc module with parameters
+			initWebrtcModule({
+				sip: defaults.channels.webrtc.sip,
+				emit: publicApi.emit,
+				on: publicApi.on
+			});
+		} else {
+			// webrtc is supported by the browser, but the current web page
+			// is located on insecure origins, therefore the webrtc is not supported
+			debug.warn('WebRTC feature is disabled');
+			debug.warn('getUserMedia() no longer works on insecure origins. To use this feature, you should consider switching your application to a secure origin, such as HTTPS. See https://goo.gl/rStTGz for more details.');
+		}
+	}
+	
+	setSessionTimeoutHandler();
+	// getLanguages();
+
+	// load translations
+	request.get('frases', (defaults.translationsPath || defaults.clientPath)+'translations.json', function (err, result){
+		if(err) return api.emit('Error', err);
+		frases = JSON.parse(result);
+	});
+	
+	// load forms
+	request.get('forms_json', defaults.clientPath+'forms.json', function (err, result){
+		if(err) return api.emit('Error', err);
+		forms = JSON.parse(result).forms;
+	});
+
+	return publicApi;
+}
+
 function initModule(){
-	api.initModule();
+	api.init();
 	return publicApi;
 }
 
@@ -282,10 +313,8 @@ function initWebrtcModule(opts){
 }
 
 function initSession() {
-
-	debug.log('initSession:', defaults.chat, defaults.webrtcEnabled, defaults.callback.task);
 	
-	if(!defaults.chat && !defaults.webrtcEnabled && !defaults.callback.task) return false;
+	if(!defaults.chat && !defaults.webrtcEnabled && !defaults.channels.callback.task) return false;
 
 	debug.log('session initiated');
 
@@ -294,7 +323,7 @@ function initSession() {
 	setSessionTimeoutHandler();
 	
 	getLanguages();
-	getLanguagesInterval = setInterval(getLanguages, defaults.checkStatusTimeout*1000);
+	// getLanguagesInterval = setInterval(getLanguages, defaults.checkStatusTimeout*1000);
 
 	// If page loaded and "widget" property is set - load widget
 	if(defaults.widget && !widgetState.initiated && isBrowserSupported()) {
@@ -323,8 +352,7 @@ function initSession() {
 }
 
 // Session is either created or continues
-function onSessionSuccess(){
-
+function onSessionSuccess(){	
 	// Wait while translations are loaded
 	_.poll(function(){
 		debug.log('poll: ', frases);
@@ -341,7 +369,7 @@ function onSessionSuccess(){
 		
 		if(pollTurns < 2) {
 			pollTurns++;
-			Widget(defaults).initModule();
+			Widget(defaults);
 		} else {
 			return api.emit('Error', 'Module wasn\'t initiated due to network errors');
 		}
@@ -429,10 +457,10 @@ function getWidgetElement(){
 }
 
 function getLanguages(){
-	api.getLanguages(function (err, body){
-		debug.log('getLanguages: ', err, body);
+	api.getLanguages(function (err, langs){
+		debug.log('getLanguages: ', err, langs);
 		if(err) return;
-		if(body) onNewLanguages(body.result);
+		if(langs) onNewLanguages(langs);
 		// getLanguagesTimeout = setTimeout(getLanguages, defaults.checkStatusTimeout*1000);
 	});
 }
@@ -471,7 +499,7 @@ function initWidget(){
 	// if chat started
 	if(storage.getState('chat') === true) {
 		requestChat(storage.getState('credentials', 'session') || {});
-		showWidget();
+		if(storage.getState('opened', 'session')) showWidget();
 		// initChat();
 	}
 
@@ -500,7 +528,7 @@ function setOffer() {
 		showOffer({
 			from: defaults.offer.from || frases[currLang].TOP_BAR.title,
 			time: Date.now(),
-			text: defaults.offer.text || frases[currLang].default_offer
+			content: defaults.offer.text || frases[currLang].default_offer
 		});
 	}, defaults.offer.inSeconds ? defaults.offer.inSeconds*1000 : 30000);
 }
@@ -508,7 +536,8 @@ function setOffer() {
 function showOffer(message) {
 	// Return if user already interact with the widget
 	if(widgetState.state !== 'online' || isInteracted()) return;
-	newMessage({ messages: [message] });
+	newMessage(message);
+	// newMessage({ messages: [message] });
 }
 
 function setInteracted(){
@@ -555,8 +584,11 @@ function requestChat(credentials){
 	// It will be removed on session timeout
 	storage.saveState('credentials', credentials, 'session');
 
-	api.chatRequest(credentials);
+	startChat({});
+	clearWgMessages();
 	switchPane('messages');
+
+	api.chatRequest(credentials);
 }
 
 function startChat(params){
@@ -565,41 +597,42 @@ function startChat(params){
 		// debug.log('chat timeout: ', params.timeout);
 		chatTimeout = api.setChatTimeout(params.timeout);
 	}
-	getMessages();
+	// getMessages();
 	addWgState('chat');
 }
 
-function getMessages(){
-	// debug.log('get messages!');
+// function getMessages(){
+// 	// debug.log('get messages!');
 	
-	if(storage.getState('chat'))
-		noMessagesTimeout = setTimeout(getMessages, 60*1000);
+// 	if(storage.getState('chat'))
+// 		noMessagesTimeout = setTimeout(getMessages, 60*1000);
 	
-	api.getMessages(function() {
-		if(storage.getState('chat')) {
-			messagesTimeout = setTimeout(getMessages, defaults.getMessagesTimeout*1000);
-			clearTimeout(noMessagesTimeout);
-		}
-	});
-}
+// 	api.getMessages(function() {
+// 		if(storage.getState('chat')) {
+// 			messagesTimeout = setTimeout(getMessages, defaults.getMessagesTimeout*1000);
+// 			clearTimeout(noMessagesTimeout);
+// 		}
+// 	});
+// }
 
-function sendMessage(params, cb){
-	api.sendMessage(params, function(err) {
-		if(!err && widgetState.sounds) audio.play('message_sent');
-	});
+function sendMessage(params){
+	api.sendMessage(params);
+	// api.sendMessage(params, function(err) {
+	// 	if(!err && widgetState.sounds) audio.play('message_sent');
+	// });
 
-	newMessage({ messages: [{
+	newMessage({
 		from: storage.getState('credentials', 'session').uname,
 		time: Date.now(),
-		text: params.message,
-		hidden: true,
-		className: defaults.prefix+'-msg-undelivered'
-	}] });
+		content: params.message
+		// hidden: true
+		// className: defaults.prefix+'-msg-undelivered'
+	});
 
 	if(chatTimeout) clearTimeout(chatTimeout);
 }
 
-function newMessage(result){
+function newMessage(message){
 	// debug.log('new messages arrived!', result);
 
 	var str,
@@ -610,20 +643,21 @@ function newMessage(result){
 		defaultUname = false,
 		credentials = storage.getState('credentials', 'session') || {},
 		aname = storage.getState('aname', 'session'),
-		uname = credentials.uname ? credentials.uname : '';
+		uname = credentials.uname ? credentials.uname : ''
+		messagesCont = document.getElementById(defaults.prefix+'-messages-cont');
 
 	if(uname === storage.getState('sid').split('_')[0]) {
 		defaultUname = true;
 	}
 
-	result.messages.forEach(function(message, index) {
+	// result.messages.forEach(function(message, index) {
 		
 		message.entity = message.from === uname ? 'user' : 'agent';
 		// message.from = (message.entity === 'user' && defaultUname) ? frases[currLang].default_user_name : message.from;
 		message.from = (message.entity === 'user' && defaultUname) ? '' : message.from;
 		message.time = message.time ? parseTime(message.time) : parseTime(Date.now());
 
-		text = parseMessage(message.text, message.file, message.entity);
+		text = parseMessage(message.content, message.file, message.entity);
 
 		if(text.type === 'form') {
 
@@ -640,15 +674,14 @@ function newMessage(result){
 			messagesCont.insertAdjacentHTML('beforeend', '<li>'+compiled+'</li>');
 			messagesCont.scrollTop = messagesCont.scrollHeight;
 		} else {
-			if(!message.text) return;
-			message.text = text.content;
+			if(!message.content) return;
+			message.content = text.content;
 			compiled = compileTemplate('message', { defaults: defaults, message: message });
-			debug.log('newMessage compiled: ', message, compiled);
 			messagesCont.insertAdjacentHTML('beforeend', '<li '+(message.className ? 'class="'+message.className+'"' : '' )+'>'+compiled+'</li>');
 
-			if(index === result.messages.length-1) {
+			// if(index === result.messages.length-1) {
 				onLastMessage(compiled);
-			}
+			// }
 
 			// Need for sending dialog to email
 			if(!message.hidden) dialog.push(compiled);
@@ -661,7 +694,7 @@ function newMessage(result){
 
 		if(message.entity !== 'user') playSound = true;
 
-	});
+	// });
 
 	messagesCont.scrollTop = messagesCont.scrollHeight;
 	// if(playSound) playNewMsgTone();
@@ -730,7 +763,7 @@ function sendComplain(params){
 		defaults: defaults,
 		message: {
 			from: frases[currLang].EMAIL_SUBJECTS.complain+' '+params.email,
-			text: params.text,
+			content: params.text,
 			entity: '',
 			time: ''
 		}
@@ -757,7 +790,7 @@ function sendRequest(params, cb) {
 		defaults: defaults,
 		message: {
 			from: frases[currLang].EMAIL_SUBJECTS.request+' '+params.uname+' ('+params.email+')',
-			text: params.text,
+			content: params.text,
 			entity: '',
 			time: ''
 		}
@@ -854,7 +887,7 @@ function onChatTimeout(){
 	closeChat();
 }
 
-function onAgentTyping(opts){
+function onAgentTyping(){
 	// debug.log('Agent is typing!');
 	if(!agentIsTypingTimeout) {
 		addWgState('agent-typing');
@@ -869,9 +902,8 @@ function onAgentTyping(opts){
 
 function setSessionTimeoutHandler(){
 	if(api.listenerCount('session/timeout') >= 1) return;
-	api.once('session/timeout', function (params){
+	api.once('session/timeout', function (){
 		debug.log('Session timeout:', defaults);
-		debug.log('Session timeout:', params);
 
 		if(storage.getState('chat') === true) {
 			closeChat();
@@ -887,8 +919,8 @@ function setSessionTimeoutHandler(){
 		storage.removeState('sid');
 
 		// if(params && params.method === 'updateEvents') {
-		clearInterval(getLanguagesInterval);
-		clearTimeout(messagesTimeout);
+		if(getLanguagesInterval) clearInterval(getLanguagesInterval);
+		if(messagesTimeout) clearTimeout(messagesTimeout);
 
 		if(defaults.reCreateSession) {
 			initModule();
@@ -899,8 +931,8 @@ function setSessionTimeoutHandler(){
 
 function initCall(){
 	switchPane('callAgent');
-	WebRTC.audiocall(defaults.webrtc.hotline);
-	// WebRTC.audiocall('sip:'+defaults.webrtc.hotline+'@'+serverUrl.host);
+	WebRTC.audiocall(defaults.channels.webrtc.hotline);
+	// WebRTC.audiocall('sip:'+channels.webrtc.hotline+'@'+serverUrl.host);
 }
 
 function initFallbackCall(){
@@ -928,24 +960,37 @@ function setCallback(){
 	if(formData.time <= 0) return;
 
 	formData.time = Date.now() + (formData.time * 60 * 1000);
-	formData.task = defaults.callback.task;
+	formData.task = defaults.channels.callback.task;
 	debug.log('setCallback data: ', formData);
 
 	form.classList.add(defaults.prefix+'-hidden');
 	cbSpinner.classList.remove(defaults.prefix+'-hidden');
 
-	api.requestCallback(formData, function(err, result) {
-		debug.log('setCallback result: ', err, result);
+	api.requestCallback(formData);
+	// api.requestCallback(formData, function(err, result) {
+	// 	debug.log('setCallback result: ', err, result);
 
-		cbSpinner.classList.add(defaults.prefix+'-hidden');
-		form.classList.remove(defaults.prefix+'-hidden');
+	// 	cbSpinner.classList.add(defaults.prefix+'-hidden');
+	// 	form.classList.remove(defaults.prefix+'-hidden');
 
-		if(err) return;
+	// 	if(err) return;
 		
-		switchPane('callbackSent');
-	});
+	// 	switchPane('callbackSent');
+	// });
 
 	form.reset();
+}
+
+function onCallbackRequested() {
+	var form = document.getElementById(defaults.prefix+'-callback-settings'),
+		cbSpinner = document.getElementById(defaults.prefix+'-callback-spinner');
+
+	cbSpinner.classList.add(defaults.prefix+'-hidden');
+	form.classList.remove(defaults.prefix+'-hidden');
+
+	if(err) return;
+	
+	switchPane('callbackSent');
 }
 
 function initCallState(state){
@@ -1065,7 +1110,9 @@ function openWidget(){
 
 		widgetWindow = window.open('', 'wchat', defaults.widgetWindowOptions);
 		widgetWindow = constructWindow(widgetWindow);
-		widgetWindow.sessionStorage.setItem('wchat_options', JSON.stringify(opts));
+		// widgetWindow[globalSettings] = opts;
+		
+		// widgetWindow.sessionStorage.setItem('wchat_options', JSON.stringify(opts));
 
 		// Wait while the script is loaded, 
 		// then init module in the child window
@@ -1090,7 +1137,7 @@ function openWidget(){
 				});
 			});
 
-			widgetWindow.Module.initModule();
+			// widgetWindow.Module.initModule();
 
 		}, function(){
 			console.warn('Wchat module was not initiated due to network connection issues.');
@@ -1222,13 +1269,12 @@ function addLoaderRules(style){
  */
 function setListeners(widget){
 	// var sendMsgBtn = document.getElementById(defaults.prefix+'-send-message'),
-	var fileSelect = document.getElementById(defaults.prefix+'-file-select'),
-		textField = document.getElementById(defaults.prefix+'-message-text'),
-		inputs = [].slice.call(widget.querySelectorAll('.'+defaults.prefix+'-inputfile'));
-
-	btn = document.getElementById(defaults.prefix+'-btn-cont');
-	panes = [].slice.call(widget.querySelectorAll('.'+defaults.prefix+'-wg-pane'));
-	messagesCont = document.getElementById(defaults.prefix+'-messages-cont');
+	var fileSelect = document.getElementById(defaults.prefix+'-file-select');
+	var textField = document.getElementById(defaults.prefix+'-message-text');
+	var inputs = [].slice.call(widget.querySelectorAll('.'+defaults.prefix+'-inputfile'));
+	var btn = document.getElementById(defaults.prefix+'-btn-cont');
+	var panes = [].slice.call(widget.querySelectorAll('.'+defaults.prefix+'-wg-pane'));
+	var messagesCont = document.getElementById(defaults.prefix+'-messages-cont');
 
 	inputs.forEach(function(input){
 		var label = input.nextElementSibling,
@@ -1249,13 +1295,24 @@ function setListeners(widget){
 	// addEvent(sendMsgBtn, 'click', wgSendMessage);
 	addEvent(fileSelect, 'change', wgSendFile);
 	addEvent(textField, 'keypress', wgTypingHandler);
+	addEvent(textField, 'focus', wgTextareaFocusHandler);
+	addEvent(textField, 'blur', wgTextareaBlurHandler);
+
+	addEvent(global, 'DOMMouseScroll', wgGlobalScrollHandler);
+	addEvent(global, 'wheel', wgGlobalScrollHandler);
+	// window.ontouchmove  = wgGlobalScrollHandler; // mobile
 
 	addEvent(widget, 'mouseenter', onMouseEnter);
 	addEvent(widget, 'mouseleave', onMouseLeave);
 
+	// if(defaults.buttonElement) 
+	// 	defaults.buttonElement.addEventListener('click', publicApi.openWidget, false);
+}
 
-	if(defaults.buttonElement) 
-		defaults.buttonElement.addEventListener('click', publicApi.openWidget, false);
+function setHandlers(selector) {
+	var fn = defaults.widget ? initWidgetState : openWidget;
+	var els = [].slice.call(document.querySelectorAll(selector));
+	els.map(function(el) { addEvent(el, 'click', fn); return el; });
 }
 
 /********************************
@@ -1263,11 +1320,11 @@ function setListeners(widget){
  ********************************/
 
 function onMouseEnter() {
-	document.body.classList.add(defaults.prefix+'-no-scroll');
+	mouseFocused = true;
 }
 
 function onMouseLeave() {
-	document.body.classList.remove(defaults.prefix+'-no-scroll');
+	mouseFocused = false;
 }
 
 function wgClickHandler(e){
@@ -1340,33 +1397,70 @@ function btnClickHandler(e){
 	}
 }
 
+function wgGlobalScrollHandler(e) {
+	var targ = document.getElementById(defaults.prefix+'-messages-cont');
+	var dir = getScrollDirection(e);
+	if(mouseFocused) {
+		if(targ.scrollTop === 0 && dir === 'up') {
+			e.stopPropagation();
+			e.preventDefault();
+		} else if (targ.scrollTop >= (targ.scrollHeight-targ.clientHeight) && dir === 'down') {
+			e.stopPropagation();
+			e.preventDefault();
+		}
+	}
+}
+
+function getScrollDirection(event) {
+	var delta;
+
+    if(event.wheelDelta) {
+        delta = event.wheelDelta;
+    } else {
+        delta = -1 * event.deltaY;
+    }
+
+    if(delta < 0) {
+        return "down";
+    } else if(delta > 0) {
+        return "up";
+    }
+}
+
 function initWidgetState(){
+	var chatInProgress = storage.getState('chat', 'cache');
+	var wasOpened = storage.getState('opened', 'session');
+	var callInProgress = storage.getState('call', 'cache');
 	// If element is interacted, then no notifications of a new message 
 	// will occur during current browser session
 	setInteracted();
 	// If timeout is occured, init session first
 	if(hasWgState('timeout')) {
 		initModule();
-	} else if(storage.getState('chat', 'cache')){
+	} else if(chatInProgress){
 		showWidget();
 	} else if(!langs.length){
 		switchPane('sendemail');
+		showWidget();
 	} else if(defaults.webrtcEnabled){
 		// if call is in progress - just show the widget
-		if(storage.getState('call', 'cache')) {
+		if(callInProgress) {
 			showWidget();
 		} else {
-			if(!defaults.chat && !defaults.callback.task) {
+			if(!defaults.chat && !defaults.channels.callback.task) {
 				initCall();
 			} else {
 				switchPane('chooseConnection');
+				showWidget();
 			}
 		}
-	} else if(defaults.callback.task) {
+	} else if(defaults.channels.callback.task) {
 		if(!defaults.chat && !defaults.webrtcEnabled) {
 			switchPane('callback');
+			showWidget();
 		} else {
 			switchPane('chooseConnection');
+			showWidget();
 		}
 	} else {
 		initChat();
@@ -1390,6 +1484,8 @@ function wgSendMessage(){
 
 function wgTypingHandler(e){
 	var targ = e.target;
+	var clone = document.getElementById("swc-message-text-clone");
+
 	if(e.keyCode === 10 || e.keyCode === 13) {
 		e.preventDefault();
 		wgSendMessage();
@@ -1402,10 +1498,23 @@ function wgTypingHandler(e){
 		}
 	}
 
-	if(targ.value.length >= 80 && !hasWgState('type-extend'))
-		addWgState('type-extend');
-	if(targ.value.length < 80 && hasWgState('type-extend'))
-		removeWgState('type-extend');
+	clone.innerText = targ.value;
+	targ.style.height = clone.clientHeight+'px';
+
+	// if(targ.value.length >= 80 && !hasWgState('type-extend'))
+	// 	addWgState('type-extend');
+	// if(targ.value.length < 80 && hasWgState('type-extend'))
+	// 	removeWgState('type-extend');
+}
+
+function wgTextareaFocusHandler(e) {
+	var target = e.target;
+	target.style.borderColor = defaults.styles.primary.backgroundColor;
+}
+
+function wgTextareaBlurHandler(e) {
+	var target = e.target;
+	target.style.borderColor = "#fff";
 }
 
 function wgSubmitHandler(e){
@@ -1422,7 +1531,7 @@ function wgSendFile(e){
 		if(err) {
 			alert('File was not sent');
 		} else {
-			api.sendMessage({ message: result.filedata, file: result.filename });
+			sendMessage({ message: result.filename, file: result.filedata });
 		}
 	});
 }
@@ -1434,6 +1543,7 @@ function wgSendFile(e){
 function switchPane(pane){
 	// var paneId = defaults.prefix+'-'+pane+'-pane';
 	var attr = 'data-'+defaults.prefix+'-pane';
+	var panes = [].slice.call(widget.querySelectorAll('.'+defaults.prefix+'-wg-pane'));
 	// debug.log('switchPane panes:', panes, 'pane: ', pane);
 	panes.forEach(function(item){
 		if(item.getAttribute(attr) === pane) {
@@ -1443,7 +1553,7 @@ function switchPane(pane){
 		}
 	});
 
-	if(!widgetState.active) showWidget();
+	// if(!widgetState.active) showWidget();
 }
 
 function changeWgState(params){
@@ -1503,7 +1613,10 @@ function removeWgState(state){
 }
 
 function showWidget(){
+	var messagesCont = document.getElementById(defaults.prefix+'-messages-cont');
+
 	widgetState.active = true;
+	storage.saveState('opened', true, 'session');
 	addWgState('active');
 	removeWgState('notified');
 
@@ -1519,6 +1632,7 @@ function closeWidget(){
 		window.close();
 	} else {
 		widgetState.active = false;
+		storage.saveState('opened', false, 'session');
 		removeWgState('active');
 	}
 }
@@ -1593,6 +1707,12 @@ function getFileContent(element, cb){
 function compileTemplate(template, data){
 	var compiled = templates[template];
 	return compiled(data);
+}
+
+function clearWgMessages() {
+	var cont = document.getElementById(defaults.prefix+'-messages-cont');
+	var clone = cont.cloneNode();
+	cont.parentNode.replaceChild(clone, cont);
 }
 
 /********************************
@@ -1780,8 +1900,3 @@ function removeEvent(obj, evType, fn) {
   if (obj.removeEventListener) obj.removeEventListener(evType, fn, false);
   else if (obj.detachEvent) obj.detachEvent("on"+evType, fn);
 }
-
-module.exports = {
-	module: Widget,
-	api: publicApi
-};

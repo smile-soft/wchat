@@ -211,7 +211,7 @@ __p += ' \n\t\t\tstyle="border-color:';
 __p += '" \n\t\t';
  } ;
 __p += '>\n\t\t<p>' +
-((__t = ( message.text )) == null ? '' : __t) +
+((__t = ( message.content )) == null ? '' : __t) +
 '</p>\n\t</div>\n\t<span class="' +
 __e( defaults.prefix ) +
 '-message-time"> ' +
@@ -245,6 +245,8 @@ with (obj) {
  var frases = translations[currLang]; ;
 __p += '\n';
  var panels = frases.PANELS; ;
+__p += '\n';
+ var channels = defaults.channels; ;
 __p += '\n';
  var positionClass = defaults.position === 'right' ? 'position-right' : 'position-left' ;
 __p += '\n<div id="' +
@@ -319,48 +321,50 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-init-form" \n\t\t\t\t\tname="' +
 __e( defaults.prefix ) +
-'InitForm">\n\n\t\t\t\t\t<!-- Display call button if WebRTC is enabled and supported by the browser -->\n\t\t\t\t\t';
+'InitForm">\n\n\t\t\t\t\t';
+ if(channels.webrtc) { ;
+__p += ' \n\t\t\t\t\t\t<!-- Display call button if WebRTC is enabled and supported by the browser -->\n\t\t\t\t\t\t';
  if(defaults.webrtcEnabled) { ;
-__p += ' \n\t\t\t\t\t\t<button \n\t\t\t\t\t\t\ttype="button" \n\t\t\t\t\t\t\tclass="' +
+__p += ' \n\t\t\t\t\t\t\t<button \n\t\t\t\t\t\t\t\ttype="button" \n\t\t\t\t\t\t\t\tclass="' +
 __e( defaults.prefix ) +
 '-button ' +
 __e( defaults.prefix ) +
 '-button-primary ' +
 __e( defaults.prefix ) +
-'-block" \n\t\t\t\t\t\t\tstyle="\n\t\t\t\t\t\t\t\tbackground: ' +
+'-block" \n\t\t\t\t\t\t\t\tstyle="\n\t\t\t\t\t\t\t\t\tbackground: ' +
 __e( defaults.styles.primary.backgroundColor ) +
-'; \n\t\t\t\t\t\t\t\tcolor: ' +
+'; \n\t\t\t\t\t\t\t\t\tcolor: ' +
 __e( defaults.styles.primary.color ) +
-'; \n\t\t\t\t\t\t\t\tborder: 1px solid ' +
+'; \n\t\t\t\t\t\t\t\t\tborder: 1px solid ' +
 __e( defaults.styles.primary.color ) +
-';"\n\t\t\t\t\t\t\tdata-' +
+';"\n\t\t\t\t\t\t\t\tdata-' +
 __e( defaults.prefix ) +
-'-handler="initCall">\n\n\t\t\t\t\t\t\t' +
+'-handler="initCall">\n\n\t\t\t\t\t\t\t\t' +
 __e( panels.CONNECTION_TYPES.call_agent_btn ) +
-'\n\n\t\t\t\t\t\t</button>\n\t\t\t\t\t';
+'\n\n\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t\t<!-- If WebRTC is not supported and fallback is set -->\n\t\t\t\t\t\t';
+ } else if(channels.webrtc.fallback && channels.webrtc.fallback.sipCall) { ;
+__p += '\n\t\t\t\t\t\t\t<button \n\t\t\t\t\t\t\t\ttype="button" \n\t\t\t\t\t\t\t\tclass="' +
+__e( defaults.prefix ) +
+'-button ' +
+__e( defaults.prefix ) +
+'-button-primary ' +
+__e( defaults.prefix ) +
+'-block" \n\t\t\t\t\t\t\t\tstyle="\n\t\t\t\t\t\t\t\t\tbackground: ' +
+__e( defaults.styles.primary.backgroundColor ) +
+'; \n\t\t\t\t\t\t\t\t\tcolor: ' +
+__e( defaults.styles.primary.color ) +
+'; \n\t\t\t\t\t\t\t\t\tborder: 1px solid ' +
+__e( defaults.styles.primary.color ) +
+';"\n\t\t\t\t\t\t\t\tdata-' +
+__e( defaults.prefix ) +
+'-handler="initFallbackCall">\n\n\t\t\t\t\t\t\t\t' +
+__e( panels.CONNECTION_TYPES.call_agent_btn ) +
+'\n\n\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t';
  } ;
-__p += '\n\n\t\t\t\t\t<!-- If WebRTC is not supported and fallback is set -->\n\t\t\t\t\t';
- if(!defaults.webrtcEnabled && defaults.webrtc.fallback && defaults.webrtc.fallback.sipCall) { ;
-__p += ' \n\t\t\t\t\t\t<button \n\t\t\t\t\t\t\ttype="button" \n\t\t\t\t\t\t\tclass="' +
-__e( defaults.prefix ) +
-'-button ' +
-__e( defaults.prefix ) +
-'-button-primary ' +
-__e( defaults.prefix ) +
-'-block" \n\t\t\t\t\t\t\tstyle="\n\t\t\t\t\t\t\t\tbackground: ' +
-__e( defaults.styles.primary.backgroundColor ) +
-'; \n\t\t\t\t\t\t\t\tcolor: ' +
-__e( defaults.styles.primary.color ) +
-'; \n\t\t\t\t\t\t\t\tborder: 1px solid ' +
-__e( defaults.styles.primary.color ) +
-';"\n\t\t\t\t\t\t\tdata-' +
-__e( defaults.prefix ) +
-'-handler="initFallbackCall">\n\n\t\t\t\t\t\t\t' +
-__e( panels.CONNECTION_TYPES.call_agent_btn ) +
-'\n\n\t\t\t\t\t\t</button>\n\t\t\t\t\t';
+__p += '\n\t\t\t\t\t';
  } ;
 __p += '\n\n\t\t\t\t\t<!-- Display callback button if callback task is configured in the settings -->\n\t\t\t\t\t';
- if(defaults.callback && defaults.callback.task) { ;
+ if(channels.callback && channels.callback.task) { ;
 __p += '\n\t\t\t\t\t\t<button \n\t\t\t\t\t\t\ttype="button" \n\t\t\t\t\t\t\tclass="' +
 __e( defaults.prefix ) +
 '-button ' +
@@ -539,7 +543,11 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-icon-upload" \n\t\t\t\t\t\tstyle="color: ' +
 __e( defaults.styles.primary.backgroundColor ) +
-'">\n\t\t\t\t\t<span>\n\n\t\t\t\t</label>\n\n\t\t\t\t<!-- Field for typing the user message -->\n\t\t\t\t<textarea \n\t\t\t\t\tid="' +
+'">\n\t\t\t\t\t<span>\n\n\t\t\t\t</label>\n\n\t\t\t\t<div id="' +
+__e( defaults.prefix ) +
+'-message-text-clone"  class="' +
+__e( defaults.prefix ) +
+'-msg-textarea-clone" ></div>\n\n\t\t\t\t<!-- Field for typing the user message -->\n\t\t\t\t<textarea \n\t\t\t\t\tid="' +
 __e( defaults.prefix ) +
 '-message-text" \n\t\t\t\t\tclass="' +
 __e( defaults.prefix ) +
@@ -763,9 +771,13 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-text-center">\n\t\t\t\t\t<h3>' +
 __e( panels.AUDIO_CALL_FALLBACK.DOWNLOAD_MSG ) +
-'</h3>\n\t\t\t\t\t<br>\n\t\t\t\t\t<a href="' +
+'</h3>\n\t\t\t\t\t<br>\n\t\t\t\t\t';
+ if(defaults.webrtc && defaults.webrtc.fallback) { ;
+__p += '\n\t\t\t\t\t\t<a href="' +
 __e( defaults.webrtc.fallback.sipCall ) +
-'">call.jnlp</a>\n\t\t\t\t</div>\n\t\t\t\t<form>\n\t\t\t\t\t<hr>\n\t\t\t\t\t<a href="#chooseConnection" class="' +
+'">call.jnlp</a>\n\t\t\t\t\t';
+ } ;
+__p += '\n\t\t\t\t</div>\n\t\t\t\t<form>\n\t\t\t\t\t<hr>\n\t\t\t\t\t<a href="#chooseConnection" class="' +
 __e( defaults.prefix ) +
 '-button ' +
 __e( defaults.prefix ) +

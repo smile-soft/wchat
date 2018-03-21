@@ -1,5 +1,6 @@
 <% var frases = translations[currLang]; %>
 <% var panels = frases.PANELS; %>
+<% var channels = defaults.channels; %>
 <% var positionClass = defaults.position === 'right' ? 'position-right' : 'position-left' %>
 <div id="<%- defaults.prefix %>-wg-cont" class="<%- defaults.prefix %>-wg-cont <%- positionClass %>">
 
@@ -72,40 +73,40 @@
 					id="<%- defaults.prefix %>-init-form" 
 					name="<%- defaults.prefix %>InitForm">
 
-					<!-- Display call button if WebRTC is enabled and supported by the browser -->
-					<% if(defaults.webrtcEnabled) { %> 
-						<button 
-							type="button" 
-							class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
-							style="
-								background: <%- defaults.styles.primary.backgroundColor %>; 
-								color: <%- defaults.styles.primary.color %>; 
-								border: 1px solid <%- defaults.styles.primary.color %>;"
-							data-<%- defaults.prefix %>-handler="initCall">
+					<% if(channels.webrtc) { %> 
+						<!-- Display call button if WebRTC is enabled and supported by the browser -->
+						<% if(defaults.webrtcEnabled) { %> 
+							<button 
+								type="button" 
+								class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
+								style="
+									background: <%- defaults.styles.primary.backgroundColor %>; 
+									color: <%- defaults.styles.primary.color %>; 
+									border: 1px solid <%- defaults.styles.primary.color %>;"
+								data-<%- defaults.prefix %>-handler="initCall">
 
-							<%- panels.CONNECTION_TYPES.call_agent_btn %>
+								<%- panels.CONNECTION_TYPES.call_agent_btn %>
 
-						</button>
-					<% } %>
+							</button>
+							<!-- If WebRTC is not supported and fallback is set -->
+						<% } else if(channels.webrtc.fallback && channels.webrtc.fallback.sipCall) { %>
+							<button 
+								type="button" 
+								class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
+								style="
+									background: <%- defaults.styles.primary.backgroundColor %>; 
+									color: <%- defaults.styles.primary.color %>; 
+									border: 1px solid <%- defaults.styles.primary.color %>;"
+								data-<%- defaults.prefix %>-handler="initFallbackCall">
 
-					<!-- If WebRTC is not supported and fallback is set -->
-					<% if(!defaults.webrtcEnabled && defaults.webrtc.fallback && defaults.webrtc.fallback.sipCall) { %> 
-						<button 
-							type="button" 
-							class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
-							style="
-								background: <%- defaults.styles.primary.backgroundColor %>; 
-								color: <%- defaults.styles.primary.color %>; 
-								border: 1px solid <%- defaults.styles.primary.color %>;"
-							data-<%- defaults.prefix %>-handler="initFallbackCall">
+								<%- panels.CONNECTION_TYPES.call_agent_btn %>
 
-							<%- panels.CONNECTION_TYPES.call_agent_btn %>
-
-						</button>
+							</button>
+						<% } %>
 					<% } %>
 
 					<!-- Display callback button if callback task is configured in the settings -->
-					<% if(defaults.callback && defaults.callback.task) { %>
+					<% if(channels.callback && channels.callback.task) { %>
 						<button 
 							type="button" 
 							class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
@@ -254,6 +255,8 @@
 					<span>
 
 				</label>
+
+				<div id="<%- defaults.prefix %>-message-text-clone"  class="<%- defaults.prefix %>-msg-textarea-clone" ></div>
 
 				<!-- Field for typing the user message -->
 				<textarea 
@@ -427,7 +430,9 @@
 				<div class="<%- defaults.prefix %>-text-center">
 					<h3><%- panels.AUDIO_CALL_FALLBACK.DOWNLOAD_MSG %></h3>
 					<br>
-					<a href="<%- defaults.webrtc.fallback.sipCall %>">call.jnlp</a>
+					<% if(defaults.webrtc && defaults.webrtc.fallback) { %>
+						<a href="<%- defaults.webrtc.fallback.sipCall %>">call.jnlp</a>
+					<% } %>
 				</div>
 				<form>
 					<hr>

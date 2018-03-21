@@ -4,7 +4,7 @@
 		<% if(message.entity === "user") { %> 
 			style="border-color:<% defaults.styles.primary.backgroundColor %>" 
 		<% } %>>
-		<p><%= message.text %></p>
+		<p><%= message.content %></p>
 	</div>
 	<span class="<%- defaults.prefix %>-message-time"> <%- message.time %></span>
 </div>

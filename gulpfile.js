@@ -90,12 +90,6 @@ gulp.task('fonts', function() {
 
 gulp.task('cp', function() {
 
-	// gulp.src(basePath.src+'*.js')
-	// .pipe(gulp.dest(basePath.dest));
-
-	// gulp.src(basePath.src+'*.html')
-	// .pipe(gulp.dest(basePath.dest));
-
 	gulp.src(basePath.src+'translations.json')
 	.pipe(gulp.dest(basePath.dest));
 

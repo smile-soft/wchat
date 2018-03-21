@@ -3,7 +3,8 @@ var cache = {};
 
 module.exports = {
 	post: post,
-	get: get
+	get: get,
+	put: put
 };
 
 function post(url, data, cb){
@@ -35,6 +36,21 @@ function get(selector, url, cb){
 	});
 }
 
+function put(url, data, cb){
+
+	// debug.log('post request: ', url, data);
+
+	// var data = JSON.stringify(data);
+
+	XmlHttpRequest('PUT', url, data, function(err, res) {
+		debug.log('put respose: ', err, res);
+
+		if(err) return cb(err);
+
+		cb(null, res);
+	});
+}
+
 /**
  * Send request to the server via XMLHttpRequest
  */
@@ -62,8 +78,11 @@ function XmlHttpRequest(method, url, data, callback){
 		}
 	};
 
-	if(data !== null) {
+	if(method === 'POST') {
 		xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+	}
+
+	if(data) {
 		xhr.send(data);
 	} else {
 		xhr.send();

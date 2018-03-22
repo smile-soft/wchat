@@ -10,12 +10,23 @@ var entity = '';
 var emit;
 var path = '';
 var eventTimestamp = 0;
-var updateInterval = null;
-var updateIntervalValue = 5000;
-var updateStateInterval = null;
-var checkEvery = _.debounce(unshareBrowser, 30000);
+// var updateInterval = null;
+// var updateIntervalValue = 5000;
+// var updateStateInterval = null;
+// var checkEvery = _.debounce(unshareBrowser, 30000);
+var checkEvery = _.debounce(emitEvents, 300);
 var cursorX = 0, cursorY = 0;
 var requestAF;
+
+module.exports = {
+	init: init,
+	isInitiated: isInitiated,
+	share: shareBrowser,
+	unshare: unshareBrowser,
+	// unshareAll: unshareAll,
+	emitEvents: emitEvents,
+	updateEvents: updateEvents
+};
 
 function isInitiated() {
 	return initiated;
@@ -37,7 +48,7 @@ function init(options){
 	path = options.path;
 
 	initiated = true;
-	updateInterval = setInterval(emitEvents, updateIntervalValue);
+	// updateInterval = setInterval(emitEvents, updateIntervalValue);
 
 	debug.log('cobrowsing module initiated with parameters: ', options);
 	emit('cobrowsing/init');
@@ -53,9 +64,10 @@ function shareBrowser(){
     // addEvent(document, 'mouseout', eventsHandler);
     
     createRemoteCursor();
+    
     shared = true;
-    updateStateInterval = setInterval(updateState, updateIntervalValue);
-    clearInterval(updateInterval);
+    // updateStateInterval = setInterval(updateState, updateIntervalValue);
+    // clearInterval(updateInterval);
 
     debug.log('browser shared');
     emit('cobrowsing/shared', { entity: entity });
@@ -73,22 +85,22 @@ function unshareBrowser(){
     
     removeRemoteCursor();
     shared = false;
-    updateInterval = setInterval(emitEvents, updateIntervalValue);
-    clearInterval(updateStateInterval);
+    // updateInterval = setInterval(emitEvents, updateIntervalValue);
+    // clearInterval(updateStateInterval);
 
 	emit('cobrowsing/unshared', { entity: entity });
     debug.log('browser unshared');
 }
 
-function unshareAll(){
+// function unshareAll(){
 	// removeEvent(document, 'keyup', eventsHandler);
 	// removeEvent(document, 'keydown', eventsHandler);
 	// removeEvent(document, 'keypress', eventsHandler);
 	// removeEvent(document, 'mouseup', eventsHandler);
 	// removeEvent(document, 'click', eventsHandler);
 	// removeEvent(document, 'change', eventsHandler);
-	clearInterval(updateInterval);
-}
+	// clearInterval(updateInterval);
+// }
 
 function createRemoteCursor(){
 	var body = document.body;
@@ -160,9 +172,9 @@ function emitEvents(){
 	localEvents = [];
 }
 
-function updateState(){
-	localEvents.push({ shared: true, entity: entity });
-}
+// function updateState(){
+// 	localEvents.push({ shared: true, entity: entity });
+// }
 
 function eventsHandler(evt){
 	var e = evt || window.event,
@@ -340,6 +352,8 @@ function eventsHandler(evt){
 
 	// debug.log('eventsHandler: ', params);
 	localEvents.push(params);
+	emitEvents();
+	// checkEvery();
 }
 
 function updateEvents(result){
@@ -352,7 +366,7 @@ function updateEvents(result){
 		// check for scrollTop/Left. 
 		// IE and Firefox always return 0 from document.body.scrollTop/Left, 
 		// while other browsers return 0 from document.documentElement
-		mainElement = ('ActiveXObject' in window || typeof InstallTrigger !== 'undefined') ? document.documentElement : document.body;
+		// mainElement = ('ActiveXObject' in window || typeof InstallTrigger !== 'undefined') ? document.documentElement : document.body;
 
 		for(var i=0; i<result.events.length; i++) {
 			evt = result.events[i];
@@ -361,23 +375,23 @@ function updateEvents(result){
 			if(evt.timestamp < eventTimestamp) continue;
 			if(evt.entity === entity) continue;
 					
-			if(evt.shared !== undefined){
-				if(evt.shared){
-					checkEvery();
-					shareBrowser();
-				} else {
-					if(!result.historyEvents) unshareBrowser();
-				}
-			}
+			// if(evt.shared !== undefined){
+			// 	if(evt.shared){
+			// 		checkEvery();
+			// 		shareBrowser();
+			// 	} else {
+			// 		if(!result.historyEvents) unshareBrowser();
+			// 	}
+			// }
 			if(evt.url) {
-				if(!result.historyEvents) {
+				// if(!result.historyEvents) {
 					var url = evt.url;
 					var docUrl = document.URL;
 					if(docUrl.indexOf('chatSessionId') !== -1) {
 						docUrl = docUrl.substr(0, docUrl.indexOf('chatSessionId')-1);
 					}
 					if(url != docUrl) changeURL(url);
-				}
+				// }
 			}
 			if(evt.w){
 				if(evt.entity === 'user') {
@@ -403,6 +417,8 @@ function updateEvents(result){
 						target.scrollTop = evt.sy;
 						target.scrollLeft = evt.sx;
 					}
+
+					console.log('scroll event: ', target, evt.sy);
 				}
 			} else if(evt.event === 'mouseup' || evt.event === 'select'){
 				if(evt.sn) {
@@ -467,7 +483,7 @@ function updateEvents(result){
 	}
 
 	if(result.timestamp) eventTimestamp = result.timestamp;
-	if(shared) emitEvents();
+	// if(shared) emitEvents();
 }
 
 function mouseEvent(type, sx, sy, cx, cy) {
@@ -549,13 +565,3 @@ function removeEvent(obj, evType, fn) {
   if (obj.removeEventListener) obj.removeEventListener(evType, fn, false);
   else if (obj.detachEvent) obj.detachEvent("on"+evType, fn);
 }
-
-module.exports = {
-	init: init,
-	isInitiated: isInitiated,
-	share: shareBrowser,
-	unshare: unshareBrowser,
-	unshareAll: unshareAll,
-	emitEvents: emitEvents,
-	updateEvents: updateEvents
-};

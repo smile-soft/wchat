@@ -95,7 +95,24 @@ WchatAPI.prototype.onWebsocketMessage = function(e){
 				this.emit('message/typing');
 			} else {
 				this.emit('message/new', data.params);
-			}			
+			}		
+		} else if(data.method === 'openShare') { // init users share state
+			if(data.params.id) {
+				storage.saveState('sharedId', data.params.id, 'cache');
+				this.emit('session/join', { url: url.href });
+				this.shareOpened(data.params.id, url.href); // send confirmation to agent
+			}
+		} else if(data.method === 'shareOpened') { // init agent share state
+			if(data.params.id) {
+				clearInterval(this.openShareInteval);
+				storage.saveState('sharedId', data.params.id, 'cache');
+				this.emit('session/join', { url: url.href });
+			}
+		} else if(data.method === 'shareClosed') { // init agent share state
+			this.emit('session/disjoin');
+
+		} else if(data.method === 'events') {
+			this.emit('cobrowsing/update', { events: data.params.events });
 		}
 	}
 };
@@ -134,26 +151,24 @@ WchatAPI.prototype.init = function(){
 	if(url.href.indexOf('chatSessionId') !== -1) {
 		sid = this.getSidFromUrl(url.href);
 		storage.saveState('entity', 'agent', 'session');
-		storage.saveState('sid', sid);
-		this.joinSession(sid);
-	} else if(entity === 'agent' && sid) { // In case the cobrowsing session is active
-		this.joinSession(sid, url.href);
-	} else {
+		storage.saveState('sid', sid, 'session');
+		this.session.sid = sid;
+		this.joinSession(url.href);
 
+	} else if(entity === 'agent') { // In case the cobrowsing session is active
+		sid = storage.getState('sid', 'session');
+		this.session.sid = sid;
+		this.joinSession(url.href);
+
+	} else {
+		storage.saveState('entity', 'user', 'session');
+		this.session.sid = sid;
 		// In case a session is already initiated 
 		// and storage containes sid parameter
 		if(sid) {
-			// this.updateEvents([{ entity: entity, url: url.href }], function (err, result){
-			// 	if(err) {
-			// 		return;
-			// 	}
-				
-				storage.saveState('sid', sid);
-				// this.emit('session/continue', { entity: entity, url: url.href });
-				this.createSession({ sid: sid, url: url.href });
-			// }.bind(this));
+			storage.saveState('sid', sid);
+			this.createSession({ sid: sid, url: url.href });
 		} else {
-			storage.saveState('entity', 'user', 'session');
 			// Create new session
 			this.createSession({ url: url.href });
 		}
@@ -188,14 +203,18 @@ WchatAPI.prototype.createSession = function(params){
 			return;
 		}
 
-		body.result.url = url.href;
-		storage.saveState('sid', body.result.sid);
 		this.emit('session/create', body.result);
 	}.bind(this));
 };
 
-WchatAPI.prototype.joinSession = function(sid, url){
-	this.emit('session/join', { sid: sid, url: url });
+WchatAPI.prototype.joinSession = function(url){
+	this.openShareInteval = setInterval(function() {
+		this.switchShareState('openShare', url);
+	}.bind(this), 500);
+
+	global.onclose = function() {
+		this.switchShareState('shareClosed', url);
+	}.bind(this);
 };
 
 /** 
@@ -204,20 +223,26 @@ WchatAPI.prototype.joinSession = function(sid, url){
  * as a starting point from which an events would be obtained
 **/
 WchatAPI.prototype.updateEvents = function(events, cb){
-	var sessionId = storage.getState('sid'), params;
-	if(!sessionId) return cb();
+	// var sessionId = storage.getState('sid'), data;
+	// if(!sessionId) return cb();
 	
-	params = {
-		method: 'updateEvents',
+	data = {
+		method: 'events',
 		params: {
-			sid: sessionId,
+			sid: this.session.sid,
+			id: storage.getState('sharedId', 'cache'),
 			timestamp: storage.getState('eventTimestamp', 'cache'),
 			events: events
 		}
 	};
-	request.post(this.options.serverUrl, params, function (err, body){
+
+	if(this.websocket) {
+		return this.sendData(data);
+	}
+
+	request.post(this.options.serverUrl, data, function (err, body){
 		if(err) {
-			this.emit('Error', err, params);
+			this.emit('Error', err, data);
 			return cb(err); // TODO: handle error
 		}
 
@@ -266,7 +291,7 @@ WchatAPI.prototype.getLanguages = function(cb){
  * @param  {Object} params - user parameters (name, phone, subject, language, etc.)
  */
 WchatAPI.prototype.chatRequest = function(params, cb){
-	params.sid = storage.getState('sid');
+	params.sid = this.session.sid;
 
 	debug.log('chatRequest params: ', params);
 
@@ -301,7 +326,7 @@ WchatAPI.prototype.getMessages = function(cb){
 	request.post(this.options.serverUrl, {
 		method: 'getMessages',
 		params: {
-			sid: storage.getState('sid'),
+			sid: this.session.sid,
 			timestamp: storage.getState('msgTimestamp')
 		}
 	}, function (err, body){
@@ -335,7 +360,7 @@ WchatAPI.prototype.closeChat = function(rating){
 	var data = {
 		method: 'closeChat',
 		params: {
-			sid: storage.getState('sid')
+			sid: this.session.sid
 		}
 	};
 	if(rating) data.params.rating = rating;
@@ -365,26 +390,24 @@ WchatAPI.prototype.sendMessage = function(params, cb){
 	var data = {
 		method: 'message',
 		params: {
-			sid: storage.getState('sid'),
+			sid: this.session.sid,
 			content: params.message
 		}
 	};
 
 	if(this.websocket) {
 		if(params.file) {
-			var content = publicUrl+Date.now()+"_"+this.options.pageid+"_"+params.message;
-			data.params.content = content;
+		// 	// var content = publicUrl+Date.now()+"_"+this.options.pageid+"_"+params.message;
+			data.params.content = params.file;
+			data.params.file = params.message;
 
-			request.put(content, params.file, function(err, result) {
-				if(err) return console.error('sendMessage error: ', err);
-				this.sendData(data);
-			});
+		// 	request.put(content, params.file, function(err, result) {
+		// 		if(err) return console.error('sendMessage error: ', err);
+		// 		this.sendData(data);
+		// 	});
 
-		} else {
-			this.sendData(data);
 		}
-		
-		return;
+		return this.sendData(data);
 	}
 
 	request.post(this.options.serverUrl, data, function(err, body){
@@ -414,7 +437,7 @@ WchatAPI.prototype.sendMessage = function(params, cb){
  * @param  {String} text		Email body
  */
 WchatAPI.prototype.sendEmail = function(params, cb){
-	params.sid = storage.getState('sid');
+	params.sid = this.session.sid;
 
 	var data = {
 		method: 'sendMail',
@@ -445,7 +468,7 @@ WchatAPI.prototype.sendEmail = function(params, cb){
  * @param  {Number} time - Timestamp of the call to be initiated
  */
 WchatAPI.prototype.requestCallback = function(params, cb){
-	params.sid = storage.getState('sid');
+	params.sid = this.session.sid;
 
 	var data = {
 		method: 'requestCallback',
@@ -495,6 +518,20 @@ WchatAPI.prototype.disjoinSession = function(sid){
 	}.bind(this));
 };
 
+WchatAPI.prototype.shareOpened = function(sharedId, url){
+	var data = {
+		method: 'shareOpened',
+		params: {
+			id: sharedId,
+			url: url
+		}
+	};
+
+	if(this.websocket) {
+		return this.sendData(data);
+	}
+};
+
 /**
  * Informs the server that the cobrowsing feature is turned on or off
  * @param  {Boolean} state Represents the state of cobrowsing feature
@@ -502,14 +539,20 @@ WchatAPI.prototype.disjoinSession = function(sid){
  * @return none
  */
 WchatAPI.prototype.switchShareState = function(state, url){
-	var method = state ? 'shareOpened' : 'shareClosed';
-	request.post(this.options.serverUrl, {
+	var method = state;
+	var data = {
 		method: method,
 		params: {
-			sid: storage.getState('sid'),
+			sid: this.session.sid,
 			url: url
 		}
-	}, function(err, body){
+	};
+
+	if(this.websocket) {
+		return this.sendData(data);
+	}
+
+	request.post(this.options.serverUrl, data, function(err, body){
 		if(err) {
 			this.emit('Error', err, { method: 'switchShareState', params: { state: state } });
 			return;
@@ -527,7 +570,7 @@ WchatAPI.prototype.userIsTyping = function(){
 	var data = {
 		method: 'typing',
 		params: {
-			sid: storage.getState('sid')
+			sid: this.session.sid
 		}
 	};
 
@@ -547,7 +590,7 @@ WchatAPI.prototype.updateUrl = function(url){
 	var data = {
 		method: 'updateUrl',
 		params: {
-			sid: storage.getState('sid'),
+			sid: this.session.sid,
 			url: url
 		}
 	};
@@ -568,7 +611,7 @@ WchatAPI.prototype.linkFollowed = function(url){
 	var data = {
 		method: 'linkFollowed',
 		params: {
-			sid: storage.getState('sid'),
+			sid: this.session.sid,
 			url: url
 		}
 	};

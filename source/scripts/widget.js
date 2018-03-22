@@ -214,6 +214,7 @@ function Widget(options){
 	.on('session/create', onSessionSuccess)
 	.on('session/continue', onSessionSuccess)
 	.on('session/join', onSessionJoin)
+	.on('session/disjoin', onSessionDisjoin)
 	.on('session/init', onSessionInit);
 	// .on('chat/languages', function() {
 	// 	changeWgState({ state: getWidgetState() });
@@ -336,17 +337,17 @@ function initSession() {
 	}
 
 	// if window is not a opened window
-	if(!defaults.external) {
+	// if(!defaults.external) {
 		// api.updateUrl(window.location.href);
 
-		if(defaults.cobrowsing) {
-			initCobrowsingModule({
-				url: window.location.href,
-				entity: storage.getState('entity', 'session'),
-				widget: '#'+defaults.prefix+'-wg-cont'
-			});
-		}
-	}
+	// 	if(defaults.cobrowsing) {
+	// 		initCobrowsingModule({
+	// 			url: window.location.href,
+	// 			entity: storage.getState('entity', 'session'),
+	// 			widget: '#'+defaults.prefix+'-wg-cont'
+	// 		});
+	// 	}
+	// }
 
 	api.emit('session/init', {options: defaults, url: global.location.href });
 }
@@ -389,22 +390,8 @@ function onSessionJoin(params){
 	initCobrowsingModule({ url: params.url, entity: storage.getState('entity', 'session') });
 }
 
-function loadWidget(cb){
-	
-	compiled = compileTemplate('widget', {
-		defaults: defaults,
-		languages: langs,
-		translations: frases,
-		currLang: currLang || defaults.lang,
-		credentials: storage.getState('credentials', 'session') || {},
-		_: _
-	});
-
-	// Widget variable assignment
-	widget = domify(compiled);
-	document.body.appendChild(widget);
-	api.emit('widget/load', widget);
-
+function onSessionDisjoin() {
+	cobrowsing.unshare();
 }
 
 function initCobrowsingModule(params){
@@ -412,36 +399,44 @@ function initCobrowsingModule(params){
 	if(defaults.external || cobrowsing.isInitiated()) return;
 
 	api.on('cobrowsing/init', function(){
-		if(storage.getState('shared', 'session') || params.entity === 'agent') cobrowsing.share();
+		cobrowsing.share();
 		// cobrowsing.emitEvents();
 	});
+
+	api.on('cobrowsing/update', function(params){
+		cobrowsing.updateEvents(params);
+	});
+
 	api.on('cobrowsing/event', function(params){
-		api.updateEvents(params.events, function(err, result){
-			if(err) return;
-			if(result) cobrowsing.updateEvents(result);
-		});
+		if(params.events && params.events.length) api.updateEvents(params.events)
+		// , function(err, result){
+		// 	if(err) return;
+		// 	if(result) cobrowsing.updateEvents(result);
+		// });
 	});
 
 	api.on('cobrowsing/shared', function(){
-		if(!storage.getState('shared', 'session') && params.entity === 'user') {
-			storage.saveState('shared', true, 'session');
-			api.switchShareState(true, params.url);
-		}
-		api.updateEvents([{ entity: params.entity, url: params.url, shared: true }], function(err, result){
-			// if(err) return;
-			result.historyEvents = true;
-			// debug.log('cobrowsing update: ', result);
-			cobrowsing.updateEvents(result);
-		});
+		storage.saveState('shared', true, 'session');
+		// if(!storage.getState('shared', 'session') && params.entity === 'user') {
+			// storage.saveState('shared', true, 'session');
+			// api.switchShareState(true, params.url);
+		// }
+		// api.updateEvents([{ entity: params.entity, url: params.url, shared: true }], function(err, result){
+		// 	// if(err) return;
+		// 	result.historyEvents = true;
+		// 	// debug.log('cobrowsing update: ', result);
+		// 	cobrowsing.updateEvents(result);
+		// });
 	});
 
 	api.on('cobrowsing/unshared', function(params){
 		storage.saveState('shared', false, 'session');
-		api.updateEvents([{ entity: params.entity, url: params.url, shared: false }], function(err){
-			// if(err) return;
-			if(params.entity === 'user') api.switchShareState(false, window.location.href);
-			else cobrowsing.unshareAll();
-		});
+		// cobrowsing.unshare();
+		// api.updateEvents([{ entity: params.entity, url: params.url, shared: false }], function(err){
+		// 	// if(err) return;
+		// 	if(params.entity === 'user') api.switchShareState(false, window.location.href);
+		// 	else cobrowsing.unshareBrowser();
+		// });
 	});
 	
 	cobrowsing.init({
@@ -521,6 +516,24 @@ function initWidget(){
 
 	// Widget is initiated
 	api.emit('widget/init');
+}
+
+function loadWidget(cb){
+	
+	compiled = compileTemplate('widget', {
+		defaults: defaults,
+		languages: langs,
+		translations: frases,
+		currLang: currLang || defaults.lang,
+		credentials: storage.getState('credentials', 'session') || {},
+		_: _
+	});
+
+	// Widget variable assignment
+	widget = domify(compiled);
+	document.body.appendChild(widget);
+	api.emit('widget/load', widget);
+
 }
 
 function setOffer() {
@@ -640,21 +653,21 @@ function newMessage(message){
 		text,
 		compiled,
 		playSound = false,
-		defaultUname = false,
+		// defaultUname = false,
 		credentials = storage.getState('credentials', 'session') || {},
 		aname = storage.getState('aname', 'session'),
 		uname = credentials.uname ? credentials.uname : ''
 		messagesCont = document.getElementById(defaults.prefix+'-messages-cont');
 
-	if(uname === storage.getState('sid').split('_')[0]) {
-		defaultUname = true;
-	}
+	// if(uname === storage.getState('sid').split('_')[0]) {
+	// 	defaultUname = true;
+	// }
 
 	// result.messages.forEach(function(message, index) {
 		
 		message.entity = message.from === uname ? 'user' : 'agent';
 		// message.from = (message.entity === 'user' && defaultUname) ? frases[currLang].default_user_name : message.from;
-		message.from = (message.entity === 'user' && defaultUname) ? '' : message.from;
+		message.from = message.entity === 'user' ? '' : message.from;
 		message.time = message.time ? parseTime(message.time) : parseTime(Date.now());
 
 		text = parseMessage(message.content, message.file, message.entity);
@@ -875,6 +888,11 @@ function closeChat(rating) {
 	storage.saveState('chat', false);
 	api.closeChat(rating);
 	removeWgState('chat');
+
+	if(storage.getState('shared', 'session')) {
+		api.switchShareState('shareClosed', global.location.href);
+		cobrowsing.unshare();
+	}
 }
 
 function onChatClose(){
@@ -916,7 +934,7 @@ function setSessionTimeoutHandler(){
 		// widgetState.state = 'timeout';
 		// addWgState('timeout');
 		setButtonStyle('timeout');
-		storage.removeState('sid');
+		// storage.removeState('sid');
 
 		// if(params && params.method === 'updateEvents') {
 		if(getLanguagesInterval) clearInterval(getLanguagesInterval);
@@ -967,6 +985,7 @@ function setCallback(){
 	cbSpinner.classList.remove(defaults.prefix+'-hidden');
 
 	api.requestCallback(formData);
+	switchPane('callbackSent');
 	// api.requestCallback(formData, function(err, result) {
 	// 	debug.log('setCallback result: ', err, result);
 
@@ -1097,7 +1116,6 @@ function endCall(){
  * Open web chat widget in a new window
  */
 function openWidget(){
-	debug.log('open widget: ', storage.getState('sid'));
 	var opts = {};
 	
 	if(!widgetWindow || widgetWindow.closed) {
@@ -1111,7 +1129,7 @@ function openWidget(){
 		widgetWindow = window.open('', 'wchat', defaults.widgetWindowOptions);
 		widgetWindow = constructWindow(widgetWindow);
 		// widgetWindow[globalSettings] = opts;
-		
+
 		// widgetWindow.sessionStorage.setItem('wchat_options', JSON.stringify(opts));
 
 		// Wait while the script is loaded, 
@@ -1737,10 +1755,13 @@ function detectLanguage(){
 		if(defaults.langFromUrl) {
 			global.location.pathname
 			.split('/')
-			.forEach(function(item) {
+			.map(function(item) {
+				item = handleAliases(item);
 				if(availableLangs.indexOf(item) !== -1) {
 					lang = item;
 				}
+
+				return item;
 			});
 		}
 
@@ -1750,8 +1771,15 @@ function detectLanguage(){
 		}
 	}
 
-	// debug.log('detected lang: ', lang);
+	debug.log('detected lang: ', lang);
 
+	return lang;
+}
+
+function handleAliases(alias) {
+	var lang = alias;
+	if(alias === 'ua') lang = 'uk';
+	if(alias === 'us' || alias === 'gb') lang = 'en';
 	return lang;
 }
 
@@ -1785,6 +1813,14 @@ function parseMessage(text, file, entity){
 				content: '<a href="'+api.options.server+'/ipcc/'+text+'" download="'+filename+'">'+filename+'</a>'
 			};
 		}
+	} else if(entity === 'agent' && isLink(text) && isImage(text)) {
+		filename = text.substring(text.indexOf('_')+1)
+		return {
+			type: 'image',
+			content: '<a href="'+text+'" target="_blank">' +
+					'<img src="'+text+'" alt="'+filename+'" />' +
+				'</a>'
+		};
 	} else if(entity === 'agent' && new RegExp('^{.+}$').test(text)) {
 		forms.forEach(function(item) {
 			if(item.name === text.substring(1, text.length-1)) {

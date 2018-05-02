@@ -550,8 +550,11 @@ function initChat(){
 }
 
 function requestChat(credentials){
+	var chatStarted = storage.getState('chat', 'session');
+	var message = credentials.message;
+
 	if(!credentials.uname) credentials.uname = api.session.sid;
-	
+
 	// Save user language based on preferable dialog language
 	// if(credentials.lang && credentials.lang !== currLang ) {
 	// 	storage.saveState('lang', credentials.lang, 'session');
@@ -564,11 +567,21 @@ function requestChat(credentials){
 	// It will be removed on session timeout
 	storage.saveState('credentials', credentials, 'session');
 
+	api.chatRequest(credentials);
+
+	setTimeout(function() {
+		console.log('requestChat: ', credentials.message, chatStarted);
+
+		if(message && !chatStarted) {
+			sendMessage({
+				message: credentials.message
+			});
+		}
+	}, 500);
+
 	startChat(api.session);
 	clearWgMessages();
 	switchPane('messages');
-
-	api.chatRequest(credentials);
 }
 
 function startChat(params){

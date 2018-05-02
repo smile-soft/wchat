@@ -456,7 +456,29 @@ __e( defaults.prefix ) +
 'IntroForm" \n\t\t\t\t\t\tdata-validate-form="true">\n\n\t\t\t\t\t\t<!-- Iterating over intro array, which is a list of fields and their properties -->\n\t\t\t\t\t\t';
  _.forEach(defaults.intro, function(item){ ;
 __p += '\n\t\t\t\t\t\t\t';
- if(item.name !== 'lang') { ;
+ if(item.name === 'lang') { ;
+__p += '\n\t\t\t\t\t\t\t\t<select name="lang">\n\t\t\t\t\t\t\t\t\t';
+ _.forEach(languages, function(lang) { ;
+__p += '\n\t\t\t\t\t\t\t\t\t\t<option \n\t\t\t\t\t\t\t\t\t\t\tvalue="' +
+__e( lang ) +
+'" \n\t\t\t\t\t\t\t\t\t\t\t';
+ if(lang === currLang) { ;
+__p += ' selected ';
+ } ;
+__p += ' >\n\t\t\t\t\t\t\t\t\t\t\t' +
+__e( translations[lang].lang ) +
+'\n\t\t\t\t\t\t\t\t\t\t</option>\n\t\t\t\t\t\t\t\t\t';
+ }); ;
+__p += '\n\t\t\t\t\t\t\t\t</select>\n\t\t\t\t\t\t\t';
+ } else if(item.name === 'message') { ;
+__p += '\n\t\t\t\t\t\t\t\t<textarea\n\t\t\t\t\t\t\t\t\tname="message"\n\t\t\t\t\t\t\t\t\tplaceholder="' +
+((__t = ( item.placeholder || panels.INTRO.PLACEHOLDERS[item.name] )) == null ? '' : __t) +
+' ';
+ if(item.required){ ;
+__p += ' * ';
+ } ;
+__p += '"\n\t\t\t\t\t\t\t\t></textarea>\n\t\t\t\t\t\t\t';
+ } else { ;
 __p += '\n\t\t\t\t\t\t\t\t<input \n\t\t\t\t\t\t\t\t\ttype="' +
 ((__t = ( item.type || 'text' )) == null ? '' : __t) +
 '" \n\t\t\t\t\t\t\t\t\tplaceholder="' +
@@ -478,22 +500,6 @@ __p += ' \n\t\t\t\t\t\t\t\t\t';
 __p += ' required ';
  } ;
 __p += '>\n\t\t\t\t\t\t\t';
- } ;
-__p += '\n\n\t\t\t\t\t\t\t';
- if(item.name === 'lang') { ;
-__p += '\n\t\t\t\t\t\t\t\t<select name="lang">\n\t\t\t\t\t\t\t\t\t';
- _.forEach(languages, function(lang) { ;
-__p += '\n\t\t\t\t\t\t\t\t\t\t<option \n\t\t\t\t\t\t\t\t\t\t\tvalue="' +
-__e( lang ) +
-'" \n\t\t\t\t\t\t\t\t\t\t\t';
- if(lang === currLang) { ;
-__p += ' selected ';
- } ;
-__p += ' >\n\t\t\t\t\t\t\t\t\t\t\t' +
-__e( translations[lang].lang ) +
-'\n\t\t\t\t\t\t\t\t\t\t</option>\n\t\t\t\t\t\t\t\t\t';
- }); ;
-__p += '\n\t\t\t\t\t\t\t\t</select>\n\t\t\t\t\t\t\t';
  } ;
 __p += '\n\n\t\t\t\t\t\t';
  }); ;

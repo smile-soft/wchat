@@ -168,15 +168,6 @@
 
 						<!-- Iterating over intro array, which is a list of fields and their properties -->
 						<% _.forEach(defaults.intro, function(item){ %>
-							<% if(item.name !== 'lang') { %>
-								<input 
-									type="<%= item.type || 'text' %>" 
-									placeholder="<%= item.placeholder || panels.INTRO.PLACEHOLDERS[item.name] %> <% if(item.required){ %> * <% } %>" 
-									name="<%- item.name %>" 
-									<% if(item.save){ %> value="<%- credentials[item.name] %>" <% } %> 
-									<% if(item.required){ %> required <% } %>>
-							<% } %>
-
 							<% if(item.name === 'lang') { %>
 								<select name="lang">
 									<% _.forEach(languages, function(lang) { %>
@@ -187,6 +178,18 @@
 										</option>
 									<% }); %>
 								</select>
+							<% } else if(item.name === 'message') { %>
+								<textarea
+									name="message"
+									placeholder="<%= item.placeholder || panels.INTRO.PLACEHOLDERS[item.name] %> <% if(item.required){ %> * <% } %>"
+								></textarea>
+							<% } else { %>
+								<input 
+									type="<%= item.type || 'text' %>" 
+									placeholder="<%= item.placeholder || panels.INTRO.PLACEHOLDERS[item.name] %> <% if(item.required){ %> * <% } %>" 
+									name="<%- item.name %>" 
+									<% if(item.save){ %> value="<%- credentials[item.name] %>" <% } %> 
+									<% if(item.required){ %> required <% } %>>
 							<% } %>
 
 						<% }); %>

@@ -20,14 +20,15 @@
     			"cancel": "Відміна"
     		},
     		"INTRO": {
-    			"intro_message": "Будь ласка, заповніть необхідні поля",
+    			"intro_message": "Для підвищення якості нашого обслуговування , просимо Вас представитися та залишити контакти для зворотнього зв'язку.",
     			"start_dialog_button": "Розпочати діалог",
     			"cancel": "Відміна",
     			"PLACEHOLDERS": {
     				"uname": "Ваше ім'я",
 					"email": "Ваша електронна адреса",
 					"phone": "Ваш телефон",
-					"subject": "Тема діалогу",
+                    "subject": "Тема діалогу",
+					"message": "Ваше повідомлення",
     				"lang": "Оберіть мову діалогу"
     			}
     		},
@@ -156,14 +157,15 @@
     			"cancel": "Отмена"
     		},
     		"INTRO": {
-    			"intro_message": "Пожалуйста, заполните необходимые поля",
+    			"intro_message": "Для повышения качества нашего обслуживания, просим Вас представиться и оставить контакты для обратной связи.",
     			"start_dialog_button": "Начать диалог",
     			"cancel": "Отмена",
     			"PLACEHOLDERS": {
     				"uname": "Ваше имя",
     				"email": "Ваш электронный адрес",
     				"phone": "Ваш телефон",
-    				"subject": "Тема диалога",
+                    "subject": "Тема диалога",
+    				"message": "Ваше сообщение",
     				"lang": "Выберите язык диалога"
     			}
     		},
@@ -292,14 +294,15 @@
 				"cancel": "Cancel"
 			},
 			"INTRO": {
-				"intro_message": "Please, introduce yourself",
+				"intro_message": "To improve the quality of our service, please leave your contact information for feedback.",
 				"start_dialog_button": "Start dialog",
 				"cancel": "Cancel",
 				"PLACEHOLDERS": {
 					"uname": "Your name",
 					"email": "Your email",
 					"phone": "Your phone",
-					"subject": "Dialog's subject",
+                    "subject": "Dialog's subject",
+					"message": "Your message",
 					"lang": "Choose dialog language"
 				}
 			},

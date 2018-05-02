@@ -181,12 +181,13 @@
 				.swc-message-content {
 					display: inline-block;
 					font-size: 14px;
+					line-height: 1.42857143;
 					max-width: 90%;
 					margin: 0;
-					padding: 10px;
+					padding: 15px;
 					border-radius: $border-radius;
-					border-width: 1px;
-					border-style: solid;
+					// border-width: 1px;
+					// border-style: solid;
 					background-color: #fff;
 					overflow: hidden;
 
@@ -213,6 +214,7 @@
 
 				.swc-agent-msg {
 					text-align: left;
+
 					// span {
 					// 	float: left;
 					// }
@@ -220,7 +222,8 @@
 
 						// float: left;
 						border-top-left-radius: 0;
-						// border-color: $primary-color; 
+						border-style: solid;
+						border-width: 1px;
 					}
 				}
 			}

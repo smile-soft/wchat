@@ -1,7 +1,8 @@
 var debug = require('./debug');
 var events = {},
-// JsSIP = require('./jssip.min.js'),
-JsSIP = global.JsSIP,
+// JsSIP = require('jssip'),
+JsSIP = require('./jssip.min.js'),
+// JsSIP = global.JsSIP,
 options,
 sipClient,
 sipSession,
@@ -117,6 +118,8 @@ function init(opts){
 	debug.log('Initiating WebRTC module:', opts);
 	options = opts;
 	if(options.sip.register === undefined) options.sip.register = false;
+	var socket = new JsSIP.WebSocketInterface(options.sip.ws_servers);
+	options.sip.sockets = [socket];
 
 	// !!get rid of this!!
 	events.emit = opts.emit;

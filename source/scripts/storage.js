@@ -8,7 +8,7 @@ var cache = {
 	sid: null,
 	eventTimestamp: 0,
 	msgTimestamp: 0,
-	entity: undefined,
+	entity: null,
 	chat: null
 };
 

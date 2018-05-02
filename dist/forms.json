@@ -40,6 +40,26 @@
 		}, {
 			"name": "request_browser_access",
 			"description": "request_browser_access"
+		}, {
+			"name": "queue_overload",
+			"description": "queue_overload",
+			"autocomplete": true,
+			"fields": [{
+				"name": "uname",
+				"placeholder": "uname",
+				"type": "text",
+				"value": "email"
+			}, {
+				"name": "email",
+				"placeholder": "email",
+				"type": "email",
+				"value": "email",
+				"required": true
+			}, {
+				"name": "text",
+				"placeholder": "text",
+				"type": "textarea"
+			}]
 		}
 	]
 }

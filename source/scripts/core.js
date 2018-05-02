@@ -10,9 +10,11 @@ var inherits = require('inherits');
 var websocketTry = 1;
 var pollTurns = 1;
 var mainAddress = "main.ringotel.net/chatbot/WebChat/";
-var publicUrl = "https://main.ringotel.net/public/";
+// var publicUrl = "https://main.ringotel.net/public/";
 var websocketUrl = "";
 var moduleInit = false;
+var sessionTimeout = null;
+var chatTimeout = null;
 
 /**
  * Core module implements main internal functionality
@@ -20,12 +22,6 @@ var moduleInit = false;
  * @param  {Object} options Instantiation options that overrides module defaults
  * @return {Object}         Return public API
  */
-
-var defaults = {
-	// IPCC server IP address/domain name and port number.
-	// ex.: "http://192.168.1.100:8880"
-	server: ''
-};
 
 inherits(WchatAPI, EventEmitter);
 
@@ -35,7 +31,7 @@ function WchatAPI(options){
 
 	// extend default options
 	// with provided object
-	this.options = _.assign(defaults, options || {});
+	this.options = options || {};
 	this.options.serverUrl = this.options.server + '/ipcc/$$$';
 	this.session = {};
 
@@ -45,13 +41,10 @@ function WchatAPI(options){
 
 	this.createWebsocket();
 
-	this.on('session/create', function(data) {
-		this.session = data;
-		storage.saveState('sid', data.sid);
-	}.bind(this));
-	this.on('chat/close', function(data) {
-		storage.saveState('chat', false);
-	});
+	this.on('session/create', this.onSessionCreate.bind(this));
+	// this.on('chat/close', function(data) {
+	// 	storage.saveState('chat', false, 'session');
+	// });
 	this.on('Error', this.onError);
 
 	return this;
@@ -59,10 +52,24 @@ function WchatAPI(options){
 }
 
 WchatAPI.prototype.onError = function(err){
-	debug.error(err);
-	if(err.code === 404) {
-		this.emit('session/timeout');
-	}
+	debug.log('Error: ', err);
+}
+
+WchatAPI.prototype.onSessionCreate = function(data){
+	this.session = _.merge(this.session, data);
+	storage.saveState('sid', data.sid);
+	// this.setSessionTimeout();
+}
+
+WchatAPI.prototype.setSessionTimeout = function(){
+	var timeout = this.session.sessionTimeout;
+	clearTimeout(sessionTimeout);
+	if(timeout)
+		sessionTimeout = setTimeout(this.onSessionTimeout.bind(this), timeout*1000);
+}
+
+WchatAPI.prototype.onSessionTimeout = function(){
+	this.emit('session/timeout');
 };
 
 WchatAPI.prototype.sendData = function(data){
@@ -77,7 +84,7 @@ WchatAPI.prototype.onWebsocketMessage = function(e){
 	var data = JSON.parse(e.data),
 	    method = data.method;
 
-	debug.log('onWebsocketMessage: ', data);
+	// debug.log('onWebsocketMessage: ', data);
 	
 	if(data.method) {
 		if(data.method === 'session') {
@@ -90,29 +97,38 @@ WchatAPI.prototype.onWebsocketMessage = function(e){
 					return item;
 				}.bind(this));
 			}
+
 		} else if(data.method === 'message') {
 			if(data.params.typing) {
 				this.emit('message/typing');
 			} else {
 				this.emit('message/new', data.params);
-			}		
-		} else if(data.method === 'openShare') { // init users share state
-			if(data.params.id) {
-				storage.saveState('sharedId', data.params.id, 'cache');
-				this.emit('session/join', { url: url.href });
-				this.shareOpened(data.params.id, url.href); // send confirmation to agent
+				this.setSessionTimeout();
 			}
-		} else if(data.method === 'shareOpened') { // init agent share state
+
+		} else if(data.method === 'openShare') { // Agent ---> User
+			if(this.session.sharedId === data.params.id) return;
+			if(data.params.url && (url.href !== data.params.url)) return window.location = data.params.url;
 			if(data.params.id) {
-				clearInterval(this.openShareInteval);
-				storage.saveState('sharedId', data.params.id, 'cache');
-				this.emit('session/join', { url: url.href });
+				this.session.sharedId = data.params.id;
+				this.emit('session/joined', { url: url.href });
+				this.shareOpened(data.params.id, url.href); // User ---> Agent
 			}
-		} else if(data.method === 'shareClosed') { // init agent share state
+
+		} else if(data.method === 'shareOpened') { // User ---> Agent
+			if(data.params.id) {
+				this.session.sharedId = data.params.id;
+				this.emit('session/joined', { url: url.href });
+			}
+
+		} else if(data.method === 'shareClosed') {
+			clearInterval(this.openShareInteval);
+			this.session.sharedId = "";
 			this.emit('session/disjoin');
 
 		} else if(data.method === 'events') {
-			this.emit('cobrowsing/update', { events: data.params.events });
+			this.emit('cobrowsing/update', data.params);
+
 		}
 	}
 };
@@ -142,37 +158,35 @@ WchatAPI.prototype.init = function(){
 
 	var entity = storage.getState('entity', 'session'),
 		sid = storage.getState('sid');
+		strIndex = url.href.indexOf('chatSessionId');
 
-	debug.log('initModule: ', entity, sid);
+	debug.log('initModule: ', this.session, entity, sid);
 
 	// A chatSessionId parameter in the url query 
 	// indicates that the web page was opened by agent.
 	// In that case agent should join the session.
-	if(url.href.indexOf('chatSessionId') !== -1) {
+	if(strIndex !== -1) {
 		sid = this.getSidFromUrl(url.href);
-		storage.saveState('entity', 'agent', 'session');
-		storage.saveState('sid', sid, 'session');
-		this.session.sid = sid;
-		this.joinSession(url.href);
+		entity = 'agent';
+		var cleanUrl = url.href.substr(0, strIndex);
+		cleanUrl = cleanUrl[cleanUrl.length-1] === '?' ? cleanUrl.substr(0, cleanUrl.length-1) : cleanUrl;
+
+		storage.saveState('sid', sid);
+		this.joinSession(cleanUrl);
 
 	} else if(entity === 'agent') { // In case the cobrowsing session is active
-		sid = storage.getState('sid', 'session');
-		this.session.sid = sid;
+		sid = storage.getState('sid');
 		this.joinSession(url.href);
 
 	} else {
-		storage.saveState('entity', 'user', 'session');
-		this.session.sid = sid;
-		// In case a session is already initiated 
-		// and storage containes sid parameter
-		if(sid) {
-			storage.saveState('sid', sid);
-			this.createSession({ sid: sid, url: url.href });
-		} else {
-			// Create new session
-			this.createSession({ url: url.href });
-		}
+		entity = 'user';
+		this.createSession({ sid: sid, url: url.href });
 	}
+
+	this.session.sid = sid;
+	this.session.entity = entity;
+	storage.saveState('entity', entity, 'session');
+
 };
 
 /**
@@ -209,11 +223,11 @@ WchatAPI.prototype.createSession = function(params){
 
 WchatAPI.prototype.joinSession = function(url){
 	this.openShareInteval = setInterval(function() {
-		this.switchShareState('openShare', url);
-	}.bind(this), 500);
+		this.openShare(url);
+	}.bind(this), 3000);
 
 	global.onclose = function() {
-		this.switchShareState('shareClosed', url);
+		this.shareClosed();
 	}.bind(this);
 };
 
@@ -226,11 +240,13 @@ WchatAPI.prototype.updateEvents = function(events, cb){
 	// var sessionId = storage.getState('sid'), data;
 	// if(!sessionId) return cb();
 	
+	if(!this.session.sharedId) return;
+
 	data = {
 		method: 'events',
 		params: {
 			sid: this.session.sid,
-			id: storage.getState('sharedId', 'cache'),
+			id: this.session.sharedId,
 			timestamp: storage.getState('eventTimestamp', 'cache'),
 			events: events
 		}
@@ -299,6 +315,8 @@ WchatAPI.prototype.chatRequest = function(params, cb){
 		method: 'chatRequest',
 		params: params
 	};
+
+	this.setSessionTimeout();
 
 	if(this.websocket) {
 		return this.sendData(data);
@@ -394,6 +412,9 @@ WchatAPI.prototype.sendMessage = function(params, cb){
 			content: params.message
 		}
 	};
+
+	// reset session timeout
+	this.setSessionTimeout();
 
 	if(this.websocket) {
 		if(params.file) {
@@ -518,12 +539,26 @@ WchatAPI.prototype.disjoinSession = function(sid){
 	}.bind(this));
 };
 
-WchatAPI.prototype.shareOpened = function(sharedId, url){
+WchatAPI.prototype.shareOpened = function(){
 	var data = {
 		method: 'shareOpened',
 		params: {
-			id: sharedId,
-			url: url
+			id: this.session.sharedId,
+			url: url.href
+		}
+	};
+
+	if(this.websocket) {
+		return this.sendData(data);
+	}
+};
+
+WchatAPI.prototype.shareClosed = function(){
+	var data = {
+		method: 'shareClosed',
+		params: {
+			id: this.session.sharedId,
+			url: url.href
 		}
 	};
 
@@ -538,10 +573,9 @@ WchatAPI.prototype.shareOpened = function(sharedId, url){
  * @param  {String} url   Url where the feature's state is changed
  * @return none
  */
-WchatAPI.prototype.switchShareState = function(state, url){
-	var method = state;
+WchatAPI.prototype.openShare = function(url){
 	var data = {
-		method: method,
+		method: 'openShare',
 		params: {
 			sid: this.session.sid,
 			url: url
@@ -554,7 +588,7 @@ WchatAPI.prototype.switchShareState = function(state, url){
 
 	request.post(this.options.serverUrl, data, function(err, body){
 		if(err) {
-			this.emit('Error', err, { method: 'switchShareState', params: { state: state } });
+			this.emit('Error', err, { method: 'openShare', params: { state: state } });
 			return;
 		}
 	}.bind(this));
@@ -628,6 +662,41 @@ WchatAPI.prototype.linkFollowed = function(url){
 	}.bind(this));
 };
 
+WchatAPI.prototype.detectLanguage = function(frases){
+	var storageLang = storage.getState('lang', 'session'),
+		availableLangs = [], lang, path;
+
+	// list available languages by translations keys
+	for(var key in frases) {
+		availableLangs.push(key);
+	}
+
+	if(storageLang) {
+		lang = storageLang;
+	} else if(this.options.lang) {
+		lang = this.options.lang;
+	} else if(this.options.langFromUrl) {
+
+		url.pathname
+		.split('/')
+		.map(function(item) {
+			item = handleAliases(item);
+			if(availableLangs.indexOf(item) !== -1) {
+				lang = item;
+			}
+
+			return item;
+		});
+	}
+
+	if(!lang) lang = (navigator.language || navigator.userLanguage).split('-')[0];
+	if(availableLangs.indexOf(lang) === -1) lang = 'en';
+
+	debug.log('detected lang: ', availableLangs, storageLang, this.options.lang, this.options.langFromUrl, lang);
+	this.session.lang = lang;
+	return lang;
+};
+
 WchatAPI.prototype.getSidFromUrl = function(url) {
 	var substr = url.substring(url.indexOf('chatSessionId='));
 	substr = substr.substring(substr.indexOf('=')+1);
@@ -678,4 +747,11 @@ function generateInterval (k) {
   
     // generate the interval to a random number between 0 and the maxInterval determined from above
     return Math.random() * maxInterval;
+}
+
+function handleAliases(alias) {
+	var lang = alias;
+	if(alias === 'ua') lang = 'uk';
+	else if(alias === 'us' || alias === 'gb') lang = 'en';
+	return lang;
 }

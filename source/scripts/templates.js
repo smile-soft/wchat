@@ -83,22 +83,52 @@ __p += ' style="border-color:\'' +
 __e( defaults.styles.primary.backgroundColor ) +
 '" ';
  } ;
-__p += '>\n\t\t';
- if(form.description) { ;
-__p += '\n\t\t\t<p>' +
-((__t = ( frases.FORMS.DESCRIPTIONS[form.description] || form.description )) == null ? '' : __t) +
-'</p>\n\t\t';
- } ;
-__p += '\n\t\t<form name="' +
+__p += '>\n\t\t<form id="' +
+__e( defaults.prefix ) +
+'-' +
+__e( form.name ) +
+'" name="' +
 __e( form.name ) +
 '" ';
  if(form.autocomplete){ ;
 __p += 'autocomplete="on"';
  } ;
 __p += ' data-validate-form="true">\n\t\t\t';
+ if(form.description) { ;
+__p += '\n\t\t\t\t<p style="margin: 10px 0">' +
+((__t = ( frases.FORMS.DESCRIPTIONS[form.description] || form.description )) == null ? '' : __t) +
+'</p>\n\t\t\t';
+ } ;
+__p += '\n\t\t\t';
  _.forEach(form.fields, function(item){ ;
 __p += '\n\t\t\t\t';
- if(item.type !== 'select') { ;
+ if(item.type === 'select') { ;
+__p += '\n\t\t\t\t\t<select name="' +
+__e( item.name ) +
+'">\n\t\t\t\t\t\t';
+ _.forEach(item.options, function(option) { ;
+__p += '\n\t\t\t\t\t\t\t<option value="' +
+__e( option.value ) +
+'" ';
+ if(option.selected) { ;
+__p += ' selected ';
+ } ;
+__p += ' >\n\t\t\t\t\t\t\t\t' +
+__e( frases.FORMS.PLACEHOLDERS[option.text] || option.text ) +
+'\n\t\t\t\t\t\t\t</option>\n\t\t\t\t\t\t';
+ }); ;
+__p += '\n\t\t\t\t\t</select>\n\t\t\t\t';
+ } else if(item.type === 'textarea') { ;
+__p += '\n\t\t\t\t\t<textarea \n\t\t\t\t\t\tname="' +
+__e( item.name ) +
+'"\n\t\t\t\t\t\tplaceholder="' +
+((__t = ( frases.FORMS.PLACEHOLDERS[item.placeholder] || frases.FORMS.PLACEHOLDERS[item.name] )) == null ? '' : __t) +
+' ';
+ if(item.required){ ;
+__p += '*';
+ } ;
+__p += '"\n\t\t\t\t\t></textarea>\n\t\t\t\t';
+ } else { ;
 __p += '\n\t\t\t\t\t<input \n\t\t\t\t\t\ttype="' +
 ((__t = ( item.type || 'text' )) == null ? '' : __t) +
 '"\n\t\t\t\t\t\tplaceholder="' +
@@ -119,25 +149,7 @@ __p += ' ';
  if(item.required){ ;
 __p += 'required';
  } ;
-__p += '>\n\t\t\t\t';
- } ;
-__p += '\n\t\t\t\t';
- if(item.type === 'select') { ;
-__p += '\n\t\t\t\t\t<select name="' +
-__e( item.name ) +
-'">\n\t\t\t\t\t\t';
- _.forEach(item.options, function(option) { ;
-__p += '\n\t\t\t\t\t\t\t<option value="' +
-__e( option.value ) +
-'" ';
- if(option.selected) { ;
-__p += ' selected ';
- } ;
-__p += ' >\n\t\t\t\t\t\t\t\t' +
-__e( frases.FORMS.PLACEHOLDERS[option.text] || option.text ) +
-'\n\t\t\t\t\t\t\t</option>\n\t\t\t\t\t\t';
- }); ;
-__p += '\n\t\t\t\t\t</select>\n\t\t\t\t';
+__p += '\n\t\t\t\t\t/>\n\t\t\t\t';
  } ;
 __p += '\n\t\t\t';
  }); ;
@@ -204,11 +216,11 @@ __e( defaults.prefix ) +
 __e( message.from ) +
 '</span>\n\t<div class="' +
 __e( defaults.prefix ) +
-'-message-content" \n\t\t';
- if(message.entity === "user") { ;
-__p += ' \n\t\t\tstyle="border-color:';
- defaults.styles.primary.backgroundColor ;
-__p += '" \n\t\t';
+'-message-content"\n\t\t';
+ if(message.entity !== "user") { ;
+__p += ' \n\t\t\tstyle="border-color:' +
+((__t = ( defaults.styles.primary.backgroundColor )) == null ? '' : __t) +
+'" \n\t\t';
  } ;
 __p += '>\n\t\t<p>' +
 ((__t = ( message.content )) == null ? '' : __t) +
@@ -242,7 +254,7 @@ var __t, __p = '', __e = _.escape, __j = Array.prototype.join;
 function print() { __p += __j.call(arguments, '') }
 with (obj) {
 
- var frases = translations[currLang]; ;
+ var frases = translations; ;
 __p += '\n';
  var panels = frases.PANELS; ;
 __p += '\n';

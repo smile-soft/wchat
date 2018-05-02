@@ -116,12 +116,14 @@
     		"submitted": "Форма відправлена, дякуємо!",
     		"canceled": "Форма відхилена",
     		"DESCRIPTIONS": {
-    			"test": "Будь ласка, заповніть форму"
+    			"test": "Будь ласка, заповніть форму",
+                "queue_overload": "Нажаль, всі оператори зараз зайняті. Будь ласка, відправте нам повідомлення і ми зв'яжемося з Вами найближчим часом."
     		},
     		"PLACEHOLDERS": {
     			"uname": "Ваше ім'я",
 				"email": "Ваша електронна адреса",
-				"phone": "Ваш телефон"
+                "phone": "Ваш телефон",
+				"text": "Ваше повідомлення"
     		}
     	},
     	"FLOATING_BUTTON": {
@@ -250,12 +252,14 @@
     		"submitted": "Форма отправлена, спасибо!",
 			"canceled": "Форма отклонена",
     		"DESCRIPTIONS": {
-    			"test": "Пожалуйста, заполните форму"
+    			"test": "Пожалуйста, заполните форму",
+                "queue_overload": "К сожалению, все операторы сейчас заняты. Пожалуйста, отправьте нам сообщение и мы свяжемся с Вами в ближайшее время."
     		},
     		"PLACEHOLDERS": {
     			"uname": "Ваше имя",
     			"email": "Ваш электронный адрес",
-    			"phone": "Ваш телефон"
+                "phone": "Ваш телефон",
+    			"text": "Ваше сообщение"
     		}
     	},
     	"FLOATING_BUTTON": {
@@ -384,12 +388,14 @@
 			"submitted": "Form sent, thank you!",
 			"canceled": "Form cancelled",
 			"DESCRIPTIONS": {
-				"test": "Please, fill in the form"
+				"test": "Please, fill in the form",
+                "queue_overload": "Unfortunately, there are no available agents at the moment. Please send us a message and we will contact you as soon as possible."
 			},
 			"PLACEHOLDERS": {
 				"uname": "Your name",
 				"email": "Your email",
-				"phone": "Your phone"
+                "phone": "Your phone",
+				"text": "Your message"
 			}
 		},
 		"FLOATING_BUTTON": {

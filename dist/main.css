@@ -623,12 +623,11 @@
         .swc-wg-panes .swc-wg-pane .swc-messages-cont li .swc-message-content {
           display: inline-block;
           font-size: 14px;
+          line-height: 1.42857143;
           max-width: 90%;
           margin: 0;
-          padding: 10px;
+          padding: 15px;
           border-radius: 15px;
-          border-width: 1px;
-          border-style: solid;
           background-color: #fff;
           overflow: hidden; }
           .swc-wg-panes .swc-wg-pane .swc-messages-cont li .swc-message-content img {
@@ -643,7 +642,9 @@
         .swc-wg-panes .swc-wg-pane .swc-messages-cont li .swc-agent-msg {
           text-align: left; }
           .swc-wg-panes .swc-wg-pane .swc-messages-cont li .swc-agent-msg .swc-message-content {
-            border-top-left-radius: 0; }
+            border-top-left-radius: 0;
+            border-style: solid;
+            border-width: 1px; }
     .swc-wg-panes .swc-wg-pane .swc-write-cont {
       position: absolute;
       display: table;
@@ -684,7 +685,7 @@
     .swc-wg-panes .swc-wg-pane .swc-msg-textarea,
     .swc-wg-panes .swc-wg-pane .swc-msg-textarea-clone,
     .swc-wg-panes .swc-wg-pane textarea {
-      font: 14px "Trebuchet MS", Helvetica, sans-serif;
+      font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
       display: block;
       width: 100%;
       max-height: 200px;
@@ -901,7 +902,7 @@
     width: 100%; }
 
 .swc-wg-cont {
-  font: 14px "Trebuchet MS", Helvetica, sans-serif;
+  font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
   position: fixed;
   bottom: 20px;
   z-index: 99999;

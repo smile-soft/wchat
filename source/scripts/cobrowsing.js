@@ -14,7 +14,9 @@ var eventTimestamp = 0;
 // var updateIntervalValue = 5000;
 // var updateStateInterval = null;
 // var checkEvery = _.debounce(unshareBrowser, 30000);
-var checkEvery = _.debounce(emitEvents, 300);
+// var checkEvery = _.debounce(emitEvents, 100);
+// var addEventsEvery = _.debounce(emitEvents, 100);
+var addEventsEvery = _.throttle(emitEvents, 100, { 'trailing': true, 'leading': true });
 var cursorX = 0, cursorY = 0;
 var requestAF;
 
@@ -166,11 +168,17 @@ function getCaretPosition (oField) {
 	return (iCaretPos);
 }
 
-function emitEvents(){
-	// if(!shared && !localEvents.length) return;
-	emit('cobrowsing/event', { entity: entity, events: localEvents });
-	localEvents = [];
+function emitEvents(events){
+	// if(localEvents.length) {
+	emit('cobrowsing/event', { entity: entity, events: events });
+		// localEvents = [];
+	// }
 }
+
+// function addEvents(events) {
+// 	localEvents.push(events);
+// 	emitEvents();
+// }
 
 // function updateState(){
 // 	localEvents.push({ shared: true, entity: entity });
@@ -351,9 +359,10 @@ function eventsHandler(evt){
 	}
 
 	// debug.log('eventsHandler: ', params);
-	localEvents.push(params);
-	emitEvents();
-	// checkEvery();
+	// localEvents.push(params);
+	// emitEvents();
+	// addEvents(params);
+	addEventsEvery(params);
 }
 
 function updateEvents(result){
@@ -361,19 +370,20 @@ function updateEvents(result){
 		target,
 		evt = {};
 
-	if(result.events && result.events.length) {
+	if(result.events) {
 
 		// check for scrollTop/Left. 
 		// IE and Firefox always return 0 from document.body.scrollTop/Left, 
 		// while other browsers return 0 from document.documentElement
 		// mainElement = ('ActiveXObject' in window || typeof InstallTrigger !== 'undefined') ? document.documentElement : document.body;
 
-		for(var i=0; i<result.events.length; i++) {
-			evt = result.events[i];
+		// for(var i=0; i<result.events.length; i++) {
+			// evt = result.events[i];
+			evt = result.events;
 
 			// if(evt.shared !== undefined) debug.log('shared events', eventTimestamp, evt, result.init);
-			if(evt.timestamp < eventTimestamp) continue;
-			if(evt.entity === entity) continue;
+			if(evt.timestamp < eventTimestamp) return;
+			if(evt.entity === entity) return;
 					
 			// if(evt.shared !== undefined){
 			// 	if(evt.shared){
@@ -479,7 +489,7 @@ function updateEvents(result){
 			}
 
 			if(evt.event === 'click' || evt.event === 'scroll') remoteEvents.push(evt);
-		}
+		// }
 	}
 
 	if(result.timestamp) eventTimestamp = result.timestamp;

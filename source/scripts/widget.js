@@ -61,19 +61,19 @@ var defaults = {
 	},
 	buttonStyles: {
 		online: {
-			backgroundColor: 'rgba(175,229,255,0.8)',
+			backgroundColor: 'rgba(175,229,255)',
 			color: ''
 		},
 		offline: {
-			backgroundColor: 'rgba(241,241,241,0.8)',
+			backgroundColor: 'rgba(241,241,241)',
 			color: ''
 		},
 		timeout: {
-			backgroundColor: 'rgba(241,241,241,0.8)',
+			backgroundColor: 'rgba(241,241,241)',
 			color: ''
 		},
 		notified: {
-			backgroundColor: 'rgba(253,250,129,0.8)',
+			backgroundColor: 'rgba(253,250,129)',
 			color: ''
 		},
 		color: 'rgb(70,70,70)'

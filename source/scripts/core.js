@@ -35,9 +35,9 @@ function WchatAPI(options){
 	this.options.serverUrl = this.options.server + '/ipcc/$$$';
 	this.session = {};
 
-	// if(!this.options.pageid) return console.error('Cannot initiate module: pageid is undefined');
+	if(!this.options.wsServer && !this.options.pageid) return console.error('Cannot initiate module: pageid is undefined');
 
-	websocketUrl = this.options.pageid ? (mainAddress+this.options.pageid) : this.options.server;
+	websocketUrl = this.options.wsServer ? this.options.wsServer : (mainAddress+this.options.pageid);
 
 	this.createWebsocket();
 

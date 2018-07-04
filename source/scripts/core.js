@@ -201,7 +201,8 @@ WchatAPI.prototype.createSession = function(params){
 	var data = {
 		method: 'createSession',
 		params: {
-			url: (params.url || url.href)
+			url: (params.url || url.href),
+			lang: this.detectLanguage()
 		}
 	};
 

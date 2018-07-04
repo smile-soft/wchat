@@ -300,6 +300,7 @@ function initWebrtcModule(opts){
 // Session is either created or continues
 function onSessionSuccess(){	
 	// Wait while translations are loaded
+	
 	_.poll(function(){
 		debug.log('poll: ', frases);
 		return (frases !== null);
@@ -321,7 +322,6 @@ function onSessionSuccess(){
 		}
 
 	}, 60000);
-
 }
 
 function initSession() {
@@ -551,9 +551,11 @@ function initChat(){
 
 function requestChat(credentials){
 	var chatStarted = storage.getState('chat', 'session');
+	var agentid = storage.getState('aid', 'session');
 	var message = credentials.message;
 
 	if(!credentials.uname) credentials.uname = api.session.sid;
+	if(agentid) credentials.agentid = agentid;
 
 	// Save user language based on preferable dialog language
 	// if(credentials.lang && credentials.lang !== currLang ) {
@@ -589,6 +591,8 @@ function startChat(params){
 
 	storage.saveState('chat', true, 'session');
 	
+	console.log('startChat timeout: ', timeout);
+
 	if(timeout) {
 		chatTimeout = setTimeout(onChatTimeout, timeout*1000);
 	}
@@ -669,6 +673,7 @@ function newMessage(message){
 		// Save agent name
 		if(message.entity === 'agent') {
 			if(aname !== message.from) storage.saveState('aname', message.from, 'session');
+			if(message.agentid) storage.saveState('aid', message.agentid, 'session');
 			if(message.from) clearTimeout(chatTimeout);
 		}
 

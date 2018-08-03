@@ -4,14 +4,15 @@ var cache = {};
 module.exports = {
 	post: post,
 	get: get,
-	put: put
+	put: put,
+	upload: upload
 };
 
 function post(url, data, cb){
 
 	// debug.log('post request: ', url, data);
 
-	var data = JSON.stringify(data);
+	// var data = JSON.stringify(data);
 
 	XmlHttpRequest('POST', url, data, function(err, res) {
 		debug.log('post respose: ', err, res);
@@ -51,6 +52,16 @@ function put(url, data, cb){
 	});
 }
 
+function upload(url, data, cb) {
+	XmlHttpRequest('POST', url, data, function(err, res) {
+		debug.log('post respose: ', err, res);
+
+		if(err) return cb(err);
+
+		cb(null, res);
+	});
+}
+
 /**
  * Send request to the server via XMLHttpRequest
  */
@@ -78,8 +89,14 @@ function XmlHttpRequest(method, url, data, callback){
 		}
 	};
 
+	debug.log('XmlHttpRequest: ', data);
+
 	if(method === 'POST') {
-		xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+		if(typeof data === 'object' && !(data instanceof FormData)) {
+			data = JSON.stringify(data);
+			xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+		}
+		
 	}
 
 	if(data) {

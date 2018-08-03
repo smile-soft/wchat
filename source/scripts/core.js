@@ -420,26 +420,30 @@ WchatAPI.prototype.sendMessage = function(params, cb){
 	if(this.websocket) {
 		if(params.file) {
 		// 	// var content = publicUrl+Date.now()+"_"+this.options.pageid+"_"+params.message;
-			data.params.content = params.file;
-			data.params.file = params.message;
+			// data.params.content = params.file;
+			// data.params.file = params.file;
+			data = toFormData({ file: params.file, filename: params.message, sid: this.session.sid });
 
-		// 	request.put(content, params.file, function(err, result) {
-		// 		if(err) return console.error('sendMessage error: ', err);
-		// 		this.sendData(data);
-		// 	});
+			request.upload('https://'+websocketUrl, data, function(err, result) {
+				console.error('sendMessage: ', err, result);
+				// this.sendData(data);
+			});
 
+		} else {
+			data.params.content = params.message;
+			this.sendData(data);
 		}
-		return this.sendData(data);
+		return;
 	}
 
-	request.post(this.options.serverUrl, data, function(err, body){
-		if(err) {
-			this.emit('Error', err, { method: 'sendMessage', params: data });
-			if(cb) cb(err);
-			return;
-		}
-		if(cb) cb();
-	});
+	// request.post(this.options.serverUrl, data, function(err, body){
+	// 	if(err) {
+	// 		this.emit('Error', err, { method: 'sendMessage', params: data });
+	// 		if(cb) cb(err);
+	// 		return;
+	// 	}
+	// 	if(cb) cb();
+	// });
 };
 
 /**
@@ -755,4 +759,18 @@ function handleAliases(alias) {
 	if(alias === 'ua') lang = 'uk';
 	else if(alias === 'us' || alias === 'gb') lang = 'en';
 	return lang;
+}
+
+function toFormData(obj) {
+	var formData = new FormData();
+	Object.keys(obj).map(function(key) {
+		if(key === 'file') formData.append(key, obj[key], obj.filename || '');
+		else if(key === 'filename') return key;
+		else formData.append(key, obj[key]);
+		return key;
+	});
+
+	console.log('toFormData: ', obj, formData.get('filename'));
+
+	return formData;
 }

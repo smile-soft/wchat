@@ -44,6 +44,7 @@ var defaults = {
 	position: 'right',
 	hideOfflineButton: false,
 	offer: false,
+	themeColor: "",
 	styles: {
 		primary: {
 			backgroundColor: '#74b9ff',
@@ -536,7 +537,7 @@ function initChat(){
 	// // if chat already started and widget was minimized - just show the widget
 	if(storage.getState('chat', 'cache')) return;
 
-	if(!langs.length) {
+	if(isOffline()) {
 		switchPane('sendemail');
 	} else if(defaults.intro.length) {
 		if(storage.getState('chat', 'session')) {
@@ -1419,6 +1420,10 @@ function getScrollDirection(event) {
     }
 }
 
+function isOffline() {
+	return ((!langs || !langs.length) && api.session.state === 0);
+}
+
 function initWidgetState(){
 	var chatInProgress = storage.getState('chat', 'session');
 	var wasOpened = storage.getState('opened', 'session');
@@ -1431,7 +1436,7 @@ function initWidgetState(){
 		initModule();
 	} else if(chatInProgress){
 		showWidget();
-	} else if(!langs.length){
+	} else if(isOffline()){
 		switchPane('sendemail');
 		showWidget();
 	} else if(defaults.webrtcEnabled){
@@ -1521,7 +1526,7 @@ function wgSubmitHandler(e){
 function wgSendFile(e){
 	var targ = e.target;
 	var file = getFileContent(targ, function(err, result) {
-		debug.log('wgSendFile: ', result);
+		debug.log('wgSendFile: ', err, result);
 		if(err) {
 			alert('File was not sent');
 		} else {
@@ -1551,6 +1556,7 @@ function switchPane(pane){
 }
 
 function changeWgState(params){
+	debug.log('changeWgState: ', params);
 	if(!widget || widgetState.state === params.state) return;
 	if(params.state === 'offline') {
 		closeChat();
@@ -1572,7 +1578,8 @@ function changeWgState(params){
 }
 
 function getWidgetState() {
-	return widgetState.state ? widgetState.state : ((langs &&langs.length) ? 'online' : 'offline');
+	var state = widgetState.state ? widgetState.state : (((langs && langs.length) || (!langs.length && api.session.state === 1)) ? 'online' : 'offline');
+	return state;
 }
 
 function setStyles() {
@@ -1693,18 +1700,20 @@ function getFileContent(element, cb){
 	}
 
 	file = files[0];
+	var blob = new Blob([file], { type: file.type });
+	return cb(null, { filedata: blob, filename: file.name });
 
-	reader = new FileReader();
-	reader.onload = function(event) {
-		data = event.target.result;
-		data = data.substring(data.indexOf(',')+1);
-		if(cb) cb(null, { filedata: data, filename: file.name });
-	};
-	reader.onerror = function(event) {
-		api.emit('Error', event.target.error);
-		if(cb) cb(event.target.error);
-	};
-	reader.readAsDataURL(file);
+	// reader = new FileReader();
+	// reader.onload = function(event) {
+	// 	data = event.target.result;
+	// 	// data = data.substring(data.indexOf(',')+1);
+	// 	if(cb) cb(null, { filedata: data, filename: file.name });
+	// };
+	// reader.onerror = function(event) {
+	// 	api.emit('Error', event.target.error);
+	// 	if(cb) cb(event.target.error);
+	// };
+	// reader.readAsDataURL(file);
 }
 
 function compileTemplate(template, data){

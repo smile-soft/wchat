@@ -37,7 +37,8 @@ function WchatAPI(options){
 
 	if(!this.options.wsServer && !this.options.pageid) return console.error('Cannot initiate module: pageid is undefined');
 
-	websocketUrl = this.options.wsServer ? this.options.wsServer : (mainAddress+this.options.pageid);
+	websocketUrl = (this.options.wsServer ? this.options.wsServer : mainAddress);
+	websocketUrl += (websocketUrl[websocketUrl.length-1] !== '/' ? '/' : '') + this.options.pageid; // add forward slash at the end if necessary
 
 	this.createWebsocket();
 

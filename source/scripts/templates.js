@@ -291,9 +291,9 @@ __e( defaults.prefix ) +
 __e( defaults.title || frases.TOP_BAR.title ) +
 '\n\t\t\t</h4>\n\n\t\t\t<div class="' +
 __e( defaults.prefix ) +
-'-wg-state-cont">\n\t\t\t\t<span class="' +
+'-wg-state-cont">\n\t\t\t\t<!-- <span class="' +
 __e( defaults.prefix ) +
-'-wg-state-icon"> </span>\n\t\t\t\t<span class="' +
+'-wg-state-icon"> </span> -->\n\t\t\t\t<span class="' +
 __e( defaults.prefix ) +
 '-wg-state"></span>\n\t\t\t</div>\n\n\t\t\t<!-- Action buttons (minimize, close) -->\n\t\t\t<div class="' +
 __e( defaults.prefix ) +
@@ -305,7 +305,7 @@ __e( defaults.styles.primary.color ) +
 __e( defaults.prefix ) +
 '-handler="closeWidget"\n\t\t\t\t\t<span class="' +
 __e( defaults.prefix ) +
-'-icon-remove"></span>\n\n\t\t\t\t</a>\n\n\t\t\t</div>\n\t\t</div>\n\t\t<!-- ***** Top bar ends ***** -->\n\n\t\t<!-- ***** Connection types pane ***** -->\n\t\t<div \n\t\t\tclass="' +
+'-icon-close"></span>\n\n\t\t\t\t</a>\n\n\t\t\t</div>\n\t\t</div>\n\t\t<!-- ***** Top bar ends ***** -->\n\n\t\t<!-- ***** Connection types pane ***** -->\n\t\t<div \n\t\t\tclass="' +
 __e( defaults.prefix ) +
 '-wg-pane" \n\t\t\tdata-' +
 __e( defaults.prefix ) +
@@ -446,14 +446,14 @@ __e( defaults.prefix ) +
 '-backdrop-cont ' +
 __e( defaults.prefix ) +
 '-white">\n\t\t\t\t\t\t<br>\n\t\t\t\t\t\t<p>' +
-__e( panels.INTRO.intro_message ) +
+__e( defaults.introMessage || panels.INTRO.intro_message ) +
 '</p>\n\t\t\t\t\t</div>\n\n\t\t\t\t</div>\n\n\t\t\t\t<div class="' +
 __e( defaults.prefix ) +
 '-pane-body">\n\t\t\t\t\t<form \n\t\t\t\t\t\tid="' +
 __e( defaults.prefix ) +
 '-intro-form" \n\t\t\t\t\t\tname="' +
 __e( defaults.prefix ) +
-'IntroForm" \n\t\t\t\t\t\tdata-validate-form="true">\n\n\t\t\t\t\t\t<!-- Iterating over intro array, which is a list of fields and their properties -->\n\t\t\t\t\t\t';
+'IntroForm" \n\t\t\t\t\t\tdata-validate-form="true">\n\n\t\t\t\t\t\t<!-- Iterating over intro array, which is a list of objects -->\n\t\t\t\t\t\t';
  _.forEach(defaults.intro, function(item){ ;
 __p += '\n\t\t\t\t\t\t\t';
  if(item.name === 'lang') { ;
@@ -478,6 +478,24 @@ __p += '\n\t\t\t\t\t\t\t\t<textarea\n\t\t\t\t\t\t\t\t\tname="message"\n\t\t\t\t\
 __p += ' * ';
  } ;
 __p += '"\n\t\t\t\t\t\t\t\t></textarea>\n\t\t\t\t\t\t\t';
+ } else if(item.type === 'checkbox') { ;
+__p += '\n\t\t\t\t\t\t\t\t<label for="' +
+__e(defaults.sid ) +
+'-' +
+__e( item.name ) +
+'">\n\t\t\t\t\t\t\t\t\t<input \n\t\t\t\t\t\t\t\t\ttype="checkbox" \n\t\t\t\t\t\t\t\t\tid="' +
+__e(defaults.sid ) +
+'-' +
+__e( item.name ) +
+'"\n\t\t\t\t\t\t\t\t\tname="' +
+__e( item.name ) +
+'" \n\t\t\t\t\t\t\t\t\t';
+ if(item.required){ ;
+__p += ' required ';
+ } ;
+__p += '>\n\t\t\t\t\t\t\t\t\t' +
+__e( item.placeholder ) +
+'\n\t\t\t\t\t\t\t\t</label>\n\t\t\t\t\t\t\t';
  } else { ;
 __p += '\n\t\t\t\t\t\t\t\t<input \n\t\t\t\t\t\t\t\t\ttype="' +
 ((__t = ( item.type || 'text' )) == null ? '' : __t) +
@@ -503,7 +521,7 @@ __p += '>\n\t\t\t\t\t\t\t';
  } ;
 __p += '\n\n\t\t\t\t\t\t';
  }); ;
-__p += '\n\n\t\t\t\t\t\t<!-- Init chat with intro properties -->\n\t\t\t\t\t\t<button \n\t\t\t\t\t\t\ttype="submit" \n\t\t\t\t\t\t\tclass="' +
+__p += '\n\t\t\t\t\t\t<br><br>\n\t\t\t\t\t\t<!-- Init chat with intro properties -->\n\t\t\t\t\t\t<button \n\t\t\t\t\t\t\ttype="submit" \n\t\t\t\t\t\t\tclass="' +
 __e( defaults.prefix ) +
 '-button ' +
 __e( defaults.prefix ) +

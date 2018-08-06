@@ -35,6 +35,10 @@
 				box-shadow: none;
 			}
 
+			input[type="checkbox"] {
+				margin: 0;
+			}
+
 			textarea {
 				height: 100px !important;
 			}
@@ -67,6 +71,7 @@
 				border-radius: 4px;
 				border: 1px solid $secondary-color;
 				cursor: pointer;
+				box-shadow: none;
 
 				&.swc-button-primary {
 					// background-color: $primary-color;

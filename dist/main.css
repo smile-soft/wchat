@@ -790,6 +790,8 @@
       border: 1px solid #BBBBBB;
       border-radius: 4px;
       box-shadow: none; }
+    .swc-wg-panes .swc-wg-pane form input[type="checkbox"] {
+      margin: 0; }
     .swc-wg-panes .swc-wg-pane form textarea {
       height: 100px !important; }
     .swc-wg-panes .swc-wg-pane form input[type="file"] {
@@ -817,7 +819,8 @@
       background-color: transparent;
       border-radius: 4px;
       border: 1px solid #BBBBBB;
-      cursor: pointer; }
+      cursor: pointer;
+      box-shadow: none; }
       .swc-wg-panes .swc-wg-pane form button.swc-button-primary,
       .swc-wg-panes .swc-wg-pane form .swc-button.swc-button-primary,
       .swc-wg-panes .swc-wg-pane form a.swc-button.swc-button-primary {

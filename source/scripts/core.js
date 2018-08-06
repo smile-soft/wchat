@@ -37,15 +37,15 @@ function WchatAPI(options){
 
 	if(!this.options.wsServer && !this.options.pageid) return console.error('Cannot initiate module: pageid is undefined');
 
-	websocketUrl = this.options.wsServer ? this.options.wsServer : (mainAddress+this.options.pageid);
-
-	this.createWebsocket();
+	websocketUrl = (this.options.wsServer ? this.options.wsServer : mainAddress)+this.options.pageid;
 
 	this.on('session/create', this.onSessionCreate.bind(this));
 	// this.on('chat/close', function(data) {
 	// 	storage.saveState('chat', false, 'session');
 	// });
 	this.on('Error', this.onError);
+
+	this.createWebsocket();
 
 	return this;
 
@@ -714,7 +714,7 @@ WchatAPI.prototype.createWebsocket = function(host){
     var websocket = new WebSocket(protocol + '//'+websocketUrl,'json.api.smile-soft.com'); //Init Websocket handshake
 
     websocket.onopen = function(e){
-        console.log('WebSocket opened: ', e);
+        debug.log('WebSocket opened: ', e);
         websocketTry = 1;
         if(!moduleInit) {
         	this.init();
@@ -734,7 +734,7 @@ WchatAPI.prototype.createWebsocket = function(host){
 }
 
 WchatAPI.prototype.onWebsocketClose = function(e) {
-    console.log('WebSocket closed', e);
+    debug.log('WebSocket closed', e);
     var time = generateInterval(websocketTry);
     setTimeout(function(){
         websocketTry++;
@@ -770,7 +770,7 @@ function toFormData(obj) {
 		return key;
 	});
 
-	console.log('toFormData: ', obj, formData.get('filename'));
+	debug.log('toFormData: ', obj, formData.get('filename'));
 
 	return formData;
 }

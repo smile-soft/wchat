@@ -15,28 +15,21 @@ var api;
 
 // Widget initiation options
 var defaults = {
-	// prefix for CSS classes and ids. 
-	// Change it only if the default prefix 
-	// matches with existed classes or ids on the website
-	prefix: 'swc',
-	// Init module on page load
-	autoStart: true,
-	// whether or not to ask user 
-	// to introduce him self before the chat session
-	intro: false,
-	// whether or not to add widget to the webpage
-	widget: true,
-	// enable chat feature
-	chat: true,
-	// channels settings
-	channels: {
+	prefix: 'swc', // prefix for CSS classes and ids. 
+				// Change it only if the default prefix 
+				// matches with existed classes or ids on the website
+	autoStart: true, // Init module on page load
+	intro: false, // whether or not to ask user 
+				// to introduce him self before the chat session
+	introMessage: "", // message that asks user for introduction
+	widget: true, // whether or not to add widget to the webpage
+	chat: true, // enable chat feature
+	channels: { // channels settings
 		webrtc: {},
 		callback: {}
 	},
-	// enable cobrowsing feature
-	cobrowsing: false,
-	// DOM element[s] selector that opens a widget
-	buttonSelector: "",
+	cobrowsing: false, // enable cobrowsing feature
+	buttonSelector: "", // DOM element[s] selector that opens a widget
 	reCreateSession: true,
 	title: '',
 	lang: '',
@@ -80,16 +73,11 @@ var defaults = {
 		color: 'rgb(70,70,70)'
 	},
 	widgetWindowOptions: 'left=10,top=10,width=350,height=550,resizable',
-	// absolute path to the wchat folder
-	path: '/ipcc/webchat/',
-	// absolute path to the clients files. If not set, files requested from defaults.server + defaults.path.
-	clientPath: 'https://cdn.smile-soft.com/wchat/v1/',
-	// absolute path to the css flie
-	stylesPath: '',
-	// absolute path to the translations.json flie
-	translationsPath: '',
-	// displayed in the email template
-	host: window.location.host,
+	path: '/ipcc/webchat/', // absolute path to the wchat folder
+	clientPath: 'https://cdn.smile-soft.com/wchat/v1/', // absolute path to the clients files. If not set, files requested from defaults.server + defaults.path.
+	stylesPath: '', // absolute path to the css flie
+	translationsPath: '', // absolute path to the translations.json flie
+	host: window.location.host, // displayed in the email template
 	webrtcEnabled: false,
 };
 
@@ -180,18 +168,9 @@ function Widget(options){
 	_.merge(defaults, options || {});
 	// _.assign(defaults, options || {});
 
-	debug.log('Widget: ', options);
-
-	defaults.clientPath = options.clientPath ? options.clientPath : (defaults.clientPath || (defaults.server + defaults.path));
-
-	addWidgetStyles();
-	if(defaults.buttonSelector) 
-		setHandlers(defaults.buttonSelector);
+	// defaults.clientPath = options.clientPath ? options.clientPath : (defaults.clientPath || (defaults.server + defaults.path));
 	
 	// serverUrl = require('url').parse(defaults.server, true);
-
-	// Enabling audio module
-	audio.init(defaults.clientPath+'sounds/');
 
 	api = new core(defaults)
 	.on('session/create', onSessionSuccess)
@@ -202,7 +181,77 @@ function Widget(options){
 	.on('session/init', onSessionInit);
 	// .on('chat/languages', function() {
 	// 	changeWgState({ state: getWidgetState() });
-	// });	
+	// });
+	
+	// setSessionTimeoutHandler();
+
+	// load translations
+	request.get('frases', (defaults.translationsPath || defaults.clientPath)+'translations.json', function (err, result){
+		if(err) return api.emit('Error', err);
+		frases = JSON.parse(result);
+		frases = frases[api.detectLanguage(frases)]
+	});
+	
+	// load forms
+	request.get('forms_json', defaults.clientPath+'forms.json', function (err, result){
+		if(err) return api.emit('Error', err);
+		forms = JSON.parse(result).forms;
+	});
+
+	addWidgetStyles();
+
+	// Enabling audio module
+	audio.init(defaults.clientPath+'sounds/');
+
+	return publicApi;
+}
+
+function initModule(){
+	api.init();
+	return publicApi;
+}
+
+function initWebrtcModule(opts){
+	debug.log('initWebrtcModule: ', opts);
+	WebRTC.init(opts);
+}
+
+// Session is either created or continues
+function onSessionSuccess(){	
+	// Wait while translations are loaded
+	
+	_.poll(function(){
+		debug.log('poll: ', frases);
+		return (frases !== null);
+
+	}, function() {
+		initSession()
+		// if window is not a opened window
+		if(!defaults.external) {
+			api.updateUrl(window.location.href);
+		}
+
+	}, function(){
+		
+		if(pollTurns < 2) {
+			pollTurns++;
+			Widget(defaults);
+		} else {
+			return api.emit('Error', 'Module wasn\'t initiated due to network errors');
+		}
+
+	}, 60000);
+}
+
+function initSession() {
+	
+	if(!defaults.chat && !defaults.webrtcEnabled && !defaults.channels.callback.task) return false;
+
+	if(api.session.properties) _.merge(defaults, api.session.properties);
+
+	defaults.sid = api.session.sid;
+
+	debug.log('initSession: ', api, defaults);
 
 	if(defaults.widget) {
 		api
@@ -269,73 +318,22 @@ function Widget(options){
 			debug.warn('getUserMedia() no longer works on insecure origins. To use this feature, you should consider switching your application to a secure origin, such as HTTPS. See https://goo.gl/rStTGz for more details.');
 		}
 	}
-	
-	// setSessionTimeoutHandler();
 
-	// load translations
-	request.get('frases', (defaults.translationsPath || defaults.clientPath)+'translations.json', function (err, result){
-		if(err) return api.emit('Error', err);
-		frases = JSON.parse(result);
-		frases = frases[api.detectLanguage(frases)]
-	});
-	
-	// load forms
-	request.get('forms_json', defaults.clientPath+'forms.json', function (err, result){
-		if(err) return api.emit('Error', err);
-		forms = JSON.parse(result).forms;
-	});
-
-	return publicApi;
-}
-
-function initModule(){
-	api.init();
-	return publicApi;
-}
-
-function initWebrtcModule(opts){
-	debug.log('initWebrtcModule: ', opts);
-	WebRTC.init(opts);
-}
-
-// Session is either created or continues
-function onSessionSuccess(){	
-	// Wait while translations are loaded
-	
-	_.poll(function(){
-		debug.log('poll: ', frases);
-		return (frases !== null);
-
-	}, function() {
-		initSession()
-		// if window is not a opened window
-		if(!defaults.external) {
-			api.updateUrl(window.location.href);
-		}
-
-	}, function(){
-		
-		if(pollTurns < 2) {
-			pollTurns++;
-			Widget(defaults);
-		} else {
-			return api.emit('Error', 'Module wasn\'t initiated due to network errors');
-		}
-
-	}, 60000);
-}
-
-function initSession() {
-	
-	if(!defaults.chat && !defaults.webrtcEnabled && !defaults.channels.callback.task) return false;
-
-	debug.log('session initiated', api.session);
 	
 	getLanguages();
 
+	if(defaults.buttonSelector) setHandlers(defaults.buttonSelector);
+	if(defaults.themeColor) {
+		defaults.styles.primary.backgroundColor = defaults.themeColor;
+		defaults.styles.primary.color = getThemeTextColor(defaults.themeColor);
+		
+	}
+
+	debug.log('initSession: ', defaults.widget, widgetState.initiated, isBrowserSupported());
+
 	// If page loaded and "widget" property is set - load widget
 	if(defaults.widget && !widgetState.initiated && isBrowserSupported()) {
-		loadWidget();
+		loadWidget(defaults);
 	}
 
 	// If timeout was occured, init chat after a session is created
@@ -487,10 +485,10 @@ function initWidget(){
 	api.emit('widget/init');
 }
 
-function loadWidget(cb){
+function loadWidget(params){
 	
 	compiled = compileTemplate('widget', {
-		defaults: defaults,
+		defaults: params,
 		languages: langs,
 		translations: frases,
 		credentials: storage.getState('credentials', 'session') || {},
@@ -501,7 +499,7 @@ function loadWidget(cb){
 	widget = domify(compiled);
 	document.body.appendChild(widget);
 	api.emit('widget/load', widget);
-
+	debug.log('loadWidget', params);
 }
 
 function setOffer() {
@@ -540,8 +538,8 @@ function initChat(){
 	if(isOffline()) {
 		switchPane('sendemail');
 	} else if(defaults.intro.length) {
-		if(storage.getState('chat', 'session')) {
-			requestChat(storage.getState('credentials', 'session'));
+		if(storage.getState('chat', 'session') || storage.getState('credentials', 'session')) {
+			requestChat(storage.getState('credentials', 'session') || {});
 		} else {
 			switchPane('credentials');
 		}
@@ -555,7 +553,7 @@ function requestChat(credentials){
 	var agentid = storage.getState('aid', 'session');
 	var message = credentials.message;
 
-	if(!credentials.uname) credentials.uname = api.session.sid;
+	// if(!credentials.uname) credentials.uname = api.session.sid;
 	if(agentid) credentials.agentid = agentid;
 
 	// Save user language based on preferable dialog language
@@ -573,7 +571,7 @@ function requestChat(credentials){
 	api.chatRequest(credentials);
 
 	setTimeout(function() {
-		console.log('requestChat: ', credentials.message, chatStarted);
+		debug.log('requestChat: ', credentials.message, chatStarted);
 
 		if(message && !chatStarted) {
 			sendMessage({
@@ -592,7 +590,7 @@ function startChat(params){
 
 	storage.saveState('chat', true, 'session');
 	
-	console.log('startChat timeout: ', timeout);
+	debug.log('startChat timeout: ', timeout);
 
 	if(timeout) {
 		chatTimeout = setTimeout(onChatTimeout, timeout*1000);
@@ -605,7 +603,7 @@ function sendMessage(params){
 	api.sendMessage(params);
 
 	newMessage({
-		from: storage.getState('credentials', 'session').uname,
+		from: (storage.getState('credentials', 'session').uname || api.session.sid),
 		time: Date.now(),
 		content: params.message
 		// hidden: true
@@ -626,7 +624,7 @@ function newMessage(message){
 		// defaultUname = false,
 		credentials = storage.getState('credentials', 'session') || {},
 		aname = storage.getState('aname', 'session'),
-		uname = credentials.uname ? credentials.uname : ''
+		uname = credentials.uname ? credentials.uname : api.session.sid,
 		messagesCont = document.getElementById(defaults.prefix+'-messages-cont');
 
 	// if(uname === storage.getState('sid').split('_')[0]) {
@@ -635,7 +633,7 @@ function newMessage(message){
 
 	// result.messages.forEach(function(message, index) {
 		
-		message.entity = message.from === uname ? 'user' : 'agent';
+		message.entity = message.entity || ((message.from === uname || message.from === undefined) ? 'user' : 'agent');
 		// message.from = (message.entity === 'user' && defaultUname) ? frases.default_user_name : message.from;
 		message.from = message.entity === 'user' ? '' : message.from;
 		message.time = message.time ? parseTime(message.time) : parseTime(Date.now());
@@ -1091,12 +1089,14 @@ function endCall(){
 /**
  * Open web chat widget in a new window
  */
-function openWidget(){
+function openWidget(e){
+	if(e) e.preventDefault();
+
 	var opts = {};
 	
 	if(!widgetWindow || widgetWindow.closed) {
 
-		_.merge(opts, defaults);
+		opts = _.merge(opts, defaults);
 
 		opts.widget = true;
 		// set external flag to indicate that the module loads not in the main window
@@ -1336,8 +1336,10 @@ function wgClickHandler(e){
 	if(handler === 'closeWidget') {
 		closeWidget();
 	} else if(handler === 'finish') {
-		if(storage.getState('chat', 'session')) switchPane('closechat');
-		else closeWidget();
+		// if(storage.getState('chat', 'session')) switchPane('closechat');
+		// else closeWidget();
+		closeChat();
+		closeWidget();
 	} else if(handler === 'sendMessage') {
 		wgSendMessage();
 	} else if(handler === 'openWindow') {
@@ -1424,10 +1426,14 @@ function isOffline() {
 	return ((!langs || !langs.length) && api.session.state === 0);
 }
 
-function initWidgetState(){
+function initWidgetState(e){
+	if(e) e.preventDefault();
 	var chatInProgress = storage.getState('chat', 'session');
 	var wasOpened = storage.getState('opened', 'session');
 	var callInProgress = storage.getState('call', 'cache');
+
+	debug.log('initWidgetState');
+
 	// If element is interacted, then no notifications of a new message 
 	// will occur during current browser session
 	setInteracted();
@@ -1585,7 +1591,7 @@ function getWidgetState() {
 function setStyles() {
 	var wgBtn = widget.querySelector('.'+defaults.prefix+'-wg-btn');
 
-	console.log('setStyles: ', wgBtn, defaults.buttonStyles);
+	debug.log('setStyles: ', wgBtn, defaults.buttonStyles);
 
 	wgBtn.style.borderRadius = defaults.buttonStyles.borderRadius;
 	wgBtn.style.boxShadow = defaults.buttonStyles.boxShadow;
@@ -1736,7 +1742,7 @@ function browserIsObsolete() {
 }
 
 function parseTime(ts) {
-	var date = new Date(ts),
+	var date = new Date((typeof ts === 'string' ? parseInt(ts, 10) : ts)),
 		hours = date.getHours(),
 		minutes = date.getMinutes(),
 		time = (hours < 10 ? '0'+hours : hours) + ':' + (minutes < 10 ? '0'+minutes : minutes);
@@ -1859,6 +1865,44 @@ function PrefixedEvent(element, type, pfx, callback) {
 		if (!pfx[p]) type = type.toLowerCase();
 		element.addEventListener(pfx[p]+type, callback, false);
 	}
+}
+
+function getThemeTextColor(themeColor) {
+	var rgbObj = hexToRgb(defaults.themeColor);
+	debug.log('getThemeTextColor: ', rgbObj, relativeLuminanceW3C(rgbObj.r, rgbObj.g, rgbObj.b));
+	return (relativeLuminanceW3C(rgbObj.r, rgbObj.g, rgbObj.b) > 0.5 ? '#333' : '#f1f1f1');
+}
+
+// from http://www.w3.org/TR/WCAG20/#relativeluminancedef
+function relativeLuminanceW3C(R8bit, G8bit, B8bit) {
+
+    var RsRGB = R8bit/255;
+    var GsRGB = G8bit/255;
+    var BsRGB = B8bit/255;
+
+    var R = (RsRGB <= 0.03928) ? RsRGB/12.92 : Math.pow((RsRGB+0.055)/1.055, 2.4);
+    var G = (GsRGB <= 0.03928) ? GsRGB/12.92 : Math.pow((GsRGB+0.055)/1.055, 2.4);
+    var B = (BsRGB <= 0.03928) ? BsRGB/12.92 : Math.pow((BsRGB+0.055)/1.055, 2.4);
+
+    // For the sRGB colorspace, the relative luminance of a color is defined as: 
+    var L = 0.2126 * R + 0.7152 * G + 0.0722 * B;
+
+    return L;
+}
+
+function hexToRgb(hex) {
+    // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+    var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+        return r + r + g + g + b + b;
+    });
+
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
 }
 
 function convertTime(seconds){

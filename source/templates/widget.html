@@ -21,7 +21,7 @@
 			</h4>
 
 			<div class="<%- defaults.prefix %>-wg-state-cont">
-				<span class="<%- defaults.prefix %>-wg-state-icon"> </span>
+				<!-- <span class="<%- defaults.prefix %>-wg-state-icon"> </span> -->
 				<span class="<%- defaults.prefix %>-wg-state"></span>
 			</div>
 
@@ -40,7 +40,7 @@
 					href="#" 
 					style="color: <%- defaults.styles.primary.color %>"
 					data-<%- defaults.prefix %>-handler="closeWidget"
-					<span class="<%- defaults.prefix %>-icon-remove"></span>
+					<span class="<%- defaults.prefix %>-icon-close"></span>
 
 				</a>
 
@@ -155,7 +155,7 @@
 					<!-- The text displayed on image -->
 					<div class="<%- defaults.prefix %>-backdrop-cont <%- defaults.prefix %>-white">
 						<br>
-						<p><%- panels.INTRO.intro_message %></p>
+						<p><%- defaults.introMessage || panels.INTRO.intro_message %></p>
 					</div>
 
 				</div>
@@ -166,7 +166,7 @@
 						name="<%- defaults.prefix %>IntroForm" 
 						data-validate-form="true">
 
-						<!-- Iterating over intro array, which is a list of fields and their properties -->
+						<!-- Iterating over intro array, which is a list of objects -->
 						<% _.forEach(defaults.intro, function(item){ %>
 							<% if(item.name === 'lang') { %>
 								<select name="lang">
@@ -183,6 +183,15 @@
 									name="message"
 									placeholder="<%= item.placeholder || panels.INTRO.PLACEHOLDERS[item.name] %> <% if(item.required){ %> * <% } %>"
 								></textarea>
+							<% } else if(item.type === 'checkbox') { %>
+								<label for="<%-defaults.sid %>-<%- item.name %>">
+									<input 
+									type="checkbox" 
+									id="<%-defaults.sid %>-<%- item.name %>"
+									name="<%- item.name %>" 
+									<% if(item.required){ %> required <% } %>>
+									<%- item.placeholder %>
+								</label>
 							<% } else { %>
 								<input 
 									type="<%= item.type || 'text' %>" 
@@ -193,7 +202,7 @@
 							<% } %>
 
 						<% }); %>
-
+						<br><br>
 						<!-- Init chat with intro properties -->
 						<button 
 							type="submit" 

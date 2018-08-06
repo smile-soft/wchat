@@ -711,7 +711,7 @@ WchatAPI.prototype.createWebsocket = function(host){
     var websocket = new WebSocket(protocol + '//'+websocketUrl,'json.api.smile-soft.com'); //Init Websocket handshake
 
     websocket.onopen = function(e){
-        console.log('WebSocket opened: ', e);
+        debug.log('WebSocket opened: ', e);
         websocketTry = 1;
         if(!moduleInit) {
         	this.init();
@@ -731,7 +731,7 @@ WchatAPI.prototype.createWebsocket = function(host){
 }
 
 WchatAPI.prototype.onWebsocketClose = function(e) {
-    console.log('WebSocket closed', e);
+    debug.log('WebSocket closed', e);
     var time = generateInterval(websocketTry);
     setTimeout(function(){
         websocketTry++;

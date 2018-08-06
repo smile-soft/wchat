@@ -572,7 +572,7 @@ function requestChat(credentials){
 	api.chatRequest(credentials);
 
 	setTimeout(function() {
-		console.log('requestChat: ', credentials.message, chatStarted);
+		debug.log('requestChat: ', credentials.message, chatStarted);
 
 		if(message && !chatStarted) {
 			sendMessage({
@@ -591,7 +591,7 @@ function startChat(params){
 
 	storage.saveState('chat', true, 'session');
 	
-	console.log('startChat timeout: ', timeout);
+	debug.log('startChat timeout: ', timeout);
 
 	if(timeout) {
 		chatTimeout = setTimeout(onChatTimeout, timeout*1000);
@@ -1090,7 +1090,8 @@ function endCall(){
 /**
  * Open web chat widget in a new window
  */
-function openWidget(){
+function openWidget(e){
+	if(e) e.preventDefault();
 	var opts = {};
 	
 	if(!widgetWindow || widgetWindow.closed) {
@@ -1419,7 +1420,8 @@ function getScrollDirection(event) {
     }
 }
 
-function initWidgetState(){
+function initWidgetState(e){
+	if(e) e.preventDefault();
 	var chatInProgress = storage.getState('chat', 'session');
 	var wasOpened = storage.getState('opened', 'session');
 	var callInProgress = storage.getState('call', 'cache');
@@ -1578,7 +1580,7 @@ function getWidgetState() {
 function setStyles() {
 	var wgBtn = widget.querySelector('.'+defaults.prefix+'-wg-btn');
 
-	console.log('setStyles: ', wgBtn, defaults.buttonStyles);
+	debug.log('setStyles: ', wgBtn, defaults.buttonStyles);
 
 	wgBtn.style.borderRadius = defaults.buttonStyles.borderRadius;
 	wgBtn.style.boxShadow = defaults.buttonStyles.boxShadow;

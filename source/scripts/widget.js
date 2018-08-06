@@ -42,6 +42,7 @@ var defaults = {
 	lang: '',
 	langFromUrl: true,
 	position: 'right',
+	hideButton: false,
 	hideOfflineButton: false,
 	offer: false,
 	styles: {
@@ -451,7 +452,7 @@ function initWidget(){
 	setListeners(widget);
 	changeWgState({ state: getWidgetState() });
 
-	if(defaults.hideOfflineButton) {
+	if(defaults.hideOfflineButton || defaults.hideButton) {
 		addWgState('no-button');
 	}
 

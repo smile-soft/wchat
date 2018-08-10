@@ -28,6 +28,7 @@ var defaults = {
 	widget: true,
 	// enable chat feature
 	chat: true,
+	websockets: true,
 	// channels settings
 	channels: {
 		webrtc: {},
@@ -37,7 +38,8 @@ var defaults = {
 	cobrowsing: false,
 	// DOM element[s] selector that opens a widget
 	buttonSelector: "",
-	reCreateSession: true,
+	showAnswerTimeout: false,
+	chatRequestOnNewMessage: true,
 	title: '',
 	lang: '',
 	langFromUrl: true,
@@ -505,13 +507,17 @@ function loadWidget(cb){
 }
 
 function setOffer() {
-	setTimeout(function() {
-		showOffer({
-			from: defaults.offer.from || frases.TOP_BAR.title,
-			time: Date.now(),
-			content: defaults.offer.text || frases.default_offer
-		});
-	}, defaults.offer.inSeconds ? defaults.offer.inSeconds*1000 : 30000);
+	var offers = Array.isArray(defaults.offer) ? defaults.offer : [defaults.offer];
+	offers.forEach(function(offer) {
+		setTimeout(function() {
+			showOffer({
+				from: offer.from || frases.TOP_BAR.title,
+				time: Date.now(),
+				content: offer.text || frases.default_offer
+			});
+		}, offer.inSeconds ? offer.inSeconds*1000 : 30000);
+	});
+		
 }
 
 function showOffer(message) {
@@ -594,7 +600,7 @@ function startChat(params){
 	
 	debug.log('startChat timeout: ', timeout);
 
-	if(timeout) {
+	if(timeout && defaults.showAnswerTimeout) {
 		chatTimeout = setTimeout(onChatTimeout, timeout*1000);
 	}
 
@@ -706,7 +712,9 @@ function playNewMsgTone() {
  * @param  {String} message - New message content 
  */
 function onLastMessage(message){
-	var lastMsg;
+	var lastMsg,
+	var chatStarted = storage.getState('chat', 'session');
+
 	if(!widgetState.active) {
 		lastMsg = document.getElementById(defaults.prefix+'-lastmsg');
 
@@ -719,6 +727,10 @@ function onLastMessage(message){
 		addWgState('notified');
 		setButtonStyle('notified');
 
+	}
+
+	if(!chatStarted && defaults.chatRequestOnNewMessage) {
+		api.chatRequest({ lang: api.session.lang });
 	}
 }
 
@@ -901,36 +913,14 @@ function onAgentTyping(){
 }
 
 function onSessionTimeout(){
-	// if(api.listenerCount('session/timeout') >= 1) return;
-	// api.once('session/timeout', function (){
-		debug.log('Session timeout:');
+	debug.log('Session timeout:');
 
-		if(storage.getState('chat', 'session') === true) {
-			closeChat();
-		}
+	if(storage.getState('chat', 'session') === true) {
+		closeChat();
+	}
 
-		switchPane('closechat');
+	switchPane('closechat');
 
-		// if(widget) {
-			// addWgState('timeout');
-			// closeWidget();
-		// }
-
-		// changeWgState({ state: 'timeout' });
-		// widgetState.state = 'timeout';
-		// addWgState('timeout');
-		// setButtonStyle('timeout');
-		// storage.removeState('sid');
-
-		// if(params && params.method === 'updateEvents') {
-		// if(getLanguagesInterval) clearInterval(getLanguagesInterval);
-		// if(messagesTimeout) clearTimeout(messagesTimeout);
-
-		// if(defaults.reCreateSession) {
-		// 	initModule();
-		// }
-		// }
-	// });
 }
 
 function initCall(){

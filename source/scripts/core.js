@@ -32,15 +32,16 @@ function WchatAPI(options){
 	// extend default options
 	// with provided object
 	this.options = options || {};
-	this.options.serverUrl = this.options.server + '/ipcc/$$$';
 	this.session = {};
 
-	if(!this.options.wsServer && !this.options.pageid) return console.error('Cannot initiate module: pageid is undefined');
+	if(!this.options.pageid) return console.error('Cannot initiate module: pageid is undefined');
 
 	websocketUrl = (this.options.wsServer ? this.options.wsServer : mainAddress);
 	websocketUrl += (websocketUrl[websocketUrl.length-1] !== '/' ? '/' : '') + this.options.pageid; // add forward slash at the end if necessary
 
-	this.createWebsocket();
+	this.options.serverUrl = this.options.server ? (this.options.server+'/ipcc/$$$') : websocketUrl;
+
+	if(this.options.websockets) this.createWebsocket();
 
 	this.on('session/create', this.onSessionCreate.bind(this));
 	// this.on('chat/close', function(data) {

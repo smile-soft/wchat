@@ -34,14 +34,15 @@ function WchatAPI(options){
 	this.options = options || {};
 	this.session = {};
 
-	if(!this.options.pageid) return console.error('Cannot initiate module: pageid is undefined');
+	// if(!this.options.pageid) return console.error('Cannot initiate module: pageid is undefined');
 
 	websocketUrl = (this.options.wsServer ? this.options.wsServer : mainAddress);
 	websocketUrl += (websocketUrl[websocketUrl.length-1] !== '/' ? '/' : '') + this.options.pageid; // add forward slash at the end if necessary
 
-	this.options.serverUrl = this.options.server ? (this.options.server+'/ipcc/$$$') : websocketUrl;
+	this.options.serverUrl = (this.options.server && !this.options.pageid) ? (this.options.server+'/ipcc/$$$') : ('https://'+websocketUrl);
 
-	if(this.options.websockets) this.createWebsocket();
+	if(this.options.websocket) this.createWebsocket();
+	else this.init();
 
 	this.on('session/create', this.onSessionCreate.bind(this));
 	// this.on('chat/close', function(data) {
@@ -74,8 +75,13 @@ WchatAPI.prototype.onSessionTimeout = function(){
 	this.emit('session/timeout');
 };
 
-WchatAPI.prototype.sendData = function(data){
-	if(this.websocket) this.websocket.send(JSON.stringify(data));
+WchatAPI.prototype.sendData = function(data, callback){
+	if(this.websocket) {
+		this.websocket.send(JSON.stringify(data));
+	} else {
+		request.post(this.options.serverUrl, data, callback.bind(this));
+	}
+
 };
 
 /**

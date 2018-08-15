@@ -28,7 +28,7 @@ var defaults = {
 	widget: true,
 	// enable chat feature
 	chat: true,
-	websockets: true,
+	websocket: true,
 	// channels settings
 	channels: {
 		webrtc: {},
@@ -423,22 +423,23 @@ function getWidgetElement(){
 }
 
 function getLanguages(){
-	api.getLanguages(function (err, langs){
-		debug.log('getLanguages: ', err, langs);
+	api.getLanguages(function (err, response){
+		debug.log('getLanguages: ', err, response);
 		if(err) return;
-		if(langs) onNewLanguages(langs);
+		if(response) onNewLanguages(response);
 		// getLanguagesTimeout = setTimeout(getLanguages, defaults.checkStatusTimeout*1000);
 	});
 }
 
 function onNewLanguages(languages){
-	// debug.log('languages: ', languages);
 	var state = languages.length ? 'online' : 'offline';
 
 	langs = languages;
 
 	// if(hasWgState(state)) return;
 	// if(widgetState.state === state) return;
+
+	debug.log('onNewLanguages: ', state);
 
 	changeWgState({ state: state });
 	api.emit('chat/languages', languages);
@@ -608,14 +609,14 @@ function startChat(params){
 }
 
 function sendMessage(params){
+	var credentials = storage.getState('credentials', 'session') || {};
+
 	api.sendMessage(params);
 
 	newMessage({
-		from: storage.getState('credentials', 'session').uname,
+		from: (credentials.uname || api.session.sid),
 		time: Date.now(),
 		content: params.message
-		// hidden: true
-		// className: defaults.prefix+'-msg-undelivered'
 	});
 
 	// if(chatTimeout) clearTimeout(chatTimeout);
@@ -631,7 +632,7 @@ function newMessage(message){
 		playSound = false,
 		// defaultUname = false,
 		credentials = storage.getState('credentials', 'session') || {},
-		aname = storage.getState('aname', 'session'),
+		aname = storage.getState('aname', 'session') || "",
 		uname = credentials.uname ? credentials.uname : ''
 		messagesCont = document.getElementById(defaults.prefix+'-messages-cont');
 
@@ -679,9 +680,11 @@ function newMessage(message){
 
 		// Save agent name
 		if(message.entity === 'agent') {
-			if(aname !== message.from) storage.saveState('aname', message.from, 'session');
 			if(message.agentid) storage.saveState('aid', message.agentid, 'session');
-			if(message.from) clearTimeout(chatTimeout);
+			if(message.from) {
+				if(aname !== message.from) storage.saveState('aname', message.from, 'session');
+				clearTimeout(chatTimeout);
+			}
 		}
 
 		if(message.entity !== 'user') playSound = true;
@@ -712,7 +715,7 @@ function playNewMsgTone() {
  * @param  {String} message - New message content 
  */
 function onLastMessage(message){
-	var lastMsg,
+	var lastMsg;
 	var chatStarted = storage.getState('chat', 'session');
 
 	if(!widgetState.active) {
@@ -729,8 +732,11 @@ function onLastMessage(message){
 
 	}
 
+	debug.log('onLastMessage: ', chatStarted, defaults.chatRequestOnNewMessage);
+
 	if(!chatStarted && defaults.chatRequestOnNewMessage) {
-		api.chatRequest({ lang: api.session.lang });
+		sendMessage({ message: "" });
+		// requestChat({ lang: api.session.lang, message: "" });
 	}
 }
 

@@ -97,6 +97,9 @@ gulp.task('cp', function() {
 	.pipe(gulp.dest(basePath.dest));
 
 	gulp.start('sounds', 'fonts');
+
+	gulp.src(basePath.src+'loader.js')
+	.pipe(gulp.dest(basePath.dest));
 });
 
 gulp.task('build', function() {

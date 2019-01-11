@@ -5,9 +5,11 @@ $btn-width: 55px;
 $btn-height: 55px;
 $font-stack: "Helvetica Neue",Helvetica,Arial,sans-serif;
 // $font-stack: "Trebuchet MS", Helvetica, sans-serif;
-$border-radius: 15px;
+$border-radius: 5px;
 $box-shadow: 0 5px 35px 20px rgba(0, 0, 0, 0.15);
 $header-height: 60px;
+
+$btn-icon: 'images/logo.png';
 
 $btn-icon-call: '\e904';
 
@@ -78,6 +80,10 @@ $secondary-color: #BBBBBB;
 
 	@include bp-small {
 		bottom: 0;
+	}
+
+	.swc-btn-icon {
+		background-image: url($btn-icon);
 	}
 
 	&.position-right {

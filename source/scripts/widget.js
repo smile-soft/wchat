@@ -184,13 +184,6 @@ function Widget(options){
 	// });
 	
 	// setSessionTimeoutHandler();
-
-	// load translations
-	request.get('frases', (defaults.translationsPath || defaults.clientPath)+'translations.json', function (err, result){
-		if(err) return api.emit('Error', err);
-		frases = JSON.parse(result);
-		frases = frases[api.detectLanguage(frases)]
-	});
 	
 	// load forms
 	request.get('forms_json', defaults.clientPath+'forms.json', function (err, result){
@@ -220,6 +213,8 @@ function initWebrtcModule(opts){
 function onSessionSuccess(){	
 	// Wait while translations are loaded
 	
+	getFrases();
+
 	_.poll(function(){
 		debug.log('poll: ', frases);
 		return (frases !== null);
@@ -250,6 +245,7 @@ function initSession() {
 	if(api.session.properties) _.merge(defaults, api.session.properties);
 
 	defaults.sid = api.session.sid;
+	defaults.isIpcc = (api.session.langs !== undefined || api.session.categories !== undefined);
 
 	debug.log('initSession: ', api, defaults);
 
@@ -427,6 +423,15 @@ function getLanguages(){
 	});
 }
 
+function getFrases() {
+	// load translations
+	request.get('frases', (defaults.translationsPath || defaults.clientPath)+'translations.json', function (err, result){
+		if(err) return api.emit('Error', err);
+		frases = JSON.parse(result);
+		frases = frases[api.detectLanguage(frases)]
+	});
+}
+
 function onNewLanguages(languages){
 	// debug.log('languages: ', languages);
 	var state = languages.length ? 'online' : 'offline';
@@ -436,7 +441,7 @@ function onNewLanguages(languages){
 	// if(hasWgState(state)) return;
 	// if(widgetState.state === state) return;
 
-	changeWgState({ state: state });
+	// changeWgState({ state: state });
 	api.emit('chat/languages', languages);
 }
 
@@ -470,7 +475,7 @@ function initWidget(){
 		addWgState('webrtc-enabled');
 	}
 
-	if(widget && defaults.intro.length) {
+	if(widget && defaults.intro && defaults.intro.length) {
 		// Add languages to the template
 		langs.forEach(function(lang) {
 			if(frases && frases.lang) {
@@ -537,7 +542,7 @@ function initChat(){
 
 	if(isOffline()) {
 		switchPane('sendemail');
-	} else if(defaults.intro.length) {
+	} else if(defaults.intro && defaults.intro.length) {
 		if(storage.getState('chat', 'session') || storage.getState('credentials', 'session')) {
 			requestChat(storage.getState('credentials', 'session') || {});
 		} else {
@@ -552,6 +557,7 @@ function requestChat(credentials){
 	var chatStarted = storage.getState('chat', 'session');
 	var agentid = storage.getState('aid', 'session');
 	var message = credentials.message;
+	var saveParams = {};
 
 	// if(!credentials.uname) credentials.uname = api.session.sid;
 	if(agentid) credentials.agentid = agentid;
@@ -564,9 +570,12 @@ function requestChat(credentials){
 		credentials.lang = api.session.lang;
 	}
 	
+	saveParams = extend({}, credentials);
+	delete saveParams.message;
+
 	// Save credentials for current session
 	// It will be removed on session timeout
-	storage.saveState('credentials', credentials, 'session');
+	storage.saveState('credentials', saveParams, 'session');
 
 	api.chatRequest(credentials);
 
@@ -780,12 +789,12 @@ function sendRequest(params, cb) {
 		}
 	});
 
-	compileEmail(msg, function(err, result) {
-		if(err) return;
-		params.text = result;
+	// compileEmail(msg, function(err, result) {
+		// if(err) return;
+		// params.text = result;
 		api.sendEmail(params);
 		if(cb) cb();
-	});
+	// });
 }
 
 function submitSendMailForm(form, data) {
@@ -957,16 +966,16 @@ function setCallback(){
 		return alert(frases.ERRORS.tel);
 	}
 
-	formData.time = parseFloat(formData.time);
-	
-	if(formData.time <= 0) return;
-
-	formData.time = Date.now() + (formData.time * 60 * 1000);
+	if(formData.time) {
+		formData.time = parseFloat(formData.time);
+		if(formData.time <= 0) return;
+		formData.time = Date.now() + (formData.time * 60 * 1000);
+	}
 	formData.task = defaults.channels.callback.task;
 	debug.log('setCallback data: ', formData);
 
-	form.classList.add(defaults.prefix+'-hidden');
-	cbSpinner.classList.remove(defaults.prefix+'-hidden');
+	// form.classList.add(defaults.prefix+'-hidden');
+	// cbSpinner.classList.remove(defaults.prefix+'-hidden');
 
 	api.requestCallback(formData);
 	switchPane('callbackSent');
@@ -1376,10 +1385,11 @@ function wgClickHandler(e){
 function btnClickHandler(e){
 	e.preventDefault();
 	var targ = e.target,
+		closeBtnId = defaults.prefix+'-unnotify-btn';
 		currTarg = e.currentTarget;
 
 	// remove notification of a new message
-	if(targ.id === defaults.prefix+'-unnotify-btn') {
+	if(targ.id === closeBtnId || targ.parentNode.id === closeBtnId) {
 		removeWgState('notified');
 		// reset button height
 		// resetStyles(btn.children[0]);
@@ -1423,7 +1433,8 @@ function getScrollDirection(event) {
 }
 
 function isOffline() {
-	return ((!langs || !langs.length) && api.session.state === 0);
+	var state = getWidgetState();
+	return state === 'offline';
 }
 
 function initWidgetState(e){
@@ -1584,7 +1595,12 @@ function changeWgState(params){
 }
 
 function getWidgetState() {
-	var state = widgetState.state ? widgetState.state : (((langs && langs.length) || (!langs.length && api.session.state === 1)) ? 'online' : 'offline');
+	var state = ''; 
+	if(defaults.isIpcc)
+		state = widgetState.state ? widgetState.state : (langs.length ? 'online' : 'offline');
+	else
+		state = widgetState.state ? widgetState.state : (api.session.state ? 'online' : 'offline');
+	
 	return state;
 }
 
@@ -1903,6 +1919,15 @@ function hexToRgb(hex) {
         g: parseInt(result[2], 16),
         b: parseInt(result[3], 16)
     } : null;
+}
+
+function extend( a, b ) {
+    for( var key in b ) {
+        if( b.hasOwnProperty( key ) ) {
+            a[key] = b[key];
+        }
+    }
+    return a;
 }
 
 function convertTime(seconds){

@@ -424,7 +424,7 @@ __e( defaults.prefix ) +
 '-handler="closeWidget">' +
 __e( panels.CONNECTION_TYPES.cancel ) +
 '</a>\n\t\t\t\t</form>\n\t\t\t</div>\n\t\t</div>\n\t\t<!-- ***** Connection types pane ends ***** -->\n\n\t\t<!-- ***** Intro pane. Displayed if configured in the settings object. ***** -->\n\t\t';
- if(defaults.intro.length) { ;
+ if(defaults.intro && defaults.intro.length) { ;
 __p += '\n\t\t\t<div \n\t\t\t\tclass="' +
 __e( defaults.prefix ) +
 '-wg-pane" \n\t\t\t\tdata-' +
@@ -635,7 +635,7 @@ __e( panels.OFFLINE.PLACEHOLDERS.uname ) +
 __e( panels.OFFLINE.PLACEHOLDERS.email ) +
 ' *" required>\n\t\t\t\t\t<textarea name="text" placeholder="' +
 __e( panels.OFFLINE.PLACEHOLDERS.message ) +
-'" maxlength="1500"></textarea>\n\n\t\t\t\t\t<input type="file" name="file" id="' +
+'" maxlength="1500"></textarea>\n\n\t\t\t\t\t<!--<input type="file" name="file" id="' +
 __e( defaults.prefix ) +
 '-contactfile" class="' +
 __e( defaults.prefix ) +
@@ -643,7 +643,7 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-contactfile">' +
 __e( panels.OFFLINE.choose_file ) +
-'</label>\n\n\t\t\t\t\t<!-- "Send offline message" button -->\n\t\t\t\t\t<button \n\t\t\t\t\t\ttype="submit" \n\t\t\t\t\t\tclass="' +
+'</label> -->\n\n\t\t\t\t\t<!-- "Send offline message" button -->\n\t\t\t\t\t<button \n\t\t\t\t\t\ttype="submit" \n\t\t\t\t\t\tclass="' +
 __e( defaults.prefix ) +
 '-button ' +
 __e( defaults.prefix ) +
@@ -808,9 +808,9 @@ __e( defaults.prefix ) +
 '-text-center">\n\t\t\t\t\t<h3>' +
 __e( panels.AUDIO_CALL_FALLBACK.DOWNLOAD_MSG ) +
 '</h3>\n\t\t\t\t\t<br>\n\t\t\t\t\t';
- if(defaults.webrtc && defaults.webrtc.fallback) { ;
+ if(channels.webrtc && channels.webrtc.fallback) { ;
 __p += '\n\t\t\t\t\t\t<a href="' +
-__e( defaults.webrtc.fallback.sipCall ) +
+__e( channels.webrtc.fallback.sipCall ) +
 '">call.jnlp</a>\n\t\t\t\t\t';
  } ;
 __p += '\n\t\t\t\t</div>\n\t\t\t\t<form>\n\t\t\t\t\t<hr>\n\t\t\t\t\t<a href="#chooseConnection" class="' +
@@ -843,25 +843,47 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-shown" style="position: relative;">\n\t\t\t\t\t\t<span></span>\n\t\t\t\t\t\t<span></span>\n\t\t\t\t\t\t<span></span>\n\t\t\t\t\t</h3>\n\t\t\t\t</div>\n\t\t\t\t<form id="' +
 __e( defaults.prefix ) +
-'-callback-settings">\n\t\t\t\t\t<p class="' +
+'-callback-settings">\n\t\t\t\t\t';
+ if(channels.callback && channels.callback.time !== false) { ;
+__p += '\n\t\t\t\t\t\t<p class="' +
 __e( defaults.prefix ) +
 '-text-center">' +
 __e( panels.CALLBACK.title ) +
-'</p>\n\t\t\t\t\t<hr>\n\t\t\t\t\t<label>' +
+'</p>\n\t\t\t\t\t';
+ } else { ;
+__p += '\n\t\t\t\t\t\t<p class="' +
+__e( defaults.prefix ) +
+'-text-center">' +
+__e( panels.CALLBACK.title_asap ) +
+'</p>\n\t\t\t\t\t';
+ } ;
+__p += '\n\t\t\t\t\t<hr>\n\t\t\t\t\t<label>' +
 __e( panels.CALLBACK.LABELS.phone ) +
 '</label>\n\t\t\t\t\t<input type="tel" name="phone" placeholder="' +
 __e( panels.CALLBACK.PLACEHOLDERS.phone ) +
-'" required>\n\t\t\t\t\t<label>' +
+'" required>\n\t\t\t\t\t';
+ if(channels.callback && channels.callback.time !== false) { ;
+__p += '\n\t\t\t\t\t\t<label>' +
 __e( panels.CALLBACK.LABELS.time ) +
-'</label>\n\t\t\t\t\t<select name="time">\n\t\t\t\t\t\t';
+'</label>\n\t\t\t\t\t\t<select name="time">\n\t\t\t\t\t\t\t';
  _.forEach(panels.CALLBACK.TIME_POINTS, function(point) { ;
-__p += '\n\t\t\t\t\t\t\t<option value="' +
+__p += '\n\t\t\t\t\t\t\t\t<option value="' +
 __e( point.minutes ) +
 '">' +
 __e( point.label ) +
-'</option>\n\t\t\t\t\t\t';
+'</option>\n\t\t\t\t\t\t\t';
  }); ;
-__p += '\n\t\t\t\t\t</select>\n\t\t\t\t\t<hr>\n\n\t\t\t\t\t<button\n\t\t\t\t\t\ttype="submit"\n\t\t\t\t\t\tclass="' +
+__p += '\n\t\t\t\t\t\t</select>\n\t\t\t\t\t';
+ } ;
+__p += '\n\t\t\t\t\t';
+ if(channels.callback && channels.callback.message !== undefined) { ;
+__p += '\n\t\t\t\t\t\t<label>' +
+__e( panels.CALLBACK.LABELS.message ) +
+'</label>\n\t\t\t\t\t\t<textarea name="message" placeholder="' +
+__e( panels.CALLBACK.PLACEHOLDERS.message ) +
+'" maxlength="1500"></textarea>\n\t\t\t\t\t';
+ } ;
+__p += '\n\t\t\t\t\t<hr>\n\n\t\t\t\t\t<button\n\t\t\t\t\t\ttype="submit"\n\t\t\t\t\t\tclass="' +
 __e( defaults.prefix ) +
 '-button ' +
 __e( defaults.prefix ) +
@@ -897,11 +919,21 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-icon-check ' +
 __e( defaults.prefix ) +
-'-text-success"></h3>\n\t\t\t\t\t<p class="' +
+'-text-success"></h3>\n\t\t\t\t\t';
+ if(channels.callback && channels.callback.time !== false) { ;
+__p += '\n\t\t\t\t\t\t<p class="' +
 __e( defaults.prefix ) +
 '-text-center">' +
 __e( panels.CALLBACK.request_sent ) +
-'</p>\n\t\t\t\t\t<form>\n\t\t\t\t\t\t<hr>\n\t\t\t\t\t\t<a href="#chooseConnection" class="' +
+'</p>\n\t\t\t\t\t';
+ } else { ;
+__p += '\n\t\t\t\t\t\t<p class="' +
+__e( defaults.prefix ) +
+'-text-center">' +
+__e( panels.CALLBACK.request_sent_asap ) +
+'</p>\n\t\t\t\t\t';
+ } ;
+__p += '\n\t\t\t\t\t<form>\n\t\t\t\t\t\t<hr>\n\t\t\t\t\t\t<a href="#chooseConnection" class="' +
 __e( defaults.prefix ) +
 '-button ' +
 __e( defaults.prefix ) +
@@ -927,9 +959,15 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-unnotify-btn" id="' +
 __e( defaults.prefix ) +
+'-unnotify-btn"><span class="' +
+__e( defaults.prefix ) +
+'-icon-close"></span></span>\n\t\t\t\t<!-- <span class="' +
+__e( defaults.prefix ) +
+'-unnotify-btn" id="' +
+__e( defaults.prefix ) +
 '-unnotify-btn">' +
 __e( frases.FLOATING_BUTTON.close ) +
-'</span>\n\t\t\t\t<div id="' +
+'</span> -->\n\t\t\t\t<div id="' +
 __e( defaults.prefix ) +
 '-lastmsg" class="' +
 __e( defaults.prefix ) +

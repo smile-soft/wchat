@@ -678,9 +678,11 @@ WchatAPI.prototype.detectLanguage = function(frases){
 
 	if(storageLang) {
 		lang = storageLang;
-	} else if(this.options.lang) {
-		lang = this.options.lang;
-	} else if(this.options.langFromUrl) {
+	} else if(this.session.lang) {
+		lang = this.session.lang;
+	} else if(this.session.properties && this.session.properties.lang) {
+		lang = this.session.properties.lang;
+	} else if(this.session.langFromUrl || (this.session.properties && this.session.properties.langFromUrl)) {
 
 		url.pathname
 		.split('/')
@@ -697,7 +699,7 @@ WchatAPI.prototype.detectLanguage = function(frases){
 	if(!lang) lang = (navigator.language || navigator.userLanguage).split('-')[0];
 	if(availableLangs.indexOf(lang) === -1) lang = 'en';
 
-	debug.log('detected lang: ', availableLangs, storageLang, this.options.lang, this.options.langFromUrl, lang);
+	debug.log('detected lang: ', availableLangs, storageLang, this.session.lang, this.session.langFromUrl, lang);
 	this.session.lang = lang;
 	return lang;
 };

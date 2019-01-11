@@ -1,5 +1,6 @@
 node_modules
 *.zip
+package-lock.json
 <<<<<<< HEAD
 .DS_Store
 

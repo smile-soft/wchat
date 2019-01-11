@@ -33,7 +33,7 @@
     			}
     		},
     		"MESSAGES": {
-                "end_dialog": "Закінчити диалог",
+                "end_dialog": "Закінчити діалог",
     			"PLACEHOLDERS": {
     				"message": "Ваше повідомлення тут..."
     			}
@@ -62,7 +62,7 @@
     			}
     		},
     		"AUDIO_CALL": {
-    			"confirm_access": "Будь ласка, підтвердіть доступ до мікрофона",
+    			"confirm_access": "Будь ласка, підтвердіть доступ до мікрофону",
     			"calling_agent": "Йде виклик",
     			"connected_with_agent": "Виклик з'єднаний",
     			"call_ended": "Виклик завершено",
@@ -76,17 +76,21 @@
             },
             "CALLBACK": {
                 "title": "Введіть ваш номер телефону, ми передзвонимо протягом зазначеного часу.",
+                "title_asap": "Введіть ваш номер телефону, ми передзвонимо у найближчий час.",
                 "confirm_callback": "Підтвердити",
                 "sending_request": "Зачекайте, будь ласка",
                 "request_sent": "Запит відправлено, оператор зв'яжеться з вами у зазначений час.",
+                "request_sent_asap": "Запит відправлено, оператор зв'яжеться з вами якнайшвидше.",
                 "back": "Назад",
                 "close": "Закрити",
                 "LABELS": {
                     "phone": "Передзвонити за номером",
-                    "time": "через"
+                    "time": "через",
+                    "message": "Ваше повідомлення (не обов'язково)"
                 },
                 "PLACEHOLDERS": {
-                    "phone": "067 123 45 67"
+                    "phone": "+380 67 123 45 67",
+                    "message": "Будь ласка, передзвоніть мені якнайшвидше!"
                 },
                 "TIME_POINTS": [
                     { "minutes": 0.5, "label": "30 секунд" },
@@ -213,17 +217,21 @@
             },
             "CALLBACK": {
                 "title": "Введите номер телефона, мы перезвоним в течение указанного времени.",
+                "title_asap": "Введите номер телефона, мы перезвоним в ближайшее время.",
                 "confirm_callback": "Подтвердить",
                 "sending_request": "Пожалуйста, ожидайте",
                 "request_sent": "Запрос отправлен, оператор свяжется с вами в указанное время.",
+                "request_sent_asap": "Запрос отправлен, наш оператор свяжется с вами как можно скорее.",
                 "back": "Назад",
                 "close": "Закрыть",
                 "LABELS": {
                     "phone": "Перезвонить по номеру",
-                    "time": "через"
+                    "time": "через",
+                    "message": "Ваше сообщение (не обязательно)"
                 },
                 "PLACEHOLDERS": {
-                    "phone": "067 123 45 67"
+                    "phone": "+380 67 123 45 67",
+                    "message": "Пожалуйста, свяжитесь со мной как можно скорее!"
                 },
                 "TIME_POINTS": [
                     { "minutes": 0.5, "label": "30 секунд" },
@@ -350,17 +358,21 @@
             },
             "CALLBACK": {
                 "title": "Enter your phone number, we will call back within the specified time.",
+                "title_asap": "Enter your phone number, we will call back in a moment.",
                 "confirm_callback": "Confirm",
                 "sending_request": "Please, wait",
                 "request_sent": "Request sent, the agent will call you at a specified time.",
+                "request_sent_asap": "Request sent, our agent will call you back ASAP.",
                 "back": "Back",
                 "close": "Close",
                 "LABELS": {
                     "phone": "Make a call on",
-                    "time": "in"
+                    "time": "in",
+                    "message": "Your message (optional)"
                 },
                 "PLACEHOLDERS": {
-                    "phone": "067 123 45 67"
+                    "phone": "+353 85 123 45 67",
+                    "message": "Please call me back ASAP!"
                 },
                 "TIME_POINTS": [
                     { "minutes": 0.5, "label": "30 seconds" },

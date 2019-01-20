@@ -46,8 +46,8 @@ gulp.task('bundle', function() {
 	}).bundle();
 
 	bundleStream
-	.pipe(source(srcAssets.scripts+'main.js'))
-	.pipe(rename('wchat.js'))
+	// .pipe(source('main.js'))
+	.pipe(source('wchat.js'))
 	.pipe(gulp.dest(basePath.dest))
 	.pipe(streamify(uglify()))
 	.pipe(rename({suffix: '.min'}))

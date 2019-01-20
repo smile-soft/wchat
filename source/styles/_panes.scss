@@ -240,13 +240,14 @@
 			text-align: center;
 			box-shadow: 0 5px 20px 5px rgba(0, 0, 0, 0.15);
 
-			.swc-end-dialog-btn {
+			.swc-action-btns {
 				position: absolute;
 				top: -30px;
 				width: 100%;
 
 				a {
 					position: relative;
+					text-decoration: none;
 					margin: auto;
 					padding: 5px 25px;
 					background-color: #fff;

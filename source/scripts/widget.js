@@ -24,6 +24,7 @@ var defaults = {
 	introMessage: "", // message that asks user for introduction
 	widget: true, // whether or not to add widget to the webpage
 	chat: true, // enable chat feature
+	sounds: true,
 	channels: { // channels settings
 		webrtc: {},
 		callback: {}
@@ -326,6 +327,8 @@ function initSession() {
 	}
 
 	debug.log('initSession: ', defaults.widget, widgetState.initiated, isBrowserSupported());
+
+	defaults.sounds = storage.getState('sounds') !== undefined ? storage.getState('sounds', 'session') : defaults.sounds;
 
 	// If page loaded and "widget" property is set - load widget
 	if(defaults.widget && !widgetState.initiated && isBrowserSupported()) {
@@ -690,7 +693,7 @@ function newMessage(message){
 	// });
 
 	messagesCont.scrollTop = messagesCont.scrollHeight;
-	// if(playSound) playNewMsgTone();
+	if(playSound) playNewMsgTone();
 }
 
 function clearUndelivered(){
@@ -702,8 +705,16 @@ function clearUndelivered(){
 	}
 }
 
+function triggerSounds() {
+	var icon = document.querySelector('.'+defaults.prefix+'-trigger-sounds-btn span');
+	defaults.sounds = !defaults.sounds;
+	icon.className = defaults.sounds ? (defaults.prefix+'-icon-bell') : (defaults.prefix+'-icon-bell-slash');
+	storage.saveState('sounds', defaults.sounds, 'session');
+}
+
 function playNewMsgTone() {
-	audio.play('new_message');
+	if(defaults.sounds)
+		audio.play('new_message');
 }
 
 /**
@@ -1349,6 +1360,8 @@ function wgClickHandler(e){
 		// else closeWidget();
 		closeChat();
 		closeWidget();
+	} else if(handler === 'triggerSounds') {
+		triggerSounds();
 	} else if(handler === 'sendMessage') {
 		wgSendMessage();
 	} else if(handler === 'openWindow') {

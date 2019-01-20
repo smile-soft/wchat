@@ -653,12 +653,13 @@
       z-index: 100;
       text-align: center;
       box-shadow: 0 5px 20px 5px rgba(0, 0, 0, 0.15); }
-      .swc-wg-panes .swc-wg-pane .swc-write-cont .swc-end-dialog-btn {
+      .swc-wg-panes .swc-wg-pane .swc-write-cont .swc-action-btns {
         position: absolute;
         top: -30px;
         width: 100%; }
-        .swc-wg-panes .swc-wg-pane .swc-write-cont .swc-end-dialog-btn a {
+        .swc-wg-panes .swc-wg-pane .swc-write-cont .swc-action-btns a {
           position: relative;
+          text-decoration: none;
           margin: auto;
           padding: 5px 25px;
           background-color: #fff;

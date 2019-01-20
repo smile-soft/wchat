@@ -241,8 +241,13 @@
 			<div class="<%- defaults.prefix %>-write-cont">
 				
 				<!-- End dialog button -->
-				<div class="<%- defaults.prefix %>-end-dialog-btn">
-					<a href="#" data-<%- defaults.prefix %>-handler="finish"><%- panels.MESSAGES.end_dialog %></a>
+				<div class="<%- defaults.prefix %>-action-btns">
+					<a href="#" class="<%- defaults.prefix %>-end-dialog-btn" data-<%- defaults.prefix %>-handler="finish"><%- panels.MESSAGES.end_dialog %></a>
+					<a href="#" class="<%- defaults.prefix %>-trigger-sounds-btn" data-<%- defaults.prefix %>-handler="triggerSounds">
+						<span 
+							class="<% if(defaults.sounds) { %><%- defaults.prefix %>-icon-bell<% } else { %><%- defaults.prefix%>-icon-bell-slash<% } %>">
+						</span>
+					</a>
 				</div>
 
 				<!-- "Agent is typing" indicator -->
@@ -264,7 +269,7 @@
 					<span 
 						class="<%- defaults.prefix %>-icon-upload" 
 						style="color: <%- defaults.styles.primary.backgroundColor %>">
-					<span>
+					</span>
 
 				</label>
 

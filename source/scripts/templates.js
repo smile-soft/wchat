@@ -13,7 +13,7 @@ _.escape = function(string) {
         return escapeMap[match];
     });
 };
-exports['email']= function(obj) {
+exports.email = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape, __j = Array.prototype.join;
 function print() { __p += __j.call(arguments, '') }
@@ -60,7 +60,7 @@ _.escape = function(string) {
         return escapeMap[match];
     });
 };
-exports['forms']= function(obj) {
+exports.forms = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape, __j = Array.prototype.join;
 function print() { __p += __j.call(arguments, '') }
@@ -199,7 +199,7 @@ _.escape = function(string) {
         return escapeMap[match];
     });
 };
-exports['message']= function(obj) {
+exports.message = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape, __j = Array.prototype.join;
 function print() { __p += __j.call(arguments, '') }
@@ -248,7 +248,7 @@ _.escape = function(string) {
         return escapeMap[match];
     });
 };
-exports['widget']= function(obj) {
+exports.widget = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape, __j = Array.prototype.join;
 function print() { __p += __j.call(arguments, '') }
@@ -563,11 +563,27 @@ __p += '">\n\t\t\t\t\t\n\t\t\t</ul>\n\n\t\t\t<div class="' +
 __e( defaults.prefix ) +
 '-write-cont">\n\t\t\t\t\n\t\t\t\t<!-- End dialog button -->\n\t\t\t\t<div class="' +
 __e( defaults.prefix ) +
-'-end-dialog-btn">\n\t\t\t\t\t<a href="#" data-' +
+'-action-btns">\n\t\t\t\t\t<a href="#" class="' +
+__e( defaults.prefix ) +
+'-end-dialog-btn" data-' +
 __e( defaults.prefix ) +
 '-handler="finish">' +
 __e( panels.MESSAGES.end_dialog ) +
-'</a>\n\t\t\t\t</div>\n\n\t\t\t\t<!-- "Agent is typing" indicator -->\n\t\t\t\t<div class="' +
+'</a>\n\t\t\t\t\t<a href="#" class="' +
+__e( defaults.prefix ) +
+'-trigger-sounds-btn" data-' +
+__e( defaults.prefix ) +
+'-handler="triggerSounds">\n\t\t\t\t\t\t<span \n\t\t\t\t\t\t\tclass="';
+ if(defaults.sounds) { ;
+__p +=
+__e( defaults.prefix ) +
+'-icon-bell';
+ } else { ;
+__p +=
+__e( defaults.prefix) +
+'-icon-bell-slash';
+ } ;
+__p += '">\n\t\t\t\t\t\t</span>\n\t\t\t\t\t</a>\n\t\t\t\t</div>\n\n\t\t\t\t<!-- "Agent is typing" indicator -->\n\t\t\t\t<div class="' +
 __e( defaults.prefix ) +
 '-loader">\n\t\t\t\t\t<span></span>\n\t\t\t\t\t<span></span>\n\t\t\t\t\t<span></span>\n\t\t\t\t</div>\n\n\t\t\t\t<!-- "Attach file" button -->\n\t\t\t\t<label \n\t\t\t\t\tclass="' +
 __e( defaults.prefix ) +
@@ -579,7 +595,7 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-icon-upload" \n\t\t\t\t\t\tstyle="color: ' +
 __e( defaults.styles.primary.backgroundColor ) +
-'">\n\t\t\t\t\t<span>\n\n\t\t\t\t</label>\n\n\t\t\t\t<div id="' +
+'">\n\t\t\t\t\t</span>\n\n\t\t\t\t</label>\n\n\t\t\t\t<div id="' +
 __e( defaults.prefix ) +
 '-message-text-clone"  class="' +
 __e( defaults.prefix ) +

@@ -3,7 +3,7 @@ var core = require('./core');
 var storage = require('./storage');
 var request = require('./request');
 var debug = require('./debug');
-var _ = require('./lodash');
+var _ = require('./lodash-fns');
 var frases = null;
 var cobrowsing = require('./cobrowsing');
 var templates = require('./templates');
@@ -1498,7 +1498,7 @@ function wgSendMessage(){
 	var msg,
 		textarea = document.getElementById(defaults.prefix+'-message-text');
 
-	msg = _.trim(textarea.value);
+	msg = textarea.value.trim();
 	if(msg) {
 
 		if(!storage.getState('chat', 'session')) {

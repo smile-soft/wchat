@@ -8,6 +8,7 @@ module.exports = {
 	init: function(soundsDir) {
 		audioEl = document.createElement('audio');
 		audioEl.setAttribute('autoplay', true);
+		document.body.appendChild(audioEl);
 		if(soundsDir) dir = soundsDir;
 		return this;
 	},

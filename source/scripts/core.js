@@ -5,7 +5,7 @@ var debug = require('./debug');
 // var websockets = require('./websockets');
 // var url = require('url').parse(document.URL, true);
 var url = global.location;
-var _ = require('./lodash');
+var _ = require('./lodash-fns');
 var inherits = require('inherits');
 var websocketTry = 1;
 var pollTurns = 1;
@@ -37,7 +37,10 @@ function WchatAPI(options){
 
 	if(!this.options.wsServer && !this.options.pageid) return console.error('Cannot initiate module: pageid is undefined');
 
-	websocketUrl = (this.options.wsServer ? this.options.wsServer : mainAddress)+this.options.pageid;
+	websocketUrl = (this.options.wsServer ? this.options.wsServer : mainAddress);
+	websocketUrl += (websocketUrl[websocketUrl.length-1] !== '/' ? '/' : '') + this.options.pageid; // add forward slash at the end if necessary
+
+	this.createWebsocket();
 
 	this.on('session/create', this.onSessionCreate.bind(this));
 	// this.on('chat/close', function(data) {
@@ -45,7 +48,6 @@ function WchatAPI(options){
 	// });
 	this.on('Error', this.onError);
 
-	this.createWebsocket();
 
 	return this;
 

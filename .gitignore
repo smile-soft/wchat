@@ -3,6 +3,7 @@ node_modules
 package-lock.json
 <<<<<<< HEAD
 .DS_Store
+gulp-lodash-template-fixed.js
 
 =======
 .DS_Store

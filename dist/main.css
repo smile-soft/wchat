@@ -459,21 +459,20 @@
       -ms-transition: color 0.4s;
       -o-transition: color 0.4s;
       transition: color 0.4s; }
-  .swc-btn-cont .swc-lastmsg {
+  .swc-btn-cont .swc-lastmsg-cont {
     display: none;
     position: absolute;
     bottom: 0;
     width: 0;
-    max-height: 90px;
+    max-height: 450px;
     padding: 10px;
     cursor: pointer;
     background-color: #fff;
     border-radius: 5px;
     box-shadow: 0 5px 35px rgba(0, 0, 0, 0.15);
-    border: 1px solid #eee;
-    overflow: auto; }
-    .swc-btn-cont .swc-lastmsg .swc-message-time {
-      display: none; }
+    border: 1px solid #eee; }
+  .swc-btn-cont .swc-lastmsg .swc-message-time {
+    display: none; }
   .swc-btn-cont .swc-message span {
     margin: 0 0 5px 5px;
     font-size: 14px;
@@ -487,7 +486,8 @@
     color: #222; }
   .swc-btn-cont .swc-unnotify-btn {
     position: absolute;
-    top: -70px;
+    top: -40px;
+    right: 0;
     margin: 5px;
     padding: 5px 10px;
     text-align: center;
@@ -923,21 +923,25 @@
     right: 10px;
     transform-origin: right bottom; }
     .swc-wg-cont.position-right .swc-btn-cont {
-      right: 5px; }
+      right: 15px; }
+      @media only screen and (max-width: 750px) {
+        .swc-wg-cont.position-right .swc-btn-cont {
+          right: 5px; } }
     .swc-wg-cont.position-right .swc-btn-link {
       float: right; }
-    .swc-wg-cont.position-right .swc-lastmsg,
-    .swc-wg-cont.position-right .swc-unnotify-btn {
+    .swc-wg-cont.position-right .swc-lastmsg-cont {
       right: 65px; }
   .swc-wg-cont.position-left {
     left: 10px;
     transform-origin: left bottom; }
     .swc-wg-cont.position-left .swc-btn-cont {
-      left: 5px; }
+      left: 15px; }
+      @media only screen and (max-width: 750px) {
+        .swc-wg-cont.position-left .swc-btn-cont {
+          left: 5px; } }
     .swc-wg-cont.position-left .swc-btn-link {
       float: left; }
-    .swc-wg-cont.position-left .swc-lastmsg,
-    .swc-wg-cont.position-left .swc-unnotify-btn {
+    .swc-wg-cont.position-left .swc-lastmsg-cont {
       left: 65px; }
   .swc-wg-cont * {
     box-sizing: border-box; }
@@ -1015,7 +1019,7 @@
     background-color: #1eff1e; }
   .swc-wg-cont.notified .swc-wg-btn .swc-btn-icon:before {
     content: "" !important; }
-  .swc-wg-cont.notified .swc-lastmsg {
+  .swc-wg-cont.notified .swc-lastmsg-cont {
     display: block;
     width: 220px;
     -webkit-animation: newMessageNoify 0.4s ease-in-out;

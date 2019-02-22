@@ -1,5 +1,5 @@
 var domify = require('domify');
-var core = require('./core');
+var Core = require('./core');
 var storage = require('./storage');
 var request = require('./request');
 var debug = require('./debug');
@@ -22,6 +22,7 @@ var defaults = {
 	intro: false, // whether or not to ask user 
 				// to introduce him self before the chat session
 	introMessage: "", // message that asks user for introduction
+	concentText: "", // message that contains the text of concent that user should accept in order to start a chat
 	widget: true, // whether or not to add widget to the webpage
 	chat: true, // enable chat feature
 	sounds: true,
@@ -173,7 +174,7 @@ function Widget(options){
 	
 	// serverUrl = require('url').parse(defaults.server, true);
 
-	api = new core(defaults)
+	api = new Core(defaults)
 	.on('session/create', onSessionSuccess)
 	.on('session/timeout', onSessionTimeout)
 	.on('session/join', onSessionJoinRequest)
@@ -248,7 +249,9 @@ function initSession() {
 	defaults.sid = api.session.sid;
 	defaults.isIpcc = (api.session.langs !== undefined || api.session.categories !== undefined);
 
-	debug.log('initSession: ', api, defaults);
+	debug.log('initSession: ', api, defaults, frases, frases[lang]);
+
+	frases = (defaults.lang && frases[defaults.lang]) ? frases[defaults.lang] : frases[api.detectLanguage(frases)];
 
 	if(defaults.widget) {
 		api
@@ -317,8 +320,7 @@ function initSession() {
 	}
 
 	
-	getLanguages();
-
+	if(defaults.isIpcc) getLanguages();
 	if(defaults.buttonSelector) setHandlers(defaults.buttonSelector);
 	if(defaults.themeColor) {
 		defaults.styles.primary.backgroundColor = defaults.themeColor;
@@ -431,7 +433,7 @@ function getFrases() {
 	request.get('frases', (defaults.translationsPath || defaults.clientPath)+'translations.json', function (err, result){
 		if(err) return api.emit('Error', err);
 		frases = JSON.parse(result);
-		frases = frases[api.detectLanguage(frases)]
+		// frases = frases[api.detectLanguage(frases)]
 	});
 }
 
@@ -1356,10 +1358,13 @@ function wgClickHandler(e){
 	if(handler === 'closeWidget') {
 		closeWidget();
 	} else if(handler === 'finish') {
-		// if(storage.getState('chat', 'session')) switchPane('closechat');
-		// else closeWidget();
-		closeChat();
-		closeWidget();
+		if(defaults.isIpcc && storage.getState('chat', 'session')) {
+			switchPane('closechat');
+		} else {
+			closeChat();
+			closeWidget();
+		}
+		
 	} else if(handler === 'triggerSounds') {
 		triggerSounds();
 	} else if(handler === 'sendMessage') {

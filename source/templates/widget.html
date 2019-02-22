@@ -181,8 +181,17 @@
 							<% } else if(item.name === 'message') { %>
 								<textarea
 									name="message"
-									placeholder="<%= item.placeholder || panels.INTRO.PLACEHOLDERS[item.name] %> <% if(item.required){ %> * <% } %>"
+									placeholder="<%= panels.INTRO.PLACEHOLDERS[item.name] %> <% if(item.required){ %> * <% } %>"
 								></textarea>
+							<% } else if(item.name === 'consent') { %>
+								<label for="<%-defaults.sid %>-<%- item.name %>">
+									<input 
+									type="checkbox" 
+									id="<%-defaults.sid %>-<%- item.name %>"
+									name="<%- item.name %>" 
+									<% if(item.required){ %> required <% } %>>
+									<%= defaults.consentText %>
+								</label>
 							<% } else if(item.type === 'checkbox') { %>
 								<label for="<%-defaults.sid %>-<%- item.name %>">
 									<input 
@@ -194,8 +203,8 @@
 								</label>
 							<% } else { %>
 								<input 
-									type="<%= item.type || 'text' %>" 
-									placeholder="<%= item.placeholder || panels.INTRO.PLACEHOLDERS[item.name] %> <% if(item.required){ %> * <% } %>" 
+									type="<%= item.type || 'text' %>"
+									placeholder="<%= panels.INTRO.PLACEHOLDERS[item.name] %> <% if(item.required){ %> * <% } %>" 
 									name="<%- item.name %>" 
 									<% if(item.save){ %> value="<%- credentials[item.name] %>" <% } %> 
 									<% if(item.required){ %> required <% } %>>

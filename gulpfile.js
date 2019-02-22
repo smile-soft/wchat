@@ -52,6 +52,9 @@ gulp.task('bundle', function() {
 	.pipe(streamify(uglify()))
 	.pipe(rename({suffix: '.min'}))
 	.pipe(gulp.dest(basePath.dest))
+	.pipe(streamify(gulp.src([basePath.dest+'wchat.min.js', srcAssets.scripts+'libs/jssip.min.js'])))
+	.pipe(concat('wchat-webrtc.min.js'))
+	.pipe(gulp.dest(basePath.dest))
 	.pipe(notify({ message: 'bundle task complete' }));
 });
 

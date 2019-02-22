@@ -46,12 +46,12 @@
 		// }
 	}
 
-	.swc-lastmsg {
+	.swc-lastmsg-cont {
 		display: none;
 		position: absolute;
 		bottom: 0;
 		width: 0;
-		max-height: 90px;
+		max-height: 450px;
 		// height: 100%;
 		padding: 10px;
 		cursor: pointer;
@@ -59,7 +59,22 @@
 		border-radius: $border-radius;
 		box-shadow: 0 5px 35px rgba(0, 0, 0, 0.15);
 		border: 1px solid #eee;
-		overflow: auto;
+	}
+
+	.swc-lastmsg {
+		// display: none;
+		// position: absolute;
+		// bottom: 0;
+		// width: 0;
+		// max-height: 90px;
+		// // height: 100%;
+		// padding: 10px;
+		// cursor: pointer;
+		// background-color: #fff;
+		// border-radius: $border-radius;
+		// box-shadow: 0 5px 35px rgba(0, 0, 0, 0.15);
+		// border: 1px solid #eee;
+		// overflow: auto;
 
 		.swc-message-time {
 			display: none;
@@ -93,7 +108,8 @@
 		// display: none;
 		position: absolute;
 		// width: 85px;
-	    top: -70px;
+	    top: -40px;
+	    right: 0;
 	    margin: 5px;
 	    padding: 5px 10px;
 	    text-align: center;

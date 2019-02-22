@@ -1,8 +1,8 @@
 var debug = require('./debug');
 var events = {},
 // JsSIP = require('jssip'),
-// JsSIP = require('./jssip.min.js'),
-JsSIP = global.JsSIP,
+// JsSIP = require('./libs/jssip'),
+JsSIP,
 options,
 sipClient,
 sipSession,
@@ -10,7 +10,7 @@ sipCallEvents;
 
 function isWebrtcSupported(){
 	var RTC = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection,
-		userMeida = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.msGetUserMedia || navigator.mozGetUserMedia,
+		userMeida = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.msGetUserMedia || navigator.mozGetUserMedia || navigator.mediaDevices.getUserMedia,
 		ice = window.mozRTCIceCandidate || window.RTCIceCandidate;
 
 	return !!RTC && !!userMeida && !!ice;
@@ -116,7 +116,11 @@ function createRemoteAudio(){
 
 function init(opts){
 	debug.log('Initiating WebRTC module:', opts);
+	JsSIP = global.JsSIP;
 	options = opts;
+
+	debug.log('JsSIP: ', global, JsSIP);
+
 	if(options.sip.register === undefined) options.sip.register = false;
 	var socket = new JsSIP.WebSocketInterface(options.sip.ws_servers);
 	options.sip.sockets = [socket];

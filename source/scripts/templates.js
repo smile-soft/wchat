@@ -472,12 +472,30 @@ __e( translations[lang].lang ) +
 __p += '\n\t\t\t\t\t\t\t\t</select>\n\t\t\t\t\t\t\t';
  } else if(item.name === 'message') { ;
 __p += '\n\t\t\t\t\t\t\t\t<textarea\n\t\t\t\t\t\t\t\t\tname="message"\n\t\t\t\t\t\t\t\t\tplaceholder="' +
-((__t = ( item.placeholder || panels.INTRO.PLACEHOLDERS[item.name] )) == null ? '' : __t) +
+((__t = ( panels.INTRO.PLACEHOLDERS[item.name] )) == null ? '' : __t) +
 ' ';
  if(item.required){ ;
 __p += ' * ';
  } ;
 __p += '"\n\t\t\t\t\t\t\t\t></textarea>\n\t\t\t\t\t\t\t';
+ } else if(item.name === 'consent') { ;
+__p += '\n\t\t\t\t\t\t\t\t<label for="' +
+__e(defaults.sid ) +
+'-' +
+__e( item.name ) +
+'">\n\t\t\t\t\t\t\t\t\t<input \n\t\t\t\t\t\t\t\t\ttype="checkbox" \n\t\t\t\t\t\t\t\t\tid="' +
+__e(defaults.sid ) +
+'-' +
+__e( item.name ) +
+'"\n\t\t\t\t\t\t\t\t\tname="' +
+__e( item.name ) +
+'" \n\t\t\t\t\t\t\t\t\t';
+ if(item.required){ ;
+__p += ' required ';
+ } ;
+__p += '>\n\t\t\t\t\t\t\t\t\t' +
+((__t = ( defaults.consentText )) == null ? '' : __t) +
+'\n\t\t\t\t\t\t\t\t</label>\n\t\t\t\t\t\t\t';
  } else if(item.type === 'checkbox') { ;
 __p += '\n\t\t\t\t\t\t\t\t<label for="' +
 __e(defaults.sid ) +
@@ -499,8 +517,8 @@ __e( item.placeholder ) +
  } else { ;
 __p += '\n\t\t\t\t\t\t\t\t<input \n\t\t\t\t\t\t\t\t\ttype="' +
 ((__t = ( item.type || 'text' )) == null ? '' : __t) +
-'" \n\t\t\t\t\t\t\t\t\tplaceholder="' +
-((__t = ( item.placeholder || panels.INTRO.PLACEHOLDERS[item.name] )) == null ? '' : __t) +
+'"\n\t\t\t\t\t\t\t\t\tplaceholder="' +
+((__t = ( panels.INTRO.PLACEHOLDERS[item.name] )) == null ? '' : __t) +
 ' ';
  if(item.required){ ;
 __p += ' * ';

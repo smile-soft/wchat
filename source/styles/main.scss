@@ -90,13 +90,17 @@ $secondary-color: #BBBBBB;
 		right: 10px;
 		transform-origin: right bottom;
 		.swc-btn-cont {
-			right: 5px;
+			right: 15px;
+
+			@include bp-small {
+				right: 5px;
+			}
 		}
 		.swc-btn-link {
 			float: right;
 		}
-		.swc-lastmsg,
-		.swc-unnotify-btn {
+		.swc-lastmsg-cont {
+		// .swc-unnotify-btn {
 			right: 65px;
 		}
 	}
@@ -104,13 +108,17 @@ $secondary-color: #BBBBBB;
 		left: 10px;
 		transform-origin: left bottom;
 		.swc-btn-cont {
-			left: 5px;
+			left: 15px;
+
+			@include bp-small {
+				left: 5px;
+			}
 		}
 		.swc-btn-link {
 			float: left;
 		}
-		.swc-lastmsg,
-		.swc-unnotify-btn {
+		.swc-lastmsg-cont {
+		// .swc-unnotify-btn {
 			left: 65px;
 		}
 	}
@@ -270,7 +278,7 @@ $secondary-color: #BBBBBB;
 				content: $btn-icon-notified !important;
 			}
 		}
-		.swc-lastmsg {
+		.swc-lastmsg-cont {
 			display: block;
 			width: 220px;
 			@include animation(newMessageNoify 0.4s ease-in-out);

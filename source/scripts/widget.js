@@ -81,8 +81,8 @@ var defaults = {
 	translationsPath: '', // absolute path to the translations.json flie
 	host: window.location.host, // displayed in the email template
 	webrtcEnabled: false,
-	maxFileSize: 2, // in MB
-	allowedFileExtensions: ['txt', 'gif', 'png', 'jpeg', 'jpg', 'pdf'] // Allowed file types for uploading. If empty array - no restriction. Ex: ['txt', 'gif', 'png', 'jpeg', 'pdf']
+	maxFileSize: 100, // in MB, if 0 - no restrictions
+	allowedFileExtensions: [] // Allowed file types for uploading. If empty array - no restriction. Ex: ['txt', 'gif', 'png', 'jpeg', 'pdf']
 };
 
 var globalSettings = "WchatSettings";
@@ -1777,7 +1777,7 @@ function checkFileParams(file) {
 	var fileExt = file.name.split('.')[file.name.split('.').length-1];
 	if(fileExt && defaults.allowedFileExtensions && defaults.allowedFileExtensions.length && defaults.allowedFileExtensions.indexOf(fileExt.toLowerCase()) === -1) errors.push('file_type_error');
 	if(defaults.maxFileSize && (defaults.maxFileSize*1000*1000) < file.size) errors.push('file_size_error');
-	
+
 
 	debug.log('checkFileParams errors: ', errors);	
 

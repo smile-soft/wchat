@@ -137,7 +137,9 @@
     	"ERRORS": {
     		"required": "Будь ласка, заповніть всі необхідні поля",
 			"email": "Будь ласка, введіть свою електронну адресу",
-			"tel": "Будь ласка, введіть свій номер телефону"
+			"tel": "Будь ласка, введіть свій номер телефону",
+            "file_size_error": "Файл більше дозволеного розміру",
+            "file_type_error": "Неприпустимий тип файлу"
     	}
     },
     "ru": {
@@ -278,7 +280,9 @@
     	"ERRORS": {
     		"required": "Пожалуйста, заполните все необходимые поля",
     		"email": "Пожалуйста, введите свой электронный адрес",
-    		"tel": "Пожалуйста, введите свой номер телефона"
+    		"tel": "Пожалуйста, введите свой номер телефона",
+            "file_size_error": "Файл превышает разрешенный размер",
+            "file_type_error": "Недопустимый тип файлу"
     	}
     },
     "en": {
@@ -419,7 +423,9 @@
 		"ERRORS": {
 			"required": "Please fill in all required fields",
 			"email": "Please fill in your email",
-			"tel": "Please fill in your telephone number"
+			"tel": "Please fill in your telephone number",
+            "file_size_error": "File size exceeded",
+            "file_type_error": "Unsupported file type"
 		}
     }
 }

@@ -81,6 +81,8 @@ var defaults = {
 	translationsPath: '', // absolute path to the translations.json flie
 	host: window.location.host, // displayed in the email template
 	webrtcEnabled: false,
+	maxFileSize: 2, // in MB
+	allowedFileExtensions: ['txt', 'gif', 'png', 'jpeg', 'jpg', 'pdf'] // Allowed file types for uploading. If empty array - no restriction. Ex: ['txt', 'gif', 'png', 'jpeg', 'pdf']
 };
 
 var globalSettings = "WchatSettings";
@@ -195,9 +197,6 @@ function Widget(options){
 
 	addWidgetStyles();
 
-	// Enabling audio module
-	audio.init(defaults.clientPath+'sounds/');
-
 	return publicApi;
 }
 
@@ -249,7 +248,7 @@ function initSession() {
 	defaults.sid = api.session.sid;
 	defaults.isIpcc = (api.session.langs !== undefined || api.session.categories !== undefined);
 
-	debug.log('initSession: ', api, defaults, frases, frases[lang]);
+	debug.log('initSession: ', api, defaults, frases);
 
 	frases = (defaults.lang && frases[defaults.lang]) ? frases[defaults.lang] : frases[api.detectLanguage(frases)];
 
@@ -331,6 +330,9 @@ function initSession() {
 	debug.log('initSession: ', defaults.widget, widgetState.initiated, isBrowserSupported());
 
 	defaults.sounds = storage.getState('sounds') !== undefined ? storage.getState('sounds', 'session') : defaults.sounds;
+
+	// Enabling audio module
+	audio.init(defaults.clientPath+'sounds/');
 
 	// If page loaded and "widget" property is set - load widget
 	if(defaults.widget && !widgetState.initiated && isBrowserSupported()) {
@@ -635,6 +637,8 @@ function newMessage(message){
 		text,
 		compiled,
 		playSound = false,
+		lastmsg = null;
+		sequence = message.sequence ? message.sequence.split('/') : [1,1],
 		// defaultUname = false,
 		credentials = storage.getState('credentials', 'session') || {},
 		aname = storage.getState('aname', 'session'),
@@ -674,7 +678,7 @@ function newMessage(message){
 			compiled = compileTemplate('message', { defaults: defaults, message: message });
 			messagesCont.insertAdjacentHTML('beforeend', '<li '+(message.className ? 'class="'+message.className+'"' : '' )+'>'+compiled+'</li>');
 
-			onLastMessage(compiled);
+			lastmsg = compiled;
 
 			// Need for sending dialog to email
 			if(!message.hidden) {
@@ -694,8 +698,12 @@ function newMessage(message){
 
 	// });
 
-	messagesCont.scrollTop = messagesCont.scrollHeight;
-	if(playSound) playNewMsgTone();
+	if(sequence && (sequence[0] == sequence[1])) {
+		if(lastmsg) onLastMessage(lastmsg);
+		messagesCont.scrollTop = messagesCont.scrollHeight;
+		if(playSound) playNewMsgTone();
+	}
+		
 }
 
 function clearUndelivered(){
@@ -827,7 +835,8 @@ function submitSendMailForm(form, data) {
 				data.filename = result.filename;
 				data.filedata = result.filedata;
 			} else {
-				debug.warn('File wasn\'t sent');
+				if(frases.ERRORS[err]) alert(frases.ERRORS[err])
+				return debug.warn('File wasn\'t sent');
 			}
 			delete data.file;
 			sendRequest(data, function() {
@@ -1563,7 +1572,8 @@ function wgSendFile(e){
 	var file = getFileContent(targ, function(err, result) {
 		debug.log('wgSendFile: ', err, result);
 		if(err) {
-			alert('File was not sent');
+			if(frases.ERRORS[err]) alert(frases.ERRORS[err])
+			return debug.warn('File wasn\'t sent');
 		} else {
 			sendMessage({ message: result.filename, file: result.filedata });
 		}
@@ -1740,6 +1750,11 @@ function getFileContent(element, cb){
 	}
 
 	file = files[0];
+
+	var errors = checkFileParams(file);
+
+	if(errors.length) return cb(errors[0]);
+
 	var blob = new Blob([file], { type: file.type });
 	return cb(null, { filedata: blob, filename: file.name });
 
@@ -1754,6 +1769,19 @@ function getFileContent(element, cb){
 	// 	if(cb) cb(event.target.error);
 	// };
 	// reader.readAsDataURL(file);
+}
+
+function checkFileParams(file) {
+	debug.log('checkFileParams: ', file, file.size, file.name, defaults.allowedFileExtensions, (defaults.maxFileSize*1000*1000));	
+	var errors = [];
+	var fileExt = file.name.split('.')[file.name.split('.').length-1];
+	if(fileExt && defaults.allowedFileExtensions && defaults.allowedFileExtensions.length && defaults.allowedFileExtensions.indexOf(fileExt.toLowerCase()) === -1) errors.push('file_type_error');
+	if(defaults.maxFileSize && (defaults.maxFileSize*1000*1000) < file.size) errors.push('file_size_error');
+	
+
+	debug.log('checkFileParams errors: ', errors);	
+
+	return errors;
 }
 
 function compileTemplate(template, data){
@@ -1837,14 +1865,17 @@ function convertLinks(text){
 			href = href.slice(0,-1);
 			leftovers += 1;
 		}
-		return '<a href="'+href+'" target="_blank" data-'+defaults.prefix+'-link="'+href+'">'+href+'</a>' + text.substr(text.length - leftovers);
+
+		debug.log('convertLinks: ', href);
+
+		return '<a href="'+(href.indexOf('www.') !== -1 ? ('http://'+href) : href)+'" target="_blank" data-'+defaults.prefix+'-link="'+href+'">'+href+'</a>' + text.substr(text.length - leftovers);
 	} else {
 		return text;
 	}
 }
 
 function isLink(text){
-	var pattern = new RegExp('^http:\/\/|^https:\/\/');
+	var pattern = new RegExp('^http:\/\/|^https:\/\/|^www\.[a-zA-z0-9-]*.[a-zA-Z0-9]');
 	return pattern.test(text);
 }
 

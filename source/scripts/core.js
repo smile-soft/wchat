@@ -94,7 +94,8 @@ WchatAPI.prototype.onWebsocketMessage = function(e){
 
 		} else if(data.method === 'messages') {
 			if(data.params.list) {
-				data.params.list.map(function(item) {
+				data.params.list.map(function(item, index, array) {
+					item.sequence = (index+1) + '/' + array.length;
 					this.emit('message/new', item);
 					return item;
 				}.bind(this));

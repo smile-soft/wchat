@@ -50,13 +50,13 @@ function initJsSIPEvents(){
 		confirmed: function(e){
 			debug.log('call confirmed event: ', e);
 			events.emit('webrtc/confirmed', e);
-		},
-		addstream: function(e){
-			debug.log('call addstream event: ', e);
-			events.emit('webrtc/addstream', e);
-			var stream = e.stream;
-			options.audioRemote = JsSIP.rtcninja.attachMediaStream(options.audioRemote, stream);
 		}
+		// addstream: function(e){
+		// 	debug.log('call addstream event: ', e);
+		// 	events.emit('webrtc/addstream', e);
+		// 	var stream = e.stream;
+		// 	options.audioRemote = JsSIP.rtcninja.attachMediaStream(options.audioRemote, stream);
+		// }
 		// sdp: function(e){
 		// 	debug.log('sdp: ', e);
 		// }
@@ -84,6 +84,15 @@ function audiocall(number){
 		eventHandlers: sipCallEvents,
 		mediaConstraints: { audio: true, video: false }
 	});
+
+	sipSession.connection.addEventListener('track', function(e) {
+		events.emit('webrtc/addstream', e);
+		if(options.audioRemote.srcObject !== e.streams[0]) options.audioRemote.srcObject = e.streams[0];
+		// e.streams.forEach(function(stream) {
+		// 	e.track.muted = false;
+		// 	sipSession.connection.addTrack(e.track, stream)
+		// } );
+	})
 }
 
 function terminate(){

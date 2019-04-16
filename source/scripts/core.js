@@ -628,6 +628,24 @@ WchatAPI.prototype.userIsTyping = function(){
 	}.bind(this));
 };
 
+WchatAPI.prototype.userReadMessages = function(){
+	var data = {
+		method: 'messageRead',
+		params: {}
+	};
+
+	if(this.websocket) {
+		return this.sendData(data);
+	}
+
+	request.post(this.options.serverUrl, data, function (err){
+		if(err) {
+			this.emit('Error', err, { method: 'setChatTimeout' });
+			return;
+		}
+	}.bind(this));
+}
+
 WchatAPI.prototype.updateUrl = function(url){
 	var data = {
 		method: 'updateUrl',

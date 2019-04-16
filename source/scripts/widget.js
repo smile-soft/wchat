@@ -12,6 +12,13 @@ var audio = require('./audio-control');
 // var serverUrl = {};
 var forms;
 var api;
+var globalSettings = "WchatSettings";
+// Widget dom element
+var widget;
+var widgetWindow;
+var mouseFocused = false;
+var windowFocused = false;
+var pollTurns = 1;
 
 // Widget initiation options
 var defaults = {
@@ -85,37 +92,40 @@ var defaults = {
 	allowedFileExtensions: [] // Allowed file types for uploading. If empty array - no restriction. Ex: ['txt', 'gif', 'png', 'jpeg', 'pdf']
 };
 
-var globalSettings = "WchatSettings";
-
 // Current widget state
 var widgetState = {
 	initiated: false,
 	active: false,
 	state: '', // "online" | "offline" | "timeout",
 	share: false,
-	sounds: true
+	sounds: true,
+	dialog: [],
+	messages: [],
+	unreadMessages: false,
+	langs: [], // available dialog languages
+	chatTimeout: null,
+	agentIsTypingTimeout: null,
+	userIsTypingTimeout: null,
+	timerUpdateInterval: null
 };
 
-var dialog = [];
-var messages = [];
+// var dialog = [];
+// var messages = [];
 
 // available dialog languages
-var langs = [];
+// var langs = [];
 // var currLang = '';
-var sessionTimeout;
-var chatTimeout;
-var mouseFocused = false;
-// Widget dom element
-var widget;
+// var sessionTimeout;
+// var chatTimeout;
+
 
 // Widget in a separate window
-var widgetWindow;
 // Widget panes elements
-var agentIsTypingTimeout;
-var userIsTypingTimeout;
-var timerUpdateInterval;
-var pollTurns = 1;
-var cobrowsingPermissionGiven = false;
+// var agentIsTypingTimeout;
+// var userIsTypingTimeout;
+// var timerUpdateInterval;
+// var cobrowsingPermissionGiven = false;
+
 
 var publicApi = {
 
@@ -443,7 +453,7 @@ function onNewLanguages(languages){
 	// debug.log('languages: ', languages);
 	var state = languages.length ? 'online' : 'offline';
 
-	langs = languages;
+	widgetState.langs = languages;
 
 	// if(hasWgState(state)) return;
 	// if(widgetState.state === state) return;
@@ -484,7 +494,7 @@ function initWidget(){
 
 	if(widget && defaults.intro && defaults.intro.length) {
 		// Add languages to the template
-		langs.forEach(function(lang) {
+		widgetState.langs.forEach(function(lang) {
 			if(frases && frases.lang) {
 				selected = lang === api.session.lang ? 'selected' : '';
 				options += '<option value="'+lang+'" '+selected+' >'+frases.lang+'</option>';
@@ -501,7 +511,7 @@ function loadWidget(params){
 	
 	compiled = compileTemplate('widget', {
 		defaults: params,
-		languages: langs,
+		languages: widgetState.langs,
 		translations: frases,
 		credentials: storage.getState('credentials', 'session') || {},
 		_: _
@@ -609,7 +619,7 @@ function startChat(params){
 	debug.log('startChat timeout: ', timeout);
 
 	if(timeout) {
-		chatTimeout = setTimeout(onChatTimeout, timeout*1000);
+		widgetState.chatTimeout = setTimeout(onChatTimeout, timeout*1000);
 	}
 
 	addWgState('chat');
@@ -682,8 +692,8 @@ function newMessage(message){
 
 			// Need for sending dialog to email
 			if(!message.hidden) {
-				dialog.push(compiled);
-				messages.push(message);
+				widgetState.dialog.push(compiled);
+				widgetState.messages.push(message);
 			}
 		}
 
@@ -691,7 +701,7 @@ function newMessage(message){
 		if(message.entity === 'agent') {
 			if(aname !== message.from) storage.saveState('aname', message.from, 'session');
 			if(message.agentid) storage.saveState('aid', message.agentid, 'session');
-			if(message.from) clearTimeout(chatTimeout);
+			if(message.from) clearTimeout(widgetState.chatTimeout);
 		}
 
 		if(message.entity !== 'user') playSound = true;
@@ -703,7 +713,13 @@ function newMessage(message){
 		messagesCont.scrollTop = messagesCont.scrollHeight;
 		if(playSound) playNewMsgTone();
 	}
-		
+
+	if(!windowFocused) widgetState.unreadMessages = true;
+
+}
+
+function onReadMessages() {
+	if(widgetState.unreadMessages) api.userReadMessages();
 }
 
 function clearUndelivered(){
@@ -786,7 +802,7 @@ function sendComplain(params){
 	body = body.concat(
 		complain,
 		'<br><p class="h1">'+frases.EMAIL_SUBJECTS.dialog+' '+defaults.host+'</p><br>',
-		dialog
+		widgetState.dialog
 	).reduce(function(prev, curr) {
 		return prev.concat(curr);
 	});
@@ -863,7 +879,7 @@ function submitCloseChatForm(form, data){
 		sendDialog({
 			to: data.email,
 			subject: frases.EMAIL_SUBJECTS.dialog+' '+defaults.host,
-			text: dialog // global variable
+			text: widgetState.dialog
 		});
 	}
 	if(data && data.text) {
@@ -913,17 +929,17 @@ function onChatTimeout(){
 	});
 
 	var form = global['queue_overload'];
-	if(form) form.text.value = messages.reduce(function(str, item){ if(item.entity === 'user') {str += (item.content+"\n")} return str; }, "");
+	if(form) form.text.value = widgetState.messages.reduce(function(str, item){ if(item.entity === 'user') {str += (item.content+"\n")} return str; }, "");
 }
 
 function onAgentTyping(){
 	// debug.log('Agent is typing!');
-	if(!agentIsTypingTimeout) {
+	if(!widgetState.agentIsTypingTimeout) {
 		addWgState('agent-typing');
 	}
-	clearTimeout(agentIsTypingTimeout);
-	agentIsTypingTimeout = setTimeout(function() {
-		agentIsTypingTimeout = null;
+	clearTimeout(widgetState.agentIsTypingTimeout);
+	widgetState.agentIsTypingTimeout = setTimeout(function() {
+		widgetState.agentIsTypingTimeout = null;
 		removeWgState('agent-typing');
 		// debug.log('agent is not typing anymore!');
 	}, 5000);
@@ -1086,12 +1102,12 @@ function initCallState(state){
 function setTimer(timer, state, seconds){
 	var time = seconds;
 	if(state === 'start') {
-		timerUpdateInterval = setInterval(function(){
+		widgetState.timerUpdateInterval = setInterval(function(){
 			time = time+1;
 			timer.textContent = convertTime(time);
 		}, 1000);
 	} else if(state === 'stop') {
-		clearInterval(timerUpdateInterval);
+		clearInterval(widgetState.timerUpdateInterval);
 	} else if(state === 'init') {
 		timer.textContent = convertTime(0);
 	}
@@ -1328,6 +1344,9 @@ function setListeners(widget){
 
 	addEvent(widget, 'mouseenter', onMouseEnter);
 	addEvent(widget, 'mouseleave', onMouseLeave);
+	
+	addEvent(window, 'focus', onWindowFocus);
+	addEvent(window, 'blur', onWindowBlur);
 
 	// if(defaults.buttonElement) 
 	// 	defaults.buttonElement.addEventListener('click', publicApi.openWidget, false);
@@ -1349,6 +1368,15 @@ function onMouseEnter() {
 
 function onMouseLeave() {
 	mouseFocused = false;
+}
+
+function onWindowFocus() {
+	windowFocused = true;
+	onReadMessages();
+}
+
+function onWindowBlur() {
+	windowFocused = false;
 }
 
 function wgClickHandler(e){
@@ -1533,9 +1561,9 @@ function wgTypingHandler(e){
 		e.preventDefault();
 		wgSendMessage();
 	} else {
-		if(!userIsTypingTimeout) {
-			userIsTypingTimeout = setTimeout(function() {
-				userIsTypingTimeout = null;
+		if(!widgetState.userIsTypingTimeout) {
+			widgetState.userIsTypingTimeout = setTimeout(function() {
+				widgetState.userIsTypingTimeout = null;
 				api.userIsTyping();
 			}, 1000);
 		}
@@ -1625,7 +1653,7 @@ function changeWgState(params){
 function getWidgetState() {
 	var state = ''; 
 	if(defaults.isIpcc)
-		state = widgetState.state ? widgetState.state : (langs.length ? 'online' : 'offline');
+		state = widgetState.state ? widgetState.state : (widgetState.langs.length ? 'online' : 'offline');
 	else
 		state = widgetState.state ? widgetState.state : (api.session.state ? 'online' : 'offline');
 	
@@ -1814,9 +1842,9 @@ function parseTime(ts) {
 
 function parseMessage(text, file, entity){
 	var filename, form;
-	if(file) {
-		filename = text.substring(text.indexOf('_')+1);
-		if(isImage(file)) {
+	if(file || isLinkToFile(text)) {
+		filename = isLinkToFile(text) ? text.substring(text.lastIndexOf('/')+1) : text.substring(text.indexOf('_')+1);
+		if(isImage(filename)) {
 			return {
 				type: 'image',
 				content: '<a href="'+api.options.server+'/ipcc/'+text+'" download="'+filename+'">' +
@@ -1826,7 +1854,7 @@ function parseMessage(text, file, entity){
 		} else {
 			return {
 				type: 'file',
-				content: '<a href="'+api.options.server+'/ipcc/'+text+'" download="'+filename+'">'+filename+'</a>'
+				content: '<a href="'+text+'" download="'+filename+'">'+text+'</a>'
 			};
 		}
 	} else if(entity === 'agent' && isLink(text) && isImage(text)) {
@@ -1882,6 +1910,12 @@ function isLink(text){
 function isImage(filename){
 	var regex = new RegExp('png|PNG|jpg|JPG|JPEG|jpeg|gif|GIF');
 	var ext = filename.substring(filename.lastIndexOf('.')+1);
+	return regex.test(ext);
+}
+
+function isLinkToFile(string) {
+	var regex = new RegExp('pdf|PDF|txt|TXT');
+	var ext = string.substring(string.lastIndexOf('.')+1);
 	return regex.test(ext);
 }
 

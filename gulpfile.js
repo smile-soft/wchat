@@ -38,7 +38,6 @@ var destAssets = {
 	fonts: basePath.dest + 'fonts/'
 };
 
-
 gulp.task('bundle', function() {
 	var bundleStream = browserify(srcAssets.scripts+'main.js', {
 		standalone: nameSpace,
@@ -46,14 +45,14 @@ gulp.task('bundle', function() {
 	}).bundle();
 
 	bundleStream
-	// .pipe(source('main.js'))
-	.pipe(source('wchat.js'))
-	.pipe(gulp.dest(basePath.dest))
+	.pipe(source('main.js'))
+	// .pipe(source('wchat.js'))
+	// .pipe(gulp.dest(basePath.dest))
 	.pipe(streamify(uglify()))
 	.pipe(rename({suffix: '.min'}))
 	.pipe(gulp.dest(basePath.dest))
-	.pipe(streamify(gulp.src([basePath.dest+'wchat.min.js', srcAssets.scripts+'libs/jssip.min.js'])))
-	.pipe(concat('wchat-webrtc.min.js'))
+	.pipe(streamify(gulp.src([basePath.dest+'main.min.js', srcAssets.scripts+'libs/jssip.min.js'])))
+	.pipe(concat('wchat.min.js'))
 	.pipe(gulp.dest(basePath.dest))
 	.pipe(notify({ message: 'bundle task complete' }));
 });

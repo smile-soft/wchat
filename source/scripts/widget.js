@@ -22,6 +22,7 @@ var pollTurns = 1;
 
 // Widget initiation options
 var defaults = {
+	wsServer: "main.ringotel.net/chatbot/WebChat/",
 	prefix: 'swc', // prefix for CSS classes and ids. 
 				// Change it only if the default prefix 
 				// matches with existed classes or ids on the website
@@ -34,7 +35,12 @@ var defaults = {
 	chat: true, // enable chat feature
 	sounds: true,
 	channels: { // channels settings
-		webrtc: {},
+		webcall: {
+			sip: {
+				ws_servers: "wss://main.ringotel.net",
+				uri: "sip:operator@main.ringotel.net"
+			}
+		},
 		callback: {}
 	},
 	cobrowsing: false, // enable cobrowsing feature
@@ -186,13 +192,20 @@ function Widget(options){
 	
 	// serverUrl = require('url').parse(defaults.server, true);
 
+	defaults.webcallOnly = (!defaults.chat && !defaults.channels.callback.task && defaults.channels.webcall.hotline);
+
 	api = new Core(defaults)
-	.on('session/create', onSessionSuccess)
-	.on('session/timeout', onSessionTimeout)
-	.on('session/join', onSessionJoinRequest)
-	.on('session/joined', onSessionJoin)
-	.on('session/disjoin', onSessionDisjoin)
-	.on('session/init', onSessionInit);
+	.on('session/create', onSessionSuccess);
+
+	if(!defaults.webcallOnly) {
+		api
+		.on('session/timeout', onSessionTimeout)
+		.on('session/join', onSessionJoinRequest)
+		.on('session/joined', onSessionJoin)
+		.on('session/disjoin', onSessionDisjoin)
+		.on('session/init', onSessionInit);
+	}
+		
 	// .on('chat/languages', function() {
 	// 	changeWgState({ state: getWidgetState() });
 	// });
@@ -231,11 +244,7 @@ function onSessionSuccess(){
 		return (frases !== null);
 
 	}, function() {
-		initSession()
-		// if window is not a opened window
-		if(!defaults.external) {
-			api.updateUrl(window.location.href);
-		}
+		initSession();
 
 	}, function(){
 		
@@ -251,7 +260,7 @@ function onSessionSuccess(){
 
 function initSession() {
 	
-	if(!defaults.chat && !defaults.webrtcEnabled && !defaults.channels.callback.task) return false;
+	// if(!defaults.chat && !defaults.webrtcEnabled && !defaults.channels.callback.task) return false;
 
 	if(api.session.properties) _.merge(defaults, api.session.properties);
 
@@ -263,22 +272,30 @@ function initSession() {
 	frases = (defaults.lang && frases[defaults.lang]) ? frases[defaults.lang] : frases[api.detectLanguage(frases)];
 
 	if(defaults.widget) {
+		api.on('widget/load', initWidget);
+	}
+
+	if(defaults.channels.callback.task) {
+		api.on('callback/create', onCallbackRequested);
+	}
+
+	if(defaults.chat) {
 		api
-		// .on('chat/start', startChat)
 		.on('chat/close', onChatClose)
 		.on('chat/timeout', onChatTimeout)
 		.on('message/new', clearUndelivered)
 		.on('message/new', newMessage)
 		.on('message/typing', onAgentTyping)
-		.on('callback/create', onCallbackRequested)
 		.on('form/submit', onFormSubmit)
-		.on('form/reject', closeForm)
-		.on('widget/load', initWidget);
-		// .on('widget/init', onWidgetInit);
-		// .on('widget/statechange', changeWgState);
+		.on('form/reject', closeForm);	
 	}
 
-	if(WebRTC.isSupported() && defaults.channels.webrtc && defaults.channels.webrtc.sip && defaults.channels.webrtc.sip.ws_servers !== undefined) {
+	// if window is not a opened window
+	if(defaults.chat && !defaults.external) {
+		api.updateUrl(window.location.href);
+	}
+
+	if(WebRTC.isSupported() && defaults.channels.webcall && defaults.channels.webcall.hotline) {
 		if(window.location.protocol === 'https:'){
 		// if(window.location.protocol === 'https:' && serverUrl.protocol === 'https:'){
 			// set flag to indicate that webrtc feature is supported and enabled
@@ -316,7 +333,7 @@ function initSession() {
 
 			// initiate webrtc module with parameters
 			initWebrtcModule({
-				sip: defaults.channels.webrtc.sip,
+				sip: defaults.channels.webcall.sip,
 				emit: publicApi.emit,
 				on: publicApi.on
 			});
@@ -470,7 +487,7 @@ function initWidget(){
 
 	setStyles();
 	setListeners(widget);
-	changeWgState({ state: getWidgetState() });
+	changeWgState({ state: defaults.webcallOnly ? 'online' : getWidgetState() });
 
 	if(defaults.hideOfflineButton) {
 		addWgState('no-button');
@@ -487,7 +504,7 @@ function initWidget(){
 		// initChat();
 	}
 
-	// if webrtc supported by the browser and ws_servers parameter is set - change button icon
+	// if webrtc supported by the browser and webcall parameters is set - change button icon
 	if(defaults.webrtcEnabled) {
 		addWgState('webrtc-enabled');
 	}
@@ -980,8 +997,8 @@ function onSessionTimeout(){
 
 function initCall(){
 	switchPane('callAgent');
-	WebRTC.audiocall(defaults.channels.webrtc.hotline);
-	// WebRTC.audiocall('sip:'+channels.webrtc.hotline+'@'+serverUrl.host);
+	WebRTC.audiocall(defaults.channels.webcall.hotline);
+	// WebRTC.audiocall('sip:'+channels.webcall.hotline+'@'+serverUrl.host);
 }
 
 function initFallbackCall(){

@@ -334,7 +334,7 @@ __e( defaults.prefix ) +
 '-init-form" \n\t\t\t\t\tname="' +
 __e( defaults.prefix ) +
 'InitForm">\n\n\t\t\t\t\t';
- if(channels.webrtc) { ;
+ if(channels.webcall) { ;
 __p += ' \n\t\t\t\t\t\t<!-- Display call button if WebRTC is enabled and supported by the browser -->\n\t\t\t\t\t\t';
  if(defaults.webrtcEnabled) { ;
 __p += ' \n\t\t\t\t\t\t\t<button \n\t\t\t\t\t\t\t\ttype="button" \n\t\t\t\t\t\t\t\tclass="' +
@@ -354,7 +354,7 @@ __e( defaults.prefix ) +
 '-handler="initCall">\n\n\t\t\t\t\t\t\t\t' +
 __e( panels.CONNECTION_TYPES.call_agent_btn ) +
 '\n\n\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t\t<!-- If WebRTC is not supported and fallback is set -->\n\t\t\t\t\t\t';
- } else if(channels.webrtc.fallback && channels.webrtc.fallback.sipCall) { ;
+ } else if(channels.webcall.fallback && channels.webcall.fallback.sipCall) { ;
 __p += '\n\t\t\t\t\t\t\t<button \n\t\t\t\t\t\t\t\ttype="button" \n\t\t\t\t\t\t\t\tclass="' +
 __e( defaults.prefix ) +
 '-button ' +
@@ -842,9 +842,9 @@ __e( defaults.prefix ) +
 '-text-center">\n\t\t\t\t\t<h3>' +
 __e( panels.AUDIO_CALL_FALLBACK.DOWNLOAD_MSG ) +
 '</h3>\n\t\t\t\t\t<br>\n\t\t\t\t\t';
- if(channels.webrtc && channels.webrtc.fallback) { ;
+ if(channels.webcall && channels.webcall.fallback) { ;
 __p += '\n\t\t\t\t\t\t<a href="' +
-__e( channels.webrtc.fallback.sipCall ) +
+__e( channels.webcall.fallback.sipCall ) +
 '">call.jnlp</a>\n\t\t\t\t\t';
  } ;
 __p += '\n\t\t\t\t</div>\n\t\t\t\t<form>\n\t\t\t\t\t<hr>\n\t\t\t\t\t<a href="#chooseConnection" class="' +

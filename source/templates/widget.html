@@ -73,7 +73,7 @@
 					id="<%- defaults.prefix %>-init-form" 
 					name="<%- defaults.prefix %>InitForm">
 
-					<% if(channels.webrtc) { %> 
+					<% if(channels.webcall) { %> 
 						<!-- Display call button if WebRTC is enabled and supported by the browser -->
 						<% if(defaults.webrtcEnabled) { %> 
 							<button 
@@ -89,7 +89,7 @@
 
 							</button>
 							<!-- If WebRTC is not supported and fallback is set -->
-						<% } else if(channels.webrtc.fallback && channels.webrtc.fallback.sipCall) { %>
+						<% } else if(channels.webcall.fallback && channels.webcall.fallback.sipCall) { %>
 							<button 
 								type="button" 
 								class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
@@ -456,8 +456,8 @@
 				<div class="<%- defaults.prefix %>-text-center">
 					<h3><%- panels.AUDIO_CALL_FALLBACK.DOWNLOAD_MSG %></h3>
 					<br>
-					<% if(channels.webrtc && channels.webrtc.fallback) { %>
-						<a href="<%- channels.webrtc.fallback.sipCall %>">call.jnlp</a>
+					<% if(channels.webcall && channels.webcall.fallback) { %>
+						<a href="<%- channels.webcall.fallback.sipCall %>">call.jnlp</a>
 					<% } %>
 				</div>
 				<form>

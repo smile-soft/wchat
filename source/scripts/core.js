@@ -9,7 +9,7 @@ var _ = require('./lodash-fns');
 var inherits = require('inherits');
 var websocketTry = 1;
 var pollTurns = 1;
-var mainAddress = "main.ringotel.net/chatbot/WebChat/";
+// var mainAddress = "main.ringotel.net/chatbot/WebChat/";
 // var publicUrl = "https://main.ringotel.net/public/";
 var websocketUrl = "";
 var moduleInit = false;
@@ -32,17 +32,27 @@ function WchatAPI(options){
 	// extend default options
 	// with provided object
 	this.options = options || {};
-	this.options.serverUrl = this.options.server + '/ipcc/$$$';
+	this.options.serverUrl = this.options.server + '/ipcc/$$$'; // used for regular http requests
 	this.session = {};
 
-	if(!this.options.wsServer && !this.options.pageid) return console.error('Cannot initiate module: pageid is undefined');
+	// return console.error('Cannot initiate module: pageid is undefined');
+	websocketUrl = this.options.wsServer;
+	
+	if(this.options.pageid) {
+		websocketUrl += (websocketUrl[websocketUrl.length-1] !== '/' ? '/' : '') + this.options.pageid; // add forward slash at the end if necessary
+	}
 
-	websocketUrl = (this.options.wsServer ? this.options.wsServer : mainAddress);
-	websocketUrl += (websocketUrl[websocketUrl.length-1] !== '/' ? '/' : '') + this.options.pageid; // add forward slash at the end if necessary
+	if(!this.options.webcallOnly) {
+		this.createWebsocket({ server: websocketUrl, wsProtocol: 'json.api.smile-soft.com' });
+		this.on('session/create', this.onSessionCreate.bind(this));
 
-	this.createWebsocket();
+	} else {
+		setTimeout(function() {
+			this.emit('session/create', {});
+		}.bind(this), 200) 
 
-	this.on('session/create', this.onSessionCreate.bind(this));
+	}
+
 	// this.on('chat/close', function(data) {
 	// 	storage.saveState('chat', false, 'session');
 	// });
@@ -731,21 +741,26 @@ WchatAPI.prototype.getSidFromUrl = function(url) {
 	return substr;
 };
 
-WchatAPI.prototype.createWebsocket = function(host){
+WchatAPI.prototype.createWebsocket = function(params){
     // var protocol = (global.location.protocol === 'https:') ? 'wss:' : 'ws:';
-    var protocol = 'wss:';
-    var websocket = new WebSocket(protocol + '//'+websocketUrl,'json.api.smile-soft.com'); //Init Websocket handshake
+    var protocol = params.protocol || 'wss:';
+    var websocket = new WebSocket(protocol + '//'+params.server, params.wsProtocol); //Init Websocket handshake
 
     websocket.onopen = function(e){
         debug.log('WebSocket opened: ', e);
         websocketTry = 1;
         if(!moduleInit) {
-        	this.init();
+			this.init();
         }
     }.bind(this);
     websocket.onmessage = this.onWebsocketMessage.bind(this);
-    websocket.onclose = this.onWebsocketClose.bind(this);
     websocket.onerror = this.onError;
+    websocket.onclose = function(e) {
+    	setTimeout(function(){
+    	    websocketTry++;
+    	    this.createWebsocket(params);
+    	}.bind(this), generateInterval(websocketTry));
+    }.bind(this)
 
     global.onbeforeunload = function() {
         websocket.onclose = function () {}; // disable onclose handler first
@@ -756,14 +771,14 @@ WchatAPI.prototype.createWebsocket = function(host){
 
 }
 
-WchatAPI.prototype.onWebsocketClose = function(e) {
-    debug.log('WebSocket closed', e);
-    var time = generateInterval(websocketTry);
-    setTimeout(function(){
-        websocketTry++;
-        this.createWebsocket();
-    }.bind(this), time);
-}
+// WchatAPI.prototype.onWebsocketClose = function(e) {
+//     debug.log('WebSocket closed', e);
+//     var time = generateInterval(websocketTry);
+//     setTimeout(function(){
+//         websocketTry++;
+//         this.createWebsocket();
+//     }.bind(this), time);
+// }
 
 //Reconnection Exponential Backoff Algorithm taken from http://blog.johnryding.com/post/78544969349/how-to-reconnect-web-sockets-in-a-realtime-web-app
 function generateInterval (k) {

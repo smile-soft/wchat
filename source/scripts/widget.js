@@ -38,10 +38,14 @@ var defaults = {
 		webcall: {
 			sip: {
 				ws_servers: "wss://main.ringotel.net",
-				uri: "sip:operator@main.ringotel.net"
-			}
+				uri: "sip:0@main.ringotel.net"
+			},
+			hotline: "",
+			callerid: ""
 		},
-		callback: {}
+		callback: {
+			task: ""
+		}
 	},
 	cobrowsing: false, // enable cobrowsing feature
 	buttonSelector: "", // DOM element[s] selector that opens a widget
@@ -269,12 +273,6 @@ function initSession() {
 
 	debug.log('initSession: ', api, defaults, frases);
 
-	frases = (defaults.lang && frases[defaults.lang]) ? frases[defaults.lang] : frases[api.detectLanguage(frases)];
-
-	if(defaults.widget) {
-		api.on('widget/load', initWidget);
-	}
-
 	if(defaults.channels.callback.task) {
 		api.on('callback/create', onCallbackRequested);
 	}
@@ -300,6 +298,10 @@ function initSession() {
 		// if(window.location.protocol === 'https:' && serverUrl.protocol === 'https:'){
 			// set flag to indicate that webrtc feature is supported and enabled
 			defaults.webrtcEnabled = true;
+			
+			// set uri with custom caller ID (if defined)
+			if(defaults.channels.webcall.callerid) 
+				defaults.channels.webcall.sip.uri = setCallerId(defaults.channels.webcall.callerid, defaults.channels.webcall.sip.uri);
 
 			// set webrtc event handlers
 			api.on('webrtc/newRTCSession', function(){
@@ -307,6 +309,7 @@ function initSession() {
 			});
 			api.on('webrtc/progress', function(e){
 				if(e.response.status_code === 180) {
+					initCallState('confirmed');
 					initCallState('ringing');
 				} else {
 					initCallState('confirmed');
@@ -345,7 +348,14 @@ function initSession() {
 		}
 	}
 
+	if(defaults.webcallOnly && !defaults.webrtcEnabled) return 
 	
+	frases = (defaults.lang && frases[defaults.lang]) ? frases[defaults.lang] : frases[api.detectLanguage(frases)];
+
+	if(defaults.widget) {
+		api.on('widget/load', initWidget);
+	}
+
 	if(defaults.isIpcc) getLanguages();
 	if(defaults.buttonSelector) setHandlers(defaults.buttonSelector);
 	if(defaults.themeColor) {
@@ -2043,6 +2053,10 @@ function formatPhoneNumber(phone) {
 
 function isBrowserSupported() {
 	return document.body.classList !== undefined;
+}
+
+function setCallerId(callerid, uri) {
+	return ('sip:'+callerid+'@'+uri.split('@')[1]);
 }
 
 function addEvent(obj, evType, fn) {

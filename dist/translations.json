@@ -208,10 +208,10 @@
     			"confirm_access": "Пожалуйста, подтвердите доступ к микрофону",
     			"calling_agent": "Идет вызов",
     			"connected_with_agent": "Вызов соединен",
-    			"call_ended": "Вызов завешен",
+    			"call_ended": "Вызов завершен",
     			"call_failed": "Сбой вызова \n Пожалуйста, попробуйте позже",
     			"call_canceled": "Вызов отменен",
-    			"end_call": "Заверший вызов",
+    			"end_call": "Завершить вызов",
     			"try_again": "Попробовать еще раз"
     		},
             "AUDIO_CALL_FALLBACK": {

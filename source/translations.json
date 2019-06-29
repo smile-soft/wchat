@@ -4,11 +4,11 @@
     	"default_user_name": "Ви",
     	"default_offer": "Ласкаво просимо, потрібна допомога?",    	
     	"TOP_BAR": {
-    		"title": "Онлайн чат",
+    		"title": "Підтримка в чаті",
             "close": "Закрити",
             "STATUS": {
-                "online": "Онлайн",
-                "offline": "Офлайн"
+                "online": "в мережі",
+                "offline": "не в мережі"
             }
     	},
     	"PANELS": {
@@ -39,7 +39,7 @@
     			}
     		},
     		"OFFLINE": {
-    			"offline_message": "Наразі ми оффлайн, будь ласка, залиште нам повідомлення, ми зв'яжемося з Вами найближчим часом",
+    			"offline_message": "Наразі ми офлайн, будь ласка, залиште нам повідомлення, ми зв'яжемося з Вами найближчим часом",
     			"send_message_header": "Відправити повідомлення",
 				"send_message_button": "Відправити",
                 "choose_file": "+ Додати файл...",
@@ -147,11 +147,11 @@
     	"default_user_name": "Вы",
     	"default_offer": "Добро пожаловать, нужна помощь?",
     	"TOP_BAR": {
-    		"title": "Онлайн чат",
+    		"title": "Поддержка в чате",
             "close": "Закрыть",
             "STATUS": {
-                "online": "Онлайн",
-                "offline": "Офлайн"
+                "online": "в сети",
+                "offline": "не в сети"
             }
     	},
     	"PANELS": {
@@ -293,8 +293,8 @@
 			"title": "Live chat",
             "close": "Close",
             "STATUS": {
-                "online": "Online",
-                "offline": "Offline"
+                "online": "online",
+                "offline": "offline"
             }
 		},
 		"PANELS": {

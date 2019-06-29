@@ -789,7 +789,8 @@
       background-color: #fff;
       border: 1px solid #BBBBBB;
       border-radius: 4px;
-      box-shadow: none; }
+      box-shadow: none;
+      color: #222; }
     .swc-wg-panes .swc-wg-pane form input[type="checkbox"] {
       margin: 0; }
     .swc-wg-panes .swc-wg-pane form textarea {

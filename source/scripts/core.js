@@ -27,13 +27,13 @@ inherits(WchatAPI, EventEmitter);
 
 module.exports = WchatAPI;
 
-function WchatAPI(options){
+function WchatAPI(options, session){
 
 	// extend default options
 	// with provided object
 	this.options = options || {};
 	this.options.serverUrl = this.options.server + '/ipcc/$$$'; // used for regular http requests
-	this.session = {};
+	this.session = session || {};
 
 	// return console.error('Cannot initiate module: pageid is undefined');
 	websocketUrl = this.options.wsServer;
@@ -69,12 +69,12 @@ WchatAPI.prototype.onError = function(err){
 
 WchatAPI.prototype.onSessionCreate = function(data){
 	this.session = _.merge(this.session, data);
-	storage.saveState('sid', data.sid);
-	// this.setSessionTimeout();
+	// storage.saveState('sid', data.sid);
+	this.setSessionTimeout(this.session.sessionTimeout);
 }
 
-WchatAPI.prototype.setSessionTimeout = function(){
-	var timeout = this.session.sessionTimeout;
+WchatAPI.prototype.setSessionTimeout = function(value){
+	var timeout = value || this.session.sessionTimeout;
 	clearTimeout(sessionTimeout);
 	if(timeout)
 		sessionTimeout = setTimeout(this.onSessionTimeout.bind(this), timeout*1000);
@@ -100,7 +100,10 @@ WchatAPI.prototype.onWebsocketMessage = function(e){
 	
 	if(data.method) {
 		if(data.method === 'session') {
-			this.emit('session/create', data.params);
+			if(data.params.reason && data.params.reason === 1)
+				this.emit('session/queue_timeout');
+			else
+				this.emit('session/create', data.params);
 
 		} else if(data.method === 'messages') {
 			if(data.params.list) {
@@ -116,7 +119,7 @@ WchatAPI.prototype.onWebsocketMessage = function(e){
 				this.emit('message/typing');
 			} else {
 				this.emit('message/new', data.params);
-				this.setSessionTimeout();
+				this.setSessionTimeout(this.session.sessionTimeout);
 			}
 
 		} else if(data.method === 'openShare') { // Agent ---> User
@@ -169,11 +172,14 @@ WchatAPI.prototype.onWebsocketMessage = function(e){
 WchatAPI.prototype.init = function(){
 	moduleInit = true;
 
-	var entity = storage.getState('entity', 'session'),
-		sid = storage.getState('sid');
+	var entity = this.session.entity || "",
+		sid = this.session.sid,
 		strIndex = url.href.indexOf('chatSessionId');
 
-	debug.log('initModule: ', this.session, entity, sid);
+	this.session.sid = sid;
+	this.session.entity = entity;
+
+	// debug.log('initModule: ', this.session, entity, sid);
 
 	// A chatSessionId parameter in the url query 
 	// indicates that the web page was opened by agent.
@@ -184,21 +190,18 @@ WchatAPI.prototype.init = function(){
 		var cleanUrl = url.href.substr(0, strIndex);
 		cleanUrl = cleanUrl[cleanUrl.length-1] === '?' ? cleanUrl.substr(0, cleanUrl.length-1) : cleanUrl;
 
-		storage.saveState('sid', sid);
+		// storage.saveState('sid', sid);
 		this.joinSession(cleanUrl);
 
 	} else if(entity === 'agent') { // In case the cobrowsing session is active
-		sid = storage.getState('sid');
+		// sid = storage.getState('sid');
 		this.joinSession(url.href);
 
 	} else {
 		entity = 'user';
 		this.createSession({ sid: sid, url: url.href });
 	}
-
-	this.session.sid = sid;
-	this.session.entity = entity;
-	storage.saveState('entity', entity, 'session');
+	// storage.saveState('entity', entity, 'session');
 
 };
 
@@ -214,12 +217,12 @@ WchatAPI.prototype.createSession = function(params){
 	var data = {
 		method: 'createSession',
 		params: {
-			url: (params.url || url.href),
-			lang: this.detectLanguage()
+			url: ((params && params.url) ? params.url : url.href)
+			// lang: params.lang
 		}
 	};
 
-	if(params.sid) data.params.sid = params.sid;
+	if(params && params.sid) data.params.sid = params.sid;
 
 	if(this.websocket) {
 		return this.sendData(data);
@@ -330,7 +333,7 @@ WchatAPI.prototype.chatRequest = function(params, cb){
 		params: params
 	};
 
-	this.setSessionTimeout();
+	// this.setSessionTimeout();
 
 	if(this.websocket) {
 		return this.sendData(data);
@@ -428,7 +431,7 @@ WchatAPI.prototype.sendMessage = function(params, cb){
 	};
 
 	// reset session timeout
-	this.setSessionTimeout();
+	this.setSessionTimeout(this.session.sessionTimeout);
 
 	if(this.websocket) {
 		if(params.file) {
@@ -698,43 +701,6 @@ WchatAPI.prototype.linkFollowed = function(url){
 	}.bind(this));
 };
 
-WchatAPI.prototype.detectLanguage = function(frases){
-	var storageLang = storage.getState('lang', 'session'),
-		availableLangs = [], lang, path;
-
-	// list available languages by translations keys
-	for(var key in frases) {
-		availableLangs.push(key);
-	}
-
-	if(storageLang) {
-		lang = storageLang;
-	} else if(this.session.lang) {
-		lang = this.session.lang;
-	} else if(this.session.properties && this.session.properties.lang) {
-		lang = this.session.properties.lang;
-	} else if(this.session.langFromUrl || (this.session.properties && this.session.properties.langFromUrl)) {
-
-		url.pathname
-		.split('/')
-		.map(function(item) {
-			item = handleAliases(item);
-			if(availableLangs.indexOf(item) !== -1) {
-				lang = item;
-			}
-
-			return item;
-		});
-	}
-
-	if(!lang) lang = (navigator.language || navigator.userLanguage).split('-')[0];
-	if(availableLangs.indexOf(lang) === -1) lang = 'en';
-
-	debug.log('detected lang: ', availableLangs, storageLang, this.session.lang, this.session.langFromUrl, lang);
-	this.session.lang = lang;
-	return lang;
-};
-
 WchatAPI.prototype.getSidFromUrl = function(url) {
 	var substr = url.substring(url.indexOf('chatSessionId='));
 	substr = substr.substring(substr.indexOf('=')+1);
@@ -790,13 +756,6 @@ function generateInterval (k) {
   
     // generate the interval to a random number between 0 and the maxInterval determined from above
     return Math.random() * maxInterval;
-}
-
-function handleAliases(alias) {
-	var lang = alias;
-	if(alias === 'ua') lang = 'uk';
-	else if(alias === 'us' || alias === 'gb') lang = 'en';
-	return lang;
 }
 
 function toFormData(obj) {

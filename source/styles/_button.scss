@@ -10,7 +10,7 @@
 
 	.swc-wg-btn {
 		display: inline-block;
-		box-shadow: 0px 0px 20px 6px rgba(0, 0, 0, 0.15);
+		box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.5);
 		border-radius: $btn-border-radius;
 		width: $btn-width;
 		height: $btn-height;
@@ -24,22 +24,26 @@
 
 		.swc-btn-link {
 			position: relative;
-			width: $btn-width;
-			height: $btn-height;
+			width: $btn-link-width;
+			height: $btn-link-height;
 			text-align: center;
 			text-decoration: none;
 		}
 
 		.swc-btn-icon {
 			position: absolute;
-			font-size: 36px;
-			left: 7.7px;
-			top: 8.7px;
+			font-size: 80px;
+			left: -10px;
+			top: -15px;
 			color: $btn-icon-color;
 			@include transition(color 0.4s);
 			// padding: 10px;
 			// width: $btn-width;
 			// height: $btn-height;
+		}
+
+		.swc-btn-icon:before {
+			content: $btn-icon;
 		}
 		// .swc-btn-icon:before {
 		// 	content: $btn-icon-offline;
@@ -111,7 +115,7 @@
 	    top: -40px;
 	    right: 0;
 	    margin: 5px;
-	    padding: 5px 10px;
+	    padding: 3px;
 	    text-align: center;
 	    border-radius: 50px;
 	    background-color: #777;

@@ -2,7 +2,7 @@
 	<span class="<%- defaults.prefix %>-message-from"><%- message.from %></span>
 	<div class="<%- defaults.prefix %>-message-content"
 		<% if(message.entity !== "user") { %> 
-			style="border-color:<%= defaults.styles.primary.backgroundColor %>" 
+			style="border-color:<%= defaults.styles.backgroundColor %>" 
 		<% } %>>
 		<p><%= message.content %></p>
 	</div>

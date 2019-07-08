@@ -1,6 +1,7 @@
 <% var frases = translations; %>
 <% var panels = frases.PANELS; %>
 <% var channels = defaults.channels; %>
+<% var channelsObject = defaults.channelsObject; %>
 <% var positionClass = defaults.position === 'right' ? 'position-right' : 'position-left' %>
 <div id="<%- defaults.prefix %>-wg-cont" class="<%- defaults.prefix %>-wg-cont <%- positionClass %>">
 
@@ -13,7 +14,7 @@
 		<!-- ***** Top bar ***** -->
 		<div 
 			class="<%- defaults.prefix %>-top-bar" 
-			style="background: <%- defaults.styles.primary.backgroundColor %>; color: <%- defaults.styles.primary.color %>;">
+			style="background: <%- defaults.styles.backgroundColor %>; color: <%- defaults.styles.color %>;">
 
 			<!-- Main title -->
 			<h4 class="<%- defaults.prefix %>-wg-title <%- defaults.prefix %>-uppercase">
@@ -38,7 +39,7 @@
 				
 				<a 
 					href="#" 
-					style="color: <%- defaults.styles.primary.color %>"
+					style="color: <%- defaults.styles.color %>"
 					data-<%- defaults.prefix %>-handler="closeWidget"
 					<span class="<%- defaults.prefix %>-icon-close"></span>
 
@@ -54,11 +55,7 @@
 			data-<%- defaults.prefix %>-pane="chooseConnection">
 			
 			<!-- Panel's image container -->
-			<div 
-				class="<%- defaults.prefix %>-pane-header <%- defaults.prefix %>-dark" 
-				<% if(defaults.styles.intro.backgroundImage) { %> 
-					style="background-image: url(<%- defaults.clientPath %><%- defaults.styles.intro.backgroundImage %>)" 
-				<% } %>>
+			<div class="<%- defaults.prefix %>-pane-header <%- defaults.prefix %>-dark">
 
 				<!-- The text displayed on image -->
 				<div class="<%- defaults.prefix %>-backdrop-cont <%- defaults.prefix %>-white">
@@ -73,64 +70,57 @@
 					id="<%- defaults.prefix %>-init-form" 
 					name="<%- defaults.prefix %>InitForm">
 
-					<% if(channels.webcall) { %> 
-						<!-- Display call button if WebRTC is enabled and supported by the browser -->
-						<% if(defaults.webrtcEnabled) { %> 
+					<% _.forEach(channels, function(channel) { %>
+
+						<% if(channel.link) { %>
+
+							<a 
+								href="<%- channel.link %>" 
+								target="<% if(channel.link.indexOf('http') !== -1) { %>_blank<% } else { %>_self<% } %>"
+								class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
+								style="
+									background: <%- channel.backgroundColor || '#fff' %>; 
+									color: #222;"
+								>
+
+								<span class="<%- defaults.prefix %>-icon-<%= channel.iconClass %>"></span>
+								<span><%= channel.btnText %></span>
+
+							</a>
+
+						<% } else { %>
+
 							<button 
 								type="button" 
 								class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
 								style="
-									background: <%- defaults.styles.primary.backgroundColor %>; 
-									color: <%- defaults.styles.primary.color %>; 
-									border: 1px solid <%- defaults.styles.primary.color %>;"
-								data-<%- defaults.prefix %>-handler="initCall">
+									background: <%- channel.backgroundColor || '#fff' %>; 
+									color: <%- channel.color || '#222' %>;"
+								data-<%- defaults.prefix %>-handler="<%- channel.callback %>">
 
-								<%- panels.CONNECTION_TYPES.call_agent_btn %>
-
-							</button>
-							<!-- If WebRTC is not supported and fallback is set -->
-						<% } else if(channels.webcall.fallback && channels.webcall.fallback.sipCall) { %>
-							<button 
-								type="button" 
-								class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
-								style="
-									background: <%- defaults.styles.primary.backgroundColor %>; 
-									color: <%- defaults.styles.primary.color %>; 
-									border: 1px solid <%- defaults.styles.primary.color %>;"
-								data-<%- defaults.prefix %>-handler="initFallbackCall">
-
-								<%- panels.CONNECTION_TYPES.call_agent_btn %>
+								<span class="<%- defaults.prefix %>-icon-<%= channel.iconClass %>"></span>
+								<span><%= channel.btnText %></span>
 
 							</button>
+
 						<% } %>
-					<% } %>
 
-					<!-- Display callback button if callback task is configured in the settings -->
-					<% if(channels.callback && channels.callback.task) { %>
-						<button 
-							type="button" 
-							class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
-							style="
-								background: <%- defaults.styles.primary.backgroundColor %>; 
-								color: <%- defaults.styles.primary.color %>; 
-								border: 1px solid <%- defaults.styles.primary.color %>;"
-							data-<%- defaults.prefix %>-handler="initCallback">
-
-							<%- panels.CONNECTION_TYPES.callback_btn %>
-
-						</button>
-					<% } %>
+					<% }) %>
 
 					<!-- Init chat button -->
 					<% if(defaults.chat) { %>
 					<button
 						type="button" 
 						class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
-						style="background: <%- defaults.styles.primary.backgroundColor %>; color: <%- defaults.styles.primary.color %>; border: 1px solid <%- defaults.styles.primary.color %>;"
+						style="background: #fff; color: #222;"
 						data-<%- defaults.prefix %>-handler="initChat">
-						<%- panels.CONNECTION_TYPES.chat_agent_btn %>
+
+						<span class="<%- defaults.prefix %>-icon-forum"></span>
+						<span><%- panels.CONNECTION_TYPES.chat_agent_btn %></span>
 					</button>
 					<% } %>
+					
+					<hr>
 
 					<!-- Close widget button -->
 					<a href="#" class="<%- defaults.prefix %>-button <%- defaults.prefix %>-block" data-<%- defaults.prefix %>-handler="closeWidget"><%- panels.CONNECTION_TYPES.cancel %></a>
@@ -146,11 +136,7 @@
 				data-<%- defaults.prefix %>-pane="credentials">
 
 				<!-- Panel's image container -->
-				<div 
-					class="<%- defaults.prefix %>-pane-header <%- defaults.prefix %>-dark" 
-					<% if(defaults.styles.intro.backgroundImage) { %> 
-						style="background-image: url(<%- defaults.clientPath %><%- defaults.styles.intro.backgroundImage %>)" 
-					<% } %>>
+				<div class="<%- defaults.prefix %>-pane-header <%- defaults.prefix %>-dark">
 
 					<!-- The text displayed on image -->
 					<div class="<%- defaults.prefix %>-backdrop-cont <%- defaults.prefix %>-white">
@@ -217,9 +203,8 @@
 							type="submit" 
 							class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
 							style="
-								background: <%- defaults.styles.primary.backgroundColor %>; 
-								color: <%- defaults.styles.primary.color %>; 
-								border: 1px solid <%- defaults.styles.primary.color %>;">
+								background: <%- defaults.styles.backgroundColor %>; 
+								color: <%- defaults.styles.color %>;">
 
 							<%- panels.INTRO.start_dialog_button %>
 									
@@ -254,7 +239,7 @@
 					<a href="#" class="<%- defaults.prefix %>-end-dialog-btn" data-<%- defaults.prefix %>-handler="finish"><%- panels.MESSAGES.end_dialog %></a>
 					<a href="#" class="<%- defaults.prefix %>-trigger-sounds-btn" data-<%- defaults.prefix %>-handler="triggerSounds">
 						<span 
-							class="<% if(defaults.sounds) { %><%- defaults.prefix %>-icon-bell<% } else { %><%- defaults.prefix%>-icon-bell-slash<% } %>">
+							class="<% if(defaults.sounds) { %><%- defaults.prefix %>-icon-notifications<% } else { %><%- defaults.prefix%>-icon-notifications_off<% } %>">
 						</span>
 					</a>
 				</div>
@@ -276,8 +261,8 @@
 						id="<%- defaults.prefix %>-file-select">
 					
 					<span 
-						class="<%- defaults.prefix %>-icon-upload" 
-						style="color: <%- defaults.styles.primary.backgroundColor %>">
+						class="<%- defaults.prefix %>-icon-file_upload" 
+						style="color: <%- defaults.styles.backgroundColor %>">
 					</span>
 
 				</label>
@@ -298,8 +283,8 @@
 					data-<%- defaults.prefix %>-handler="sendMessage">
 
 					<span 
-						class="<%- defaults.prefix %>-icon-paper-plane" 
-						style="color: <%- defaults.styles.primary.backgroundColor %>">
+						class="<%- defaults.prefix %>-icon-send" 
+						style="color: <%- defaults.styles.backgroundColor %>">
 					</span>
 				</a>
 
@@ -313,11 +298,7 @@
 			data-<%- defaults.prefix %>-pane="sendemail">
 
 			<!-- Panel's image container -->
-			<div 
-				class="<%- defaults.prefix %>-pane-header <%- defaults.prefix %>-dark" 
-				<% if(defaults.styles.sendmail.backgroundImage) { %> 
-					style="background-image: url(<%- defaults.clientPath %><%- defaults.styles.sendmail.backgroundImage %>)" 
-				<% } %>>
+			<div class="<%- defaults.prefix %>-pane-header <%- defaults.prefix %>-dark">
 
 				<!-- The text displayed on image -->
 				<div class="<%- defaults.prefix %>-backdrop-cont <%- defaults.prefix %>-dark">
@@ -341,9 +322,8 @@
 						type="submit" 
 						class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
 						style="
-							background: <%- defaults.styles.primary.backgroundColor %>; 
-							color: <%- defaults.styles.primary.color %>; 
-							border: 1px solid <%- defaults.styles.primary.color %>;">
+							background: <%- defaults.styles.backgroundColor %>; 
+							color: <%- defaults.styles.color %>; ">
 
 						<%- panels.OFFLINE.send_message_button %>
 							
@@ -362,27 +342,13 @@
 			data-<%- defaults.prefix %>-pane="closechat">
 
 			<!-- Panel's image container -->
-			<div 
-				class="<%- defaults.prefix %>-pane-header <%- defaults.prefix %>-white" 
-				<% if(defaults.styles.closeChat.backgroundImage) { %> 
-					style="background-image: url(<%- defaults.clientPath %><%- defaults.styles.closeChat.backgroundImage %>)" 
-				<% } %>>
-
-				<!-- The text displayed on image -->
-				<div class="<%- defaults.prefix %>-backdrop-cont <%- defaults.prefix %>-white">
-					<br>
-					<p><%- panels.CLOSE_CHAT.close_chat_header %></p>
-				</div>
+			<div class="<%- defaults.prefix %>-pane-header <%- defaults.prefix %>-white">
 
 			</div>
 
 			<div class="<%- defaults.prefix %>-pane-body">
 				<form id="<%- defaults.prefix %>-closechat-form" data-validate-form="true">
-					<label for="<%- defaults.prefix %>-send-dialog">
-						<input type="checkbox" name="sendDialog" id="<%- defaults.prefix %>-send-dialog" />
-						<span><%- panels.CLOSE_CHAT.send_dialog_label %></span>
-					</label>
-					<input type="email" name="email" placeholder="<%- panels.CLOSE_CHAT.PLACEHOLDERS.email %>">
+					<p><%- panels.CLOSE_CHAT.close_chat_header %></p>
 					<select name="rating">
 						<option value="">--- <%- panels.CLOSE_CHAT.rate_agent %> ---</option>
 						<option value="5"><%- frases.AGENT_RATES.excellent %></option>
@@ -391,15 +357,21 @@
 						<option value="2"><%- frases.AGENT_RATES.bad %></option>
 					</select>
 					<textarea placeholder="<%- panels.CLOSE_CHAT.PLACEHOLDERS.comment %>" name="text" maxlength="1500"></textarea>
+					<input type="email" name="email" placeholder="<%- panels.CLOSE_CHAT.PLACEHOLDERS.email %>">
+					<label for="<%- defaults.prefix %>-send-dialog">
+						<input type="checkbox" name="sendDialog" id="<%- defaults.prefix %>-send-dialog" />
+						<span><%- panels.CLOSE_CHAT.send_dialog_label %></span>
+					</label>
+
+					<hr>
 
 					<!-- End chat and close widget button -->
 					<button 
 						type="submit" 
 						class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 
 						style="
-							background: <%- defaults.styles.primary.backgroundColor %>; 
-							color: <%- defaults.styles.primary.color %>; 
-							border: 1px solid <%- defaults.styles.primary.color %>;">
+							background: <%- defaults.styles.backgroundColor %>; 
+							color: <%- defaults.styles.color %>; ">
 
 						<%- panels.CLOSE_CHAT.finish_dialog_button %>
 							
@@ -433,7 +405,7 @@
 						id="<%- defaults.prefix %>-tryagain-btn"
 						type="button"
 						class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block <%- defaults.prefix %>-hidden"
-						style="background: <%- defaults.styles.primary.backgroundColor %>; color: <%- defaults.styles.primary.color %>; border: 1px solid <%- defaults.styles.primary.color %>;"
+						style="background: <%- defaults.styles.backgroundColor %>; color: <%- defaults.styles.color %>; "
 						data-<%- defaults.prefix %>-handler="initCall">
 						<%- panels.AUDIO_CALL.try_again %>
 					</button>	
@@ -456,8 +428,8 @@
 				<div class="<%- defaults.prefix %>-text-center">
 					<h3><%- panels.AUDIO_CALL_FALLBACK.DOWNLOAD_MSG %></h3>
 					<br>
-					<% if(channels.webcall && channels.webcall.fallback) { %>
-						<a href="<%- channels.webcall.fallback.sipCall %>">call.jnlp</a>
+					<% if(channelsObject.webcall && channelsObject.webcall.fallback) { %>
+						<a href="<%- channelsObject.webcall.fallback.sipCall %>">call.jnlp</a>
 					<% } %>
 				</div>
 				<form>
@@ -483,7 +455,7 @@
 					</h3>
 				</div>
 				<form id="<%- defaults.prefix %>-callback-settings">
-					<% if(channels.callback && channels.callback.time !== false) { %>
+					<% if(channelsObject.callback && channelsObject.callback.time !== false) { %>
 						<p class="<%- defaults.prefix %>-text-center"><%- panels.CALLBACK.title %></p>
 					<% } else { %>
 						<p class="<%- defaults.prefix %>-text-center"><%- panels.CALLBACK.title_asap %></p>
@@ -491,7 +463,7 @@
 					<hr>
 					<label><%- panels.CALLBACK.LABELS.phone %></label>
 					<input type="tel" name="phone" placeholder="<%- panels.CALLBACK.PLACEHOLDERS.phone %>" required>
-					<% if(channels.callback && channels.callback.time !== false) { %>
+					<% if(channelsObject.callback && channelsObject.callback.time !== false) { %>
 						<label><%- panels.CALLBACK.LABELS.time %></label>
 						<select name="time">
 							<% _.forEach(panels.CALLBACK.TIME_POINTS, function(point) { %>
@@ -499,7 +471,7 @@
 							<% }); %>
 						</select>
 					<% } %>
-					<% if(channels.callback && channels.callback.message !== undefined) { %>
+					<% if(channelsObject.callback && channelsObject.callback.message !== undefined) { %>
 						<label><%- panels.CALLBACK.LABELS.message %></label>
 						<textarea name="message" placeholder="<%- panels.CALLBACK.PLACEHOLDERS.message %>" maxlength="1500"></textarea>
 					<% } %>
@@ -509,9 +481,8 @@
 						type="submit"
 						class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block"
 						style="
-							background: <%- defaults.styles.primary.backgroundColor %>; 
-							color: <%- defaults.styles.primary.color %>; 
-							border: 1px solid <%- defaults.styles.primary.color %>;"
+							background: <%- defaults.styles.backgroundColor %>; 
+							color: <%- defaults.styles.color %>;"
 						data-<%- defaults.prefix %>-handler="setCallback">
 
 						<%- panels.CALLBACK.confirm_callback %>
@@ -529,7 +500,7 @@
 			<div class="<%- defaults.prefix %>-pane-body">
 				<div id="<%- defaults.prefix %>-callback-sent">
 					<h3 class="<%- defaults.prefix %>-text-center <%- defaults.prefix %>-icon-check <%- defaults.prefix %>-text-success"></h3>
-					<% if(channels.callback && channels.callback.time !== false) { %>
+					<% if(channelsObject.callback && channelsObject.callback.time !== false) { %>
 						<p class="<%- defaults.prefix %>-text-center"><%- panels.CALLBACK.request_sent %></p>
 					<% } else { %>
 						<p class="<%- defaults.prefix %>-text-center"><%- panels.CALLBACK.request_sent_asap %></p>
@@ -549,7 +520,13 @@
 
 	<!-- ***** Floating button container ***** -->
 	<div id="<%- defaults.prefix %>-btn-cont" class="<%- defaults.prefix %>-btn-cont">
-		<div class="<%- defaults.prefix %>-wg-btn">
+		<div 
+			class="<%- defaults.prefix %>-wg-btn" 
+			style="
+				background: <%- defaults.buttonStyles.backgroundColor %>;
+				box-shadow: <%- defaults.buttonStyles.boxShadow %>;
+				border: <%- defaults.buttonStyles.border %>"
+		>
 			<div class="<%- defaults.prefix %>-lastmsg-cont">
 				<span class="<%- defaults.prefix %>-unnotify-btn" id="<%- defaults.prefix %>-unnotify-btn"><span class="<%- defaults.prefix %>-icon-close"></span></span>
 				<!-- <span class="<%- defaults.prefix %>-unnotify-btn" id="<%- defaults.prefix %>-unnotify-btn"><%- frases.FLOATING_BUTTON.close %></span> -->
@@ -557,7 +534,10 @@
 				</div>	
 			</div>
 			<a href="#" class="<%- defaults.prefix %>-btn-link">
-				<span class="<%- defaults.prefix %>-btn-icon"></span>
+				<span 
+					class="<%- defaults.prefix %>-btn-icon"
+					style="color: <%- defaults.buttonStyles.color %>;"
+				></span>
 			</a>
 		</div>
 	</div>

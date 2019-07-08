@@ -13,7 +13,7 @@
     	},
     	"PANELS": {
     		"CONNECTION_TYPES": {
-    			"choose_conn_type": "Будь ласка, виберіть тип з'єднання",
+    			"choose_conn_type": "Як Ви бажаєте з нами зв'язатися?",
                 "call_agent_btn": "Виклик агента",
     			"callback_btn": "Передзвоніть мені",
     			"chat_agent_btn": "Почати чат",
@@ -56,6 +56,7 @@
     			"finish_dialog_button": "Закінчити діалог",
     			"rate_agent": "Оцінити роботу оператора",
     			"back": "Назад",
+                "new_chat": "Почати новий чат",
     			"PLACEHOLDERS": {
     				"email": "Ваша електронна адреса",
 					"comment": "Будь ласка, залиште тут свій коментар..."
@@ -156,7 +157,7 @@
     	},
     	"PANELS": {
     		"CONNECTION_TYPES": {
-    			"choose_conn_type": "Пожалуйста, выберите способ соединения",
+    			"choose_conn_type": "Как Вы хотите с нами связаться?",
                 "call_agent_btn": "Вызов агента",
     			"callback_btn": "Перезвоните мне",
     			"chat_agent_btn": "Начать чат",
@@ -199,6 +200,7 @@
     			"finish_dialog_button": "Завершить диалог",
     			"rate_agent": "Оценить работу оператора",
     			"back": "Назад",
+                "new_chat": "Начать новый чат",
     			"PLACEHOLDERS": {
     				"email": "Ваш электронный адрес",
     				"comment": "Пожалуйста, оставьте здесь свой комментарий..."
@@ -299,7 +301,7 @@
 		},
 		"PANELS": {
 			"CONNECTION_TYPES": {
-				"choose_conn_type": "Please, choose a connection type",
+				"choose_conn_type": "How do you want to contact us?",
                 "call_agent_btn": "Call agent",
 				"callback_btn": "Call me",
 				"chat_agent_btn": "Start chat",
@@ -342,6 +344,7 @@
 				"finish_dialog_button": "End dialog",
 				"rate_agent": "Rate agent service",
 				"back": "Back",
+                "new_chat": "Start new chat",
 				"PLACEHOLDERS": {
 					"email": "Your email",
 					"comment": "Please, leave your comment here..."

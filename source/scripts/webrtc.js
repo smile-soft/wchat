@@ -123,10 +123,9 @@ function createRemoteAudio(){
 	return el;
 }
 
-function init(opts){
-	debug.log('Initiating WebRTC module:', opts);
+function init(options){
+	debug.log('Initiating WebRTC module:', options);
 	JsSIP = global.JsSIP;
-	options = opts;
 
 	debug.log('JsSIP: ', global, JsSIP);
 
@@ -135,8 +134,8 @@ function init(opts){
 	options.sip.sockets = [socket];
 
 	// !!get rid of this!!
-	events.emit = opts.emit;
-	events.on = opts.on;
+	events.emit = options.emit;
+	events.on = options.on;
 	// !!get rid of this!!
 
 	options.audioRemote = createRemoteAudio();

@@ -1,7 +1,7 @@
 @charset "UTF-8";
 @font-face {
   font-family: 'wchat';
-  src: url("fonts/wchat.ttf?b5ikya") format("truetype"), url("fonts/wchat.woff?b5ikya") format("woff"), url("fonts/wchat.svg?b5ikya#wchat") format("svg");
+  src: url("fonts/wchat.ttf?fbiyd8") format("truetype"), url("fonts/wchat.woff?fbiyd8") format("woff"), url("fonts/wchat.svg?fbiyd8#icomoon") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -14,69 +14,229 @@
   font-variant: normal;
   text-transform: none;
   line-height: 1;
+  vertical-align: middle;
+  font-size: 1.5em;
   /* Better Font Rendering =========== */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; }
 
-.swc-icon-check:before {
-  content: "\f00c"; }
+.swc-icon-ringotel_emblem:before {
+  content: "\e933"; }
 
-.swc-icon-close:before {
-  content: "\f00d"; }
+.swc-icon-livechat_email:before {
+  content: "\e900"; }
 
-.swc-icon-remove:before {
-  content: "\f00d"; }
+.swc-icon-livechat_newmessage:before {
+  content: "\e901"; }
 
-.swc-icon-times:before {
-  content: "\f00d"; }
+.swc-icon-livechat_chat:before {
+  content: "\e902"; }
 
-.swc-icon-cog:before {
-  content: "\f013"; }
+.swc-icon-livechat_ongoing:before {
+  content: "\e903"; }
 
-.swc-icon-gear:before {
-  content: "\f013"; }
-
-.swc-icon-upload:before {
-  content: "\f093"; }
-
-.swc-icon-bell:before {
-  content: "\f0f3"; }
+.swc-icon-livechat_call:before {
+  content: "\e904"; }
 
 .swc-icon-spinner:before {
   content: "\f110"; }
 
-.swc-icon-paper-plane:before {
-  content: "\f1d8"; }
+.swc-icon-facebook:before {
+  content: "\e905";
+  color: #4172b8; }
+
+.swc-icon-instagram:before {
+  content: "\e934";
+  color: #e4405f; }
+
+.swc-icon-messenger:before {
+  content: "\e906";
+  color: #00b2ff; }
+
+.swc-icon-skype:before {
+  content: "\e907";
+  color: #00aff0; }
+
+.swc-icon-telegram:before {
+  content: "\e908";
+  color: #2ca5e0; }
+
+.swc-icon-twitter:before {
+  content: "\e909";
+  color: #1da1f2; }
+
+.swc-icon-viber:before {
+  content: "\e90a";
+  color: #665cac; }
+
+.swc-icon-whatsapp:before {
+  content: "\e90b";
+  color: #25d366; }
+
+.swc-icon-mic:before {
+  content: "\e90c"; }
+
+.swc-icon-mic_off:before {
+  content: "\e90d"; }
+
+.swc-icon-new_releases:before {
+  content: "\e930"; }
+
+.swc-icon-videocam:before {
+  content: "\e90e"; }
+
+.swc-icon-videocam_off:before {
+  content: "\e90f"; }
+
+.swc-icon-volume_off:before {
+  content: "\e910"; }
+
+.swc-icon-volume_up:before {
+  content: "\e911"; }
+
+.swc-icon-video_call:before {
+  content: "\e912"; }
+
+.swc-icon-call:before {
+  content: "\e913"; }
+
+.swc-icon-call_end:before {
+  content: "\e914"; }
+
+.swc-icon-dialpad:before {
+  content: "\e915"; }
+
+.swc-icon-email:before {
+  content: "\e916"; }
+
+.swc-icon-mail:before {
+  content: "\e916"; }
+
+.swc-icon-markunread:before {
+  content: "\e916"; }
+
+.swc-icon-local_post_office:before {
+  content: "\e916"; }
+
+.swc-icon-forum:before {
+  content: "\e917"; }
+
+.swc-icon-question_answer:before {
+  content: "\e917"; }
+
+.swc-icon-chat_bubble:before {
+  content: "\e931"; }
+
+.swc-icon-voicemail:before {
+  content: "\e918"; }
+
+.swc-icon-add:before {
+  content: "\e919"; }
+
+.swc-icon-clear:before {
+  content: "\e91a"; }
+
+.swc-icon-close:before {
+  content: "\e91a"; }
 
 .swc-icon-send:before {
-  content: "\f1d8"; }
+  content: "\e91b"; }
 
-.swc-icon-bell-slash:before {
-  content: "\f1f6"; }
+.swc-icon-attach_file:before {
+  content: "\e91c"; }
 
-.swc-icon-trash:before {
-  content: "\f1f8"; }
+.swc-icon-file_download:before {
+  content: "\e91d"; }
 
-.swc-icon-mouse-pointer:before {
-  content: "\f245"; }
+.swc-icon-get_app:before {
+  content: "\e91d"; }
 
-.swc-icon-livechat-email:before {
-  content: "\e900"; }
+.swc-icon-file_upload:before {
+  content: "\e91e"; }
 
-.swc-icon-livechat-newmessage:before {
-  content: "\e901"; }
+.swc-icon-check:before {
+  content: "\e91f"; }
 
-.swc-icon-livechat-chat:before {
-  content: "\e902"; }
+.swc-icon-keyboard_control:before {
+  content: "\e920"; }
 
-.swc-icon-livechat-ongoing:before {
-  content: "\e903"; }
+.swc-icon-phone_callback:before {
+  content: "\e921"; }
 
-.swc-icon-livechat-call:before {
-  content: "\e904"; }
+.swc-icon-notifications:before {
+  content: "\e922"; }
 
-.swc-icon-arrow-up-left2:before {
-  content: "\e905"; }
+.swc-icon-notifications_off:before {
+  content: "\e923"; }
+
+.swc-icon-sentiment_dissatisfied:before {
+  content: "\e924"; }
+
+.swc-icon-sentiment_neutral:before {
+  content: "\e925"; }
+
+.swc-icon-sentiment_satisfied:before {
+  content: "\e926"; }
+
+.swc-icon-sentiment_very_dissatisfied:before {
+  content: "\e927"; }
+
+.swc-icon-sentiment_very_satisfied:before {
+  content: "\e928"; }
+
+.swc-icon-thumb_down_alt:before {
+  content: "\e929"; }
+
+.swc-icon-thumb_up_alt:before {
+  content: "\e92a"; }
+
+.swc-icon-star:before {
+  content: "\e932"; }
+
+.swc-icon-grade:before {
+  content: "\e932"; }
+
+.swc-icon-delete:before {
+  content: "\e92b"; }
+
+.swc-icon-launch:before {
+  content: "\e92c"; }
+
+.swc-icon-open_in_new:before {
+  content: "\e92c"; }
+
+.swc-icon-update:before {
+  content: "\e92d"; }
+
+.swc-icon-thumb_down_off_alt:before {
+  content: "\e92e"; }
+
+.swc-icon-thumb_up_off_alt:before {
+  content: "\e92f"; }
+
+.swc-icon-file-empty:before {
+  content: "\e935"; }
+
+.swc-icon-file-music:before {
+  content: "\e936"; }
+
+.swc-icon-file-play:before {
+  content: "\e937"; }
+
+.swc-icon-file-video:before {
+  content: "\e938"; }
+
+.swc-icon-file-pdf:before {
+  content: "\eadf"; }
+
+.swc-icon-file-openoffice:before {
+  content: "\eae0"; }
+
+.swc-icon-file-word:before {
+  content: "\eae1"; }
+
+.swc-icon-file-excel:before {
+  content: "\eae2"; }
 
 /**
  * Clearfix
@@ -331,7 +491,7 @@
     background-color: rgba(226, 173, 173, 0.8); }
   
   50% {
-    background-color: rgba(175, 229, 255, 0.8); }
+    background-color: rgba(255, 255, 255, 0.8); }
   
   100% {
     background-color: rgba(226, 173, 173, 0.8); } }
@@ -341,7 +501,7 @@
     background-color: rgba(226, 173, 173, 0.8); }
   
   50% {
-    background-color: rgba(175, 229, 255, 0.8); }
+    background-color: rgba(255, 255, 255, 0.8); }
   
   100% {
     background-color: rgba(226, 173, 173, 0.8); } }
@@ -351,7 +511,7 @@
     background-color: rgba(226, 173, 173, 0.8); }
   
   50% {
-    background-color: rgba(175, 229, 255, 0.8); }
+    background-color: rgba(255, 255, 255, 0.8); }
   
   100% {
     background-color: rgba(226, 173, 173, 0.8); } }
@@ -361,7 +521,7 @@
     background-color: rgba(226, 173, 173, 0.8); }
   
   50% {
-    background-color: rgba(175, 229, 255, 0.8); }
+    background-color: rgba(255, 255, 255, 0.8); }
   
   100% {
     background-color: rgba(226, 173, 173, 0.8); } }
@@ -371,7 +531,7 @@
     background-color: rgba(226, 173, 173, 0.8); }
   
   50% {
-    background-color: rgba(175, 229, 255, 0.8); }
+    background-color: rgba(255, 255, 255, 0.8); }
   
   100% {
     background-color: rgba(226, 173, 173, 0.8); } }
@@ -426,10 +586,10 @@
       bottom: 20px; } }
   .swc-btn-cont .swc-wg-btn {
     display: inline-block;
-    box-shadow: 0px 0px 20px 6px rgba(0, 0, 0, 0.15);
-    border-radius: 0 20px 20px 20px;
-    width: 55px;
-    height: 55px;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    width: 54px;
+    height: 54px;
     max-height: 100px;
     z-index: 100;
     -webkit-transition: background-color 0.4s, width 0.4s ease-in-out, height 0.4s;
@@ -444,21 +604,23 @@
     animation: show 0.2s ease-in-out; }
     .swc-btn-cont .swc-wg-btn .swc-btn-link {
       position: relative;
-      width: 55px;
-      height: 55px;
+      width: 64px;
+      height: 64px;
       text-align: center;
       text-decoration: none; }
     .swc-btn-cont .swc-wg-btn .swc-btn-icon {
       position: absolute;
-      font-size: 36px;
-      left: 7.7px;
-      top: 8.7px;
+      font-size: 80px;
+      left: -10px;
+      top: -15px;
       color: #464646;
       -webkit-transition: color 0.4s;
       -moz-transition: color 0.4s;
       -ms-transition: color 0.4s;
       -o-transition: color 0.4s;
       transition: color 0.4s; }
+    .swc-btn-cont .swc-wg-btn .swc-btn-icon:before {
+      content: ""; }
   .swc-btn-cont .swc-lastmsg-cont {
     display: none;
     position: absolute;
@@ -489,7 +651,7 @@
     top: -40px;
     right: 0;
     margin: 5px;
-    padding: 5px 10px;
+    padding: 3px;
     text-align: center;
     border-radius: 50px;
     background-color: #777;
@@ -515,7 +677,7 @@
   height: 60px;
   top: 0;
   padding: 5px 10px;
-  box-shadow: 0 5px 8px 0px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 5px 0px rgba(0, 0, 0, 0.15);
   color: #fff;
   z-index: 100; }
   .swc-top-bar h3 {
@@ -636,6 +798,7 @@
         .swc-wg-panes .swc-wg-pane .swc-messages-cont li .swc-user-msg {
           text-align: right; }
           .swc-wg-panes .swc-wg-pane .swc-messages-cont li .swc-user-msg .swc-message-content {
+            text-align: left;
             border-top-right-radius: 0;
             border-color: #BBBBBB; }
         .swc-wg-panes .swc-wg-pane .swc-messages-cont li .swc-agent-msg {
@@ -670,7 +833,7 @@
       .swc-wg-panes .swc-wg-pane .swc-write-cont .swc-sendfile-cont {
         position: absolute;
         top: 0;
-        padding: 14px;
+        padding: 13px 9px;
         vertical-align: middle;
         z-index: 200; }
       .swc-wg-panes .swc-wg-pane .swc-write-cont .swc-sendfile-cont {
@@ -695,6 +858,7 @@
       font-size: 14px;
       text-align: left;
       word-wrap: break-word;
+      color: #222;
       background-color: #fff;
       border: none;
       border-top: 1px solid #fff;
@@ -807,7 +971,7 @@
       margin-bottom: 5px;
       padding: 0 30px;
       color: #555;
-      text-align: center;
+      text-align: left;
       font-size: 11px;
       font-weight: 600;
       line-height: 38px;
@@ -815,22 +979,33 @@
       text-transform: uppercase;
       text-decoration: none;
       white-space: nowrap;
-      border-color: none;
       outline: none;
-      background-color: transparent;
       border-radius: 4px;
-      border: 1px solid #BBBBBB;
+      border: none;
+      box-shadow: 0 0 5px 0px rgba(0, 0, 0, 0.15);
       cursor: pointer;
-      box-shadow: none; }
-      .swc-wg-panes .swc-wg-pane form button.swc-button-primary,
-      .swc-wg-panes .swc-wg-pane form .swc-button.swc-button-primary,
-      .swc-wg-panes .swc-wg-pane form a.swc-button.swc-button-primary {
-        color: #fff; }
+      -webkit-transition: all 0.2s ease-out;
+      -moz-transition: all 0.2s ease-out;
+      -ms-transition: all 0.2s ease-out;
+      -o-transition: all 0.2s ease-out;
+      transition: all 0.2s ease-out; }
+      .swc-wg-panes .swc-wg-pane form button:hover,
+      .swc-wg-panes .swc-wg-pane form .swc-button:hover,
+      .swc-wg-panes .swc-wg-pane form a.swc-button:hover {
+        box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.15); }
       .swc-wg-panes .swc-wg-pane form button.swc-button-warn,
       .swc-wg-panes .swc-wg-pane form .swc-button.swc-button-warn,
       .swc-wg-panes .swc-wg-pane form a.swc-button.swc-button-warn {
         background-color: #d95353;
         color: #fff; }
+      .swc-wg-panes .swc-wg-pane form button [class^="swc-btn-icon"], .swc-wg-panes .swc-wg-pane form button [class^="swc-icon-"], .swc-wg-panes .swc-wg-pane form button [class*=" swc-icon-"],
+      .swc-wg-panes .swc-wg-pane form .swc-button [class^="swc-btn-icon"],
+      .swc-wg-panes .swc-wg-pane form .swc-button [class^="swc-icon-"],
+      .swc-wg-panes .swc-wg-pane form .swc-button [class*=" swc-icon-"],
+      .swc-wg-panes .swc-wg-pane form a.swc-button [class^="swc-btn-icon"],
+      .swc-wg-panes .swc-wg-pane form a.swc-button [class^="swc-icon-"],
+      .swc-wg-panes .swc-wg-pane form a.swc-button [class*=" swc-icon-"] {
+        margin-right: 10px; }
     .swc-wg-panes .swc-wg-pane form .swc-block {
       display: block;
       width: 100%; }
@@ -906,7 +1081,7 @@
     width: 100%; }
 
 .swc-wg-cont {
-  font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font: 16px "Helvetica Neue", Helvetica, Arial, sans-serif;
   position: fixed;
   bottom: 20px;
   z-index: 99999;
@@ -918,8 +1093,6 @@
   @media only screen and (max-width: 750px) {
     .swc-wg-cont {
       bottom: 0; } }
-  .swc-wg-cont .swc-btn-icon {
-    background-image: url("images/logo.png"); }
   .swc-wg-cont.position-right {
     right: 10px;
     transform-origin: right bottom; }
@@ -931,7 +1104,7 @@
     .swc-wg-cont.position-right .swc-btn-link {
       float: right; }
     .swc-wg-cont.position-right .swc-lastmsg-cont {
-      right: 65px; }
+      right: 75px; }
   .swc-wg-cont.position-left {
     left: 10px;
     transform-origin: left bottom; }
@@ -943,7 +1116,7 @@
     .swc-wg-cont.position-left .swc-btn-link {
       float: left; }
     .swc-wg-cont.position-left .swc-lastmsg-cont {
-      left: 65px; }
+      left: 75px; }
   .swc-wg-cont * {
     box-sizing: border-box; }
   .swc-wg-cont h3, .swc-wg-cont h4, .swc-wg-cont h5 {
@@ -1005,21 +1178,11 @@
       display: none; }
     .swc-wg-cont.active .swc-wg-panes {
       display: block; }
-  .swc-wg-cont.offline .swc-wg-btn .swc-btn-icon:before {
-    content: ""; }
-  .swc-wg-cont.offline .swc-wg-state-cont .swc-wg-state-icon {
-    background-color: #f7f7f7; }
   .swc-wg-cont.online .swc-top-bar {
     background-color: #fff;
     color: #333; }
-  .swc-wg-cont.online .swc-wg-btn .swc-btn-icon:before {
-    content: ""; }
-  .swc-wg-cont.online.webrtc-enabled .swc-btn-icon:before {
-    content: ""; }
   .swc-wg-cont.online .swc-wg-state-cont .swc-wg-state-icon {
     background-color: #1eff1e; }
-  .swc-wg-cont.notified .swc-wg-btn .swc-btn-icon:before {
-    content: "" !important; }
   .swc-wg-cont.notified .swc-lastmsg-cont {
     display: block;
     width: 220px;
@@ -1035,10 +1198,6 @@
     -ms-transform: translateY(0);
     -o-transform: translateY(0);
     transform: translateY(0); }
-  .swc-wg-cont.timeout .swc-wg-btn .swc-btn-icon:before {
-    content: ""; }
-  .swc-wg-cont.chat .swc-wg-btn .swc-btn-icon:before {
-    content: ""; }
   .swc-wg-cont.agent-typing .swc-loader {
     display: block !important; }
   .swc-wg-cont.type-extend .swc-msg-textarea {

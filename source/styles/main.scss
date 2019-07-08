@@ -1,44 +1,48 @@
 
 $wg-height: 450px;
 $wg-width: 320px;
-$btn-width: 55px;
-$btn-height: 55px;
+$btn-width: 54px;
+$btn-height: 54px;
+$btn-link-width: 64px;
+$btn-link-height: 64px;
 $font-stack: "Helvetica Neue",Helvetica,Arial,sans-serif;
 // $font-stack: "Trebuchet MS", Helvetica, sans-serif;
 $border-radius: 5px;
 $box-shadow: 0 5px 35px 20px rgba(0, 0, 0, 0.15);
 $header-height: 60px;
 
-$btn-icon: 'images/logo.png';
+// $btn-icon: 'images/logo.png';
 
-$btn-icon-call: '\e904';
+// $btn-icon-call: '\e904';
+$btn-icon: '\e933';
 
-$btn-color-online: rgba(175,229,255,0.8);
-$btn-icon-online: '\e902';
-$btn-icon-color-online: '';
+$btn-color-online: rgba(255,255,255,0.8);
+// $btn-icon-online: '\e933';
+// $btn-icon-online: '\e902';
+// $btn-icon-color-online: '';
 
-$btn-color-offline: rgba(241,241,241,0.8);
-$btn-icon-offline: '\e900';
-$btn-icon-color-offline: '';
+// $btn-color-offline: rgba(241,241,241,0.8);
+// $btn-icon-offline: '\e900';
+// $btn-icon-color-offline: '';
 
-$btn-color-timeout: rgba(241,241,241,0.8);
-$btn-icon-timeout: '\e902';
-$btn-icon-color-timeout: '';
+// $btn-color-timeout: rgba(241,241,241,0.8);
+// $btn-icon-timeout: '\e902';
+// $btn-icon-color-timeout: '';
 
-$btn-color-notified: rgba(253,250,129,0.8);
-$btn-icon-notified: '\e901';
-$btn-icon-color-notified: '';
+// $btn-color-notified: rgba(253,250,129,0.8);
+// $btn-icon-notified: '\e901';
+// $btn-icon-color-notified: '';
 
 $btn-color-oncall: rgba(226,173,173,0.8);
-$btn-icon-oncall: '\e904';
+// $btn-icon-oncall: '\e904';
 $btn-icon-color-oncall: '#fff';
 
-$btn-color-chat: rgba(175,229,255,0.8);
-$btn-icon-chat: '\e903';
-$btn-icon-color-chat: '';
+// $btn-color-chat: rgba(175,229,255,0.8);
+// $btn-icon-chat: '\e903';
+// $btn-icon-color-chat: '';
 
 $btn-icon-color: rgb(70,70,70);
-$btn-border-radius: 0 20px 20px 20px;
+$btn-border-radius: 50%;
 $primary-color: #33C3F0;
 $warn-color: #d95353;
 $secondary-color: #BBBBBB;
@@ -72,7 +76,7 @@ $secondary-color: #BBBBBB;
 }
 
 .swc-wg-cont {
-	font: 14px $font-stack;
+	font: 16px $font-stack;
 	position: fixed;
 	bottom: 20px;
 	z-index: 99999;
@@ -82,9 +86,9 @@ $secondary-color: #BBBBBB;
 		bottom: 0;
 	}
 
-	.swc-btn-icon {
-		background-image: url($btn-icon);
-	}
+	// .swc-btn-icon {
+	// 	background-image: url($btn-icon);
+	// }
 
 	&.position-right {
 		right: 10px;
@@ -101,7 +105,7 @@ $secondary-color: #BBBBBB;
 		}
 		.swc-lastmsg-cont {
 		// .swc-unnotify-btn {
-			right: 65px;
+			right: 75px;
 		}
 	}
 	&.position-left {
@@ -119,7 +123,7 @@ $secondary-color: #BBBBBB;
 		}
 		.swc-lastmsg-cont {
 		// .swc-unnotify-btn {
-			left: 65px;
+			left: 75px;
 		}
 	}
 
@@ -211,23 +215,23 @@ $secondary-color: #BBBBBB;
 			display: block;
 		}
 	}
-	&.offline {
-		.swc-wg-btn {
-			// background-color: $btn-color-offline;
+	// &.offline {
+	// 	.swc-wg-btn {
+	// 		// background-color: $btn-color-offline;
 
-			// .swc-btn-icon {
-			// 	color: $btn-icon-color-offline;
-			// }
-			.swc-btn-icon:before {
-				content: $btn-icon-offline;
-			}
-		}
-		.swc-wg-state-cont {
-			.swc-wg-state-icon {
-				background-color: #f7f7f7;
-			}
-		}
-	}
+	// 		// .swc-btn-icon {
+	// 		// 	color: $btn-icon-color-offline;
+	// 		// }
+	// 		.swc-btn-icon:before {
+	// 			content: $btn-icon-offline;
+	// 		}
+	// 	}
+	// 	.swc-wg-state-cont {
+	// 		.swc-wg-state-icon {
+	// 			background-color: #f7f7f7;
+	// 		}
+	// 	}
+	// }
 	&.online {
 		.swc-top-bar {
 			background-color: #fff;
@@ -237,22 +241,22 @@ $secondary-color: #BBBBBB;
 			// 	color: #333;
 			// }
 		}
-		.swc-wg-btn {
+		// .swc-wg-btn {
 			// background-color: #AFE5FF;
 			// background-color: $btn-color-online;
 
 			// .swc-btn-icon {
 			// 	color: $btn-icon-color-online;
 			// }
-			.swc-btn-icon:before {
-				content: $btn-icon-online;
-			}
-		}
-		&.webrtc-enabled {
-			.swc-btn-icon:before {
-				content: $btn-icon-call;
-			}
-		}
+			// .swc-btn-icon:before {
+			// 	content: $btn-icon;
+			// }
+		// }
+		// &.webrtc-enabled {
+		// 	.swc-btn-icon:before {
+		// 		content: $btn-icon-call;
+		// 	}
+		// }
 
 		.swc-wg-state-cont {
 			.swc-wg-state-icon {
@@ -265,7 +269,7 @@ $secondary-color: #BBBBBB;
 	}
 	&.notified {
 
-		.swc-wg-btn {
+		// .swc-wg-btn {
 			// width: 290px;
 			// overflow: auto;
 			// background-color: #FDFA81 !important;
@@ -274,10 +278,10 @@ $secondary-color: #BBBBBB;
 			// .swc-btn-icon {
 			// 	color: $btn-icon-color-notified !important;
 			// }
-			.swc-btn-icon:before {
-				content: $btn-icon-notified !important;
-			}
-		}
+			// .swc-btn-icon:before {
+			// 	content: $btn-icon-notified !important;
+			// }
+		// }
 		.swc-lastmsg-cont {
 			display: block;
 			width: 220px;
@@ -288,29 +292,29 @@ $secondary-color: #BBBBBB;
 			@include transform(translateY(0));
 		}
 	}
-	&.timeout {
-		.swc-wg-btn {
+	// &.timeout {
+		// .swc-wg-btn {
 			// background-color: #F1F1F1;
 			// background-color: $btn-color-timeout;
 			// .swc-btn-icon {
 			// 	color: $btn-icon-color-timeout;
 			// }
-			.swc-btn-icon:before {
-				content: $btn-icon-timeout;
-			}
-		}
-	}
-	&.chat {
-		.swc-wg-btn {
+			// .swc-btn-icon:before {
+				// content: $btn-icon-timeout;
+			// }
+		// }
+	// }
+	// &.chat {
+		// .swc-wg-btn {
 			// background-color: $btn-color-chat;
 			// .swc-btn-icon {
 			// 	color: $btn-icon-color-chat;
 			// }
-			.swc-btn-icon:before {
-				content: $btn-icon-chat;
-			}
-		}
-	}
+			// .swc-btn-icon:before {
+				// content: $btn-icon-chat;
+			// }
+		// }
+	// }
 	&.agent-typing {
 		.swc-loader {
 			display: block !important;

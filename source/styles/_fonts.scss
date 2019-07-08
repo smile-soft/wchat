@@ -1,86 +1,245 @@
 @font-face {
-    font-family: 'wchat';
-    src:
-        url('fonts/wchat.ttf?b5ikya') format('truetype'),
-        url('fonts/wchat.woff?b5ikya') format('woff'),
-        url('fonts/wchat.svg?b5ikya#wchat') format('svg');
-    font-weight: normal;
-    font-style: normal;
+  font-family: 'wchat';
+  src:
+    url('fonts/wchat.ttf?fbiyd8') format('truetype'),
+    url('fonts/wchat.woff?fbiyd8') format('woff'),
+    url('fonts/wchat.svg?fbiyd8#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
 }
 
 [class^="swc-btn-icon"], [class^="swc-icon-"], [class*=" swc-icon-"] {
-    /* use !important to prevent issues with browser extensions that change fonts */
-    font-family: 'wchat' !important;
-    speak: none;
-    font-style: normal;
-    font-weight: normal;
-    font-variant: normal;
-    text-transform: none;
-    line-height: 1;
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'wchat' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  vertical-align: middle;
+  font-size: 1.5em;
 
-    /* Better Font Rendering =========== */
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.swc-icon-check:before {
-    content: "\f00c";
+.swc-icon-ringotel_emblem:before {
+  content: "\e933";
 }
-.swc-icon-close:before {
-    content: "\f00d";
+.swc-icon-livechat_email:before {
+  content: "\e900";
 }
-.swc-icon-remove:before {
-    content: "\f00d";
+.swc-icon-livechat_newmessage:before {
+  content: "\e901";
 }
-.swc-icon-times:before {
-    content: "\f00d";
+.swc-icon-livechat_chat:before {
+  content: "\e902";
 }
-.swc-icon-cog:before {
-    content: "\f013";
+.swc-icon-livechat_ongoing:before {
+  content: "\e903";
 }
-.swc-icon-gear:before {
-    content: "\f013";
-}
-.swc-icon-upload:before {
-    content: "\f093";
-}
-.swc-icon-bell:before {
-    content: "\f0f3";
+.swc-icon-livechat_call:before {
+  content: "\e904";
 }
 .swc-icon-spinner:before {
-    content: "\f110";
+  content: "\f110";
 }
-.swc-icon-paper-plane:before {
-    content: "\f1d8";
+.swc-icon-facebook:before {
+  content: "\e905";
+  color: #4172b8;
+}
+.swc-icon-instagram:before {
+  content: "\e934";
+  color: #e4405f;
+}
+.swc-icon-messenger:before {
+  content: "\e906";
+  color: #00b2ff;
+}
+.swc-icon-skype:before {
+  content: "\e907";
+  color: #00aff0;
+}
+.swc-icon-telegram:before {
+  content: "\e908";
+  color: #2ca5e0;
+}
+.swc-icon-twitter:before {
+  content: "\e909";
+  color: #1da1f2;
+}
+.swc-icon-viber:before {
+  content: "\e90a";
+  color: #665cac;
+}
+.swc-icon-whatsapp:before {
+  content: "\e90b";
+  color: #25d366;
+}
+.swc-icon-mic:before {
+  content: "\e90c";
+}
+.swc-icon-mic_off:before {
+  content: "\e90d";
+}
+.swc-icon-new_releases:before {
+  content: "\e930";
+}
+.swc-icon-videocam:before {
+  content: "\e90e";
+}
+.swc-icon-videocam_off:before {
+  content: "\e90f";
+}
+.swc-icon-volume_off:before {
+  content: "\e910";
+}
+.swc-icon-volume_up:before {
+  content: "\e911";
+}
+.swc-icon-video_call:before {
+  content: "\e912";
+}
+.swc-icon-call:before {
+  content: "\e913";
+}
+.swc-icon-call_end:before {
+  content: "\e914";
+}
+.swc-icon-dialpad:before {
+  content: "\e915";
+}
+.swc-icon-email:before {
+  content: "\e916";
+}
+.swc-icon-mail:before {
+  content: "\e916";
+}
+.swc-icon-markunread:before {
+  content: "\e916";
+}
+.swc-icon-local_post_office:before {
+  content: "\e916";
+}
+.swc-icon-forum:before {
+  content: "\e917";
+}
+.swc-icon-question_answer:before {
+  content: "\e917";
+}
+.swc-icon-chat_bubble:before {
+  content: "\e931";
+}
+.swc-icon-voicemail:before {
+  content: "\e918";
+}
+.swc-icon-add:before {
+  content: "\e919";
+}
+.swc-icon-clear:before {
+  content: "\e91a";
+}
+.swc-icon-close:before {
+  content: "\e91a";
 }
 .swc-icon-send:before {
-    content: "\f1d8";
+  content: "\e91b";
 }
-.swc-icon-bell-slash:before {
-    content: "\f1f6";
+.swc-icon-attach_file:before {
+  content: "\e91c";
 }
-.swc-icon-trash:before {
-    content: "\f1f8";
+.swc-icon-file_download:before {
+  content: "\e91d";
 }
-.swc-icon-mouse-pointer:before {
-    content: "\f245";
+.swc-icon-get_app:before {
+  content: "\e91d";
 }
-.swc-icon-livechat-email:before {
-    content: "\e900";
+.swc-icon-file_upload:before {
+  content: "\e91e";
 }
-.swc-icon-livechat-newmessage:before {
-    content: "\e901";
+.swc-icon-check:before {
+  content: "\e91f";
 }
-.swc-icon-livechat-chat:before {
-    content: "\e902";
+.swc-icon-keyboard_control:before {
+  content: "\e920";
 }
-.swc-icon-livechat-ongoing:before {
-    content: "\e903";
+.swc-icon-phone_callback:before {
+  content: "\e921";
 }
-.swc-icon-livechat-call:before {
-    content: "\e904";
+.swc-icon-notifications:before {
+  content: "\e922";
 }
-.swc-icon-arrow-up-left2:before {
-    content: "\e905";
+.swc-icon-notifications_off:before {
+  content: "\e923";
 }
-
+.swc-icon-sentiment_dissatisfied:before {
+  content: "\e924";
+}
+.swc-icon-sentiment_neutral:before {
+  content: "\e925";
+}
+.swc-icon-sentiment_satisfied:before {
+  content: "\e926";
+}
+.swc-icon-sentiment_very_dissatisfied:before {
+  content: "\e927";
+}
+.swc-icon-sentiment_very_satisfied:before {
+  content: "\e928";
+}
+.swc-icon-thumb_down_alt:before {
+  content: "\e929";
+}
+.swc-icon-thumb_up_alt:before {
+  content: "\e92a";
+}
+.swc-icon-star:before {
+  content: "\e932";
+}
+.swc-icon-grade:before {
+  content: "\e932";
+}
+.swc-icon-delete:before {
+  content: "\e92b";
+}
+.swc-icon-launch:before {
+  content: "\e92c";
+}
+.swc-icon-open_in_new:before {
+  content: "\e92c";
+}
+.swc-icon-update:before {
+  content: "\e92d";
+}
+.swc-icon-thumb_down_off_alt:before {
+  content: "\e92e";
+}
+.swc-icon-thumb_up_off_alt:before {
+  content: "\e92f";
+}
+.swc-icon-file-empty:before {
+  content: "\e935";
+}
+.swc-icon-file-music:before {
+  content: "\e936";
+}
+.swc-icon-file-play:before {
+  content: "\e937";
+}
+.swc-icon-file-video:before {
+  content: "\e938";
+}
+.swc-icon-file-pdf:before {
+  content: "\eadf";
+}
+.swc-icon-file-openoffice:before {
+  content: "\eae0";
+}
+.swc-icon-file-word:before {
+  content: "\eae1";
+}
+.swc-icon-file-excel:before {
+  content: "\eae2";
+}

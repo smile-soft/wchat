@@ -6,7 +6,7 @@
 	top: 0;
 	padding: 5px 10px;
 	// background-color: rgba(0,0,0,0.5);
-	box-shadow: 0 5px 8px 0px rgba(0, 0, 0, 0.15);
+	box-shadow: 0 2px 5px 0px rgba(0, 0, 0, 0.15);
 	color: #fff;
 	z-index: 100;
 	@extend %clearfix;
@@ -207,6 +207,7 @@
 					// }
 					.swc-message-content {
 						// float: right;
+						text-align: left;
 						border-top-right-radius: 0;
 						border-color: $secondary-color;
 					}
@@ -220,7 +221,6 @@
 					// }
 					.swc-message-content {
 
-						// float: left;
 						border-top-left-radius: 0;
 						border-style: solid;
 						border-width: 1px;
@@ -262,7 +262,7 @@
 				position: absolute;
 				top: 0;
 				// display: table-cell;
-				padding: 14px;
+				padding: 13px 9px;
 				vertical-align: middle;
 				z-index: 200;
 			}
@@ -299,7 +299,7 @@
 			font-size: 14px;
 			text-align: left;
 			word-wrap: break-word;
-
+			color: #222;
 			background-color: #fff;
 			border: none;
 			border-top: 1px solid #fff;

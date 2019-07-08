@@ -167,15 +167,7 @@ __e( defaults.styles.primary.color ) +
 __e( defaults.styles.primary.backgroundColor ) +
 ';">' +
 __e( frases.FORMS.send ) +
-'</button>\n\t\t\t<button\n\t\t\t\tclass="' +
-__e( defaults.prefix ) +
-'-button ' +
-__e( defaults.prefix ) +
-'-block"\n\t\t\t\tdata-' +
-__e( defaults.prefix ) +
-'-handler="rejectForm">' +
-__e( frases.FORMS.cancel ) +
-'</button>\n\t\t</form>\n\t</div>\n\t<span class="' +
+'</button>\n\t\t\t\n\t\t</form>\n\t</div>\n\t<span class="' +
 __e( defaults.prefix ) +
 '-message-time"> ' +
 __e( message.time ) +
@@ -219,7 +211,7 @@ __e( defaults.prefix ) +
 '-message-content"\n\t\t';
  if(message.entity !== "user") { ;
 __p += ' \n\t\t\tstyle="border-color:' +
-((__t = ( defaults.styles.primary.backgroundColor )) == null ? '' : __t) +
+((__t = ( defaults.styles.backgroundColor )) == null ? '' : __t) +
 '" \n\t\t';
  } ;
 __p += '>\n\t\t<p>' +
@@ -260,6 +252,8 @@ __p += '\n';
 __p += '\n';
  var channels = defaults.channels; ;
 __p += '\n';
+ var channelsObject = defaults.channelsObject; ;
+__p += '\n';
  var positionClass = defaults.position === 'right' ? 'position-right' : 'position-left' ;
 __p += '\n<div id="' +
 __e( defaults.prefix ) +
@@ -280,9 +274,9 @@ __e( defaults.styles.width ) +
 __p += '">\n\n\t\t<!-- ***** Top bar ***** -->\n\t\t<div \n\t\t\tclass="' +
 __e( defaults.prefix ) +
 '-top-bar" \n\t\t\tstyle="background: ' +
-__e( defaults.styles.primary.backgroundColor ) +
+__e( defaults.styles.backgroundColor ) +
 '; color: ' +
-__e( defaults.styles.primary.color ) +
+__e( defaults.styles.color ) +
 ';">\n\n\t\t\t<!-- Main title -->\n\t\t\t<h4 class="' +
 __e( defaults.prefix ) +
 '-wg-title ' +
@@ -300,7 +294,7 @@ __e( defaults.prefix ) +
 '-wg-minimize">\n\n\t\t\t\t<!--<a \n\t\t\t\t\thref="#" \n\t\t\t\t\tdata-' +
 __e( defaults.prefix ) +
 '-handler="closeWidget">\n\t\t\t\t\t\n\t\t\t\t\t<span style="font-weight: bold">_</span>\n\t\t\t\t\n\t\t\t\t</a>-->\n\t\t\t\t\n\t\t\t\t<a \n\t\t\t\t\thref="#" \n\t\t\t\t\tstyle="color: ' +
-__e( defaults.styles.primary.color ) +
+__e( defaults.styles.color ) +
 '"\n\t\t\t\t\tdata-' +
 __e( defaults.prefix ) +
 '-handler="closeWidget"\n\t\t\t\t\t<span class="' +
@@ -309,19 +303,11 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-wg-pane" \n\t\t\tdata-' +
 __e( defaults.prefix ) +
-'-pane="chooseConnection">\n\t\t\t\n\t\t\t<!-- Panel\'s image container -->\n\t\t\t<div \n\t\t\t\tclass="' +
+'-pane="chooseConnection">\n\t\t\t\n\t\t\t<!-- Panel\'s image container -->\n\t\t\t<div class="' +
 __e( defaults.prefix ) +
 '-pane-header ' +
 __e( defaults.prefix ) +
-'-dark" \n\t\t\t\t';
- if(defaults.styles.intro.backgroundImage) { ;
-__p += ' \n\t\t\t\t\tstyle="background-image: url(' +
-__e( defaults.clientPath ) +
-'' +
-__e( defaults.styles.intro.backgroundImage ) +
-')" \n\t\t\t\t';
- } ;
-__p += '>\n\n\t\t\t\t<!-- The text displayed on image -->\n\t\t\t\t<div class="' +
+'-dark">\n\n\t\t\t\t<!-- The text displayed on image -->\n\t\t\t\t<div class="' +
 __e( defaults.prefix ) +
 '-backdrop-cont ' +
 __e( defaults.prefix ) +
@@ -334,67 +320,57 @@ __e( defaults.prefix ) +
 '-init-form" \n\t\t\t\t\tname="' +
 __e( defaults.prefix ) +
 'InitForm">\n\n\t\t\t\t\t';
- if(channels.webcall) { ;
-__p += ' \n\t\t\t\t\t\t<!-- Display call button if WebRTC is enabled and supported by the browser -->\n\t\t\t\t\t\t';
- if(defaults.webrtcEnabled) { ;
-__p += ' \n\t\t\t\t\t\t\t<button \n\t\t\t\t\t\t\t\ttype="button" \n\t\t\t\t\t\t\t\tclass="' +
+ _.forEach(channels, function(channel) { ;
+__p += '\n\n\t\t\t\t\t\t';
+ if(channel.link) { ;
+__p += '\n\n\t\t\t\t\t\t\t<a \n\t\t\t\t\t\t\t\thref="' +
+__e( channel.link ) +
+'" \n\t\t\t\t\t\t\t\ttarget="';
+ if(channel.link.indexOf('http') !== -1) { ;
+__p += '_blank';
+ } else { ;
+__p += '_self';
+ } ;
+__p += '"\n\t\t\t\t\t\t\t\tclass="' +
 __e( defaults.prefix ) +
 '-button ' +
 __e( defaults.prefix ) +
 '-button-primary ' +
 __e( defaults.prefix ) +
 '-block" \n\t\t\t\t\t\t\t\tstyle="\n\t\t\t\t\t\t\t\t\tbackground: ' +
-__e( defaults.styles.primary.backgroundColor ) +
-'; \n\t\t\t\t\t\t\t\t\tcolor: ' +
-__e( defaults.styles.primary.color ) +
-'; \n\t\t\t\t\t\t\t\t\tborder: 1px solid ' +
-__e( defaults.styles.primary.color ) +
-';"\n\t\t\t\t\t\t\t\tdata-' +
+__e( channel.backgroundColor || '#fff' ) +
+'; \n\t\t\t\t\t\t\t\t\tcolor: #222;"\n\t\t\t\t\t\t\t\t>\n\n\t\t\t\t\t\t\t\t<span class="' +
 __e( defaults.prefix ) +
-'-handler="initCall">\n\n\t\t\t\t\t\t\t\t' +
-__e( panels.CONNECTION_TYPES.call_agent_btn ) +
-'\n\n\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t\t<!-- If WebRTC is not supported and fallback is set -->\n\t\t\t\t\t\t';
- } else if(channels.webcall.fallback && channels.webcall.fallback.sipCall) { ;
-__p += '\n\t\t\t\t\t\t\t<button \n\t\t\t\t\t\t\t\ttype="button" \n\t\t\t\t\t\t\t\tclass="' +
+'-icon-' +
+((__t = ( channel.iconClass )) == null ? '' : __t) +
+'"></span>\n\t\t\t\t\t\t\t\t<span>' +
+((__t = ( channel.btnText )) == null ? '' : __t) +
+'</span>\n\n\t\t\t\t\t\t\t</a>\n\n\t\t\t\t\t\t';
+ } else { ;
+__p += '\n\n\t\t\t\t\t\t\t<button \n\t\t\t\t\t\t\t\ttype="button" \n\t\t\t\t\t\t\t\tclass="' +
 __e( defaults.prefix ) +
 '-button ' +
 __e( defaults.prefix ) +
 '-button-primary ' +
 __e( defaults.prefix ) +
 '-block" \n\t\t\t\t\t\t\t\tstyle="\n\t\t\t\t\t\t\t\t\tbackground: ' +
-__e( defaults.styles.primary.backgroundColor ) +
+__e( channel.backgroundColor || '#fff' ) +
 '; \n\t\t\t\t\t\t\t\t\tcolor: ' +
-__e( defaults.styles.primary.color ) +
-'; \n\t\t\t\t\t\t\t\t\tborder: 1px solid ' +
-__e( defaults.styles.primary.color ) +
+__e( channel.color || '#222' ) +
 ';"\n\t\t\t\t\t\t\t\tdata-' +
 __e( defaults.prefix ) +
-'-handler="initFallbackCall">\n\n\t\t\t\t\t\t\t\t' +
-__e( panels.CONNECTION_TYPES.call_agent_btn ) +
-'\n\n\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t';
+'-handler="' +
+__e( channel.callback ) +
+'">\n\n\t\t\t\t\t\t\t\t<span class="' +
+__e( defaults.prefix ) +
+'-icon-' +
+((__t = ( channel.iconClass )) == null ? '' : __t) +
+'"></span>\n\t\t\t\t\t\t\t\t<span>' +
+((__t = ( channel.btnText )) == null ? '' : __t) +
+'</span>\n\n\t\t\t\t\t\t\t</button>\n\n\t\t\t\t\t\t';
  } ;
-__p += '\n\t\t\t\t\t';
- } ;
-__p += '\n\n\t\t\t\t\t<!-- Display callback button if callback task is configured in the settings -->\n\t\t\t\t\t';
- if(channels.callback && channels.callback.task) { ;
-__p += '\n\t\t\t\t\t\t<button \n\t\t\t\t\t\t\ttype="button" \n\t\t\t\t\t\t\tclass="' +
-__e( defaults.prefix ) +
-'-button ' +
-__e( defaults.prefix ) +
-'-button-primary ' +
-__e( defaults.prefix ) +
-'-block" \n\t\t\t\t\t\t\tstyle="\n\t\t\t\t\t\t\t\tbackground: ' +
-__e( defaults.styles.primary.backgroundColor ) +
-'; \n\t\t\t\t\t\t\t\tcolor: ' +
-__e( defaults.styles.primary.color ) +
-'; \n\t\t\t\t\t\t\t\tborder: 1px solid ' +
-__e( defaults.styles.primary.color ) +
-';"\n\t\t\t\t\t\t\tdata-' +
-__e( defaults.prefix ) +
-'-handler="initCallback">\n\n\t\t\t\t\t\t\t' +
-__e( panels.CONNECTION_TYPES.callback_btn ) +
-'\n\n\t\t\t\t\t\t</button>\n\t\t\t\t\t';
- } ;
+__p += '\n\n\t\t\t\t\t';
+ }) ;
 __p += '\n\n\t\t\t\t\t<!-- Init chat button -->\n\t\t\t\t\t';
  if(defaults.chat) { ;
 __p += '\n\t\t\t\t\t<button\n\t\t\t\t\t\ttype="button" \n\t\t\t\t\t\tclass="' +
@@ -403,19 +379,15 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-button-primary ' +
 __e( defaults.prefix ) +
-'-block" \n\t\t\t\t\t\tstyle="background: ' +
-__e( defaults.styles.primary.backgroundColor ) +
-'; color: ' +
-__e( defaults.styles.primary.color ) +
-'; border: 1px solid ' +
-__e( defaults.styles.primary.color ) +
-';"\n\t\t\t\t\t\tdata-' +
+'-block" \n\t\t\t\t\t\tstyle="background: #fff; color: #222;"\n\t\t\t\t\t\tdata-' +
 __e( defaults.prefix ) +
-'-handler="initChat">\n\t\t\t\t\t\t' +
+'-handler="initChat">\n\n\t\t\t\t\t\t<span class="' +
+__e( defaults.prefix ) +
+'-icon-forum"></span>\n\t\t\t\t\t\t<span>' +
 __e( panels.CONNECTION_TYPES.chat_agent_btn ) +
-'\n\t\t\t\t\t</button>\n\t\t\t\t\t';
+'</span>\n\t\t\t\t\t</button>\n\t\t\t\t\t';
  } ;
-__p += '\n\n\t\t\t\t\t<!-- Close widget button -->\n\t\t\t\t\t<a href="#" class="' +
+__p += '\n\t\t\t\t\t\n\t\t\t\t\t<hr>\n\n\t\t\t\t\t<!-- Close widget button -->\n\t\t\t\t\t<a href="#" class="' +
 __e( defaults.prefix ) +
 '-button ' +
 __e( defaults.prefix ) +
@@ -429,19 +401,11 @@ __p += '\n\t\t\t<div \n\t\t\t\tclass="' +
 __e( defaults.prefix ) +
 '-wg-pane" \n\t\t\t\tdata-' +
 __e( defaults.prefix ) +
-'-pane="credentials">\n\n\t\t\t\t<!-- Panel\'s image container -->\n\t\t\t\t<div \n\t\t\t\t\tclass="' +
+'-pane="credentials">\n\n\t\t\t\t<!-- Panel\'s image container -->\n\t\t\t\t<div class="' +
 __e( defaults.prefix ) +
 '-pane-header ' +
 __e( defaults.prefix ) +
-'-dark" \n\t\t\t\t\t';
- if(defaults.styles.intro.backgroundImage) { ;
-__p += ' \n\t\t\t\t\t\tstyle="background-image: url(' +
-__e( defaults.clientPath ) +
-'' +
-__e( defaults.styles.intro.backgroundImage ) +
-')" \n\t\t\t\t\t';
- } ;
-__p += '>\n\n\t\t\t\t\t<!-- The text displayed on image -->\n\t\t\t\t\t<div class="' +
+'-dark">\n\n\t\t\t\t\t<!-- The text displayed on image -->\n\t\t\t\t\t<div class="' +
 __e( defaults.prefix ) +
 '-backdrop-cont ' +
 __e( defaults.prefix ) +
@@ -546,11 +510,9 @@ __e( defaults.prefix ) +
 '-button-primary ' +
 __e( defaults.prefix ) +
 '-block" \n\t\t\t\t\t\t\tstyle="\n\t\t\t\t\t\t\t\tbackground: ' +
-__e( defaults.styles.primary.backgroundColor ) +
+__e( defaults.styles.backgroundColor ) +
 '; \n\t\t\t\t\t\t\t\tcolor: ' +
-__e( defaults.styles.primary.color ) +
-'; \n\t\t\t\t\t\t\t\tborder: 1px solid ' +
-__e( defaults.styles.primary.color ) +
+__e( defaults.styles.color ) +
 ';">\n\n\t\t\t\t\t\t\t' +
 __e( panels.INTRO.start_dialog_button ) +
 '\n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t</button>\n\n\t\t\t\t\t\t<!-- Close widget button -->\n\t\t\t\t\t\t<a href="#" class="' +
@@ -595,11 +557,11 @@ __e( defaults.prefix ) +
  if(defaults.sounds) { ;
 __p +=
 __e( defaults.prefix ) +
-'-icon-bell';
+'-icon-notifications';
  } else { ;
 __p +=
 __e( defaults.prefix) +
-'-icon-bell-slash';
+'-icon-notifications_off';
  } ;
 __p += '">\n\t\t\t\t\t\t</span>\n\t\t\t\t\t</a>\n\t\t\t\t</div>\n\n\t\t\t\t<!-- "Agent is typing" indicator -->\n\t\t\t\t<div class="' +
 __e( defaults.prefix ) +
@@ -611,8 +573,8 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-file-select">\n\t\t\t\t\t\n\t\t\t\t\t<span \n\t\t\t\t\t\tclass="' +
 __e( defaults.prefix ) +
-'-icon-upload" \n\t\t\t\t\t\tstyle="color: ' +
-__e( defaults.styles.primary.backgroundColor ) +
+'-icon-file_upload" \n\t\t\t\t\t\tstyle="color: ' +
+__e( defaults.styles.backgroundColor ) +
 '">\n\t\t\t\t\t</span>\n\n\t\t\t\t</label>\n\n\t\t\t\t<div id="' +
 __e( defaults.prefix ) +
 '-message-text-clone"  class="' +
@@ -631,25 +593,17 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-handler="sendMessage">\n\n\t\t\t\t\t<span \n\t\t\t\t\t\tclass="' +
 __e( defaults.prefix ) +
-'-icon-paper-plane" \n\t\t\t\t\t\tstyle="color: ' +
-__e( defaults.styles.primary.backgroundColor ) +
+'-icon-send" \n\t\t\t\t\t\tstyle="color: ' +
+__e( defaults.styles.backgroundColor ) +
 '">\n\t\t\t\t\t</span>\n\t\t\t\t</a>\n\n\t\t\t</div>\n\t\t</div>\n\t\t<!-- ***** Messages pane ends ***** -->\n\n\t\t<!-- ***** Offline pane ***** -->\n\t\t<div \n\t\t\tclass="' +
 __e( defaults.prefix ) +
 '-wg-pane" \n\t\t\tdata-' +
 __e( defaults.prefix ) +
-'-pane="sendemail">\n\n\t\t\t<!-- Panel\'s image container -->\n\t\t\t<div \n\t\t\t\tclass="' +
+'-pane="sendemail">\n\n\t\t\t<!-- Panel\'s image container -->\n\t\t\t<div class="' +
 __e( defaults.prefix ) +
 '-pane-header ' +
 __e( defaults.prefix ) +
-'-dark" \n\t\t\t\t';
- if(defaults.styles.sendmail.backgroundImage) { ;
-__p += ' \n\t\t\t\t\tstyle="background-image: url(' +
-__e( defaults.clientPath ) +
-'' +
-__e( defaults.styles.sendmail.backgroundImage ) +
-')" \n\t\t\t\t';
- } ;
-__p += '>\n\n\t\t\t\t<!-- The text displayed on image -->\n\t\t\t\t<div class="' +
+'-dark">\n\n\t\t\t\t<!-- The text displayed on image -->\n\t\t\t\t<div class="' +
 __e( defaults.prefix ) +
 '-backdrop-cont ' +
 __e( defaults.prefix ) +
@@ -684,12 +638,10 @@ __e( defaults.prefix ) +
 '-button-primary ' +
 __e( defaults.prefix ) +
 '-block" \n\t\t\t\t\t\tstyle="\n\t\t\t\t\t\t\tbackground: ' +
-__e( defaults.styles.primary.backgroundColor ) +
+__e( defaults.styles.backgroundColor ) +
 '; \n\t\t\t\t\t\t\tcolor: ' +
-__e( defaults.styles.primary.color ) +
-'; \n\t\t\t\t\t\t\tborder: 1px solid ' +
-__e( defaults.styles.primary.color ) +
-';">\n\n\t\t\t\t\t\t' +
+__e( defaults.styles.color ) +
+'; ">\n\n\t\t\t\t\t\t' +
 __e( panels.OFFLINE.send_message_button ) +
 '\n\t\t\t\t\t\t\t\n\t\t\t\t\t</button>\n\n\t\t\t\t\t<!-- Close widget button -->\n\t\t\t\t\t<a href="#" class="' +
 __e( defaults.prefix ) +
@@ -703,37 +655,17 @@ __e( panels.OFFLINE.close ) +
 __e( defaults.prefix ) +
 '-wg-pane" \n\t\t\tdata-' +
 __e( defaults.prefix ) +
-'-pane="closechat">\n\n\t\t\t<!-- Panel\'s image container -->\n\t\t\t<div \n\t\t\t\tclass="' +
+'-pane="closechat">\n\n\t\t\t<!-- Panel\'s image container -->\n\t\t\t<div class="' +
 __e( defaults.prefix ) +
 '-pane-header ' +
 __e( defaults.prefix ) +
-'-white" \n\t\t\t\t';
- if(defaults.styles.closeChat.backgroundImage) { ;
-__p += ' \n\t\t\t\t\tstyle="background-image: url(' +
-__e( defaults.clientPath ) +
-'' +
-__e( defaults.styles.closeChat.backgroundImage ) +
-')" \n\t\t\t\t';
- } ;
-__p += '>\n\n\t\t\t\t<!-- The text displayed on image -->\n\t\t\t\t<div class="' +
-__e( defaults.prefix ) +
-'-backdrop-cont ' +
-__e( defaults.prefix ) +
-'-white">\n\t\t\t\t\t<br>\n\t\t\t\t\t<p>' +
-__e( panels.CLOSE_CHAT.close_chat_header ) +
-'</p>\n\t\t\t\t</div>\n\n\t\t\t</div>\n\n\t\t\t<div class="' +
+'-white">\n\n\t\t\t</div>\n\n\t\t\t<div class="' +
 __e( defaults.prefix ) +
 '-pane-body">\n\t\t\t\t<form id="' +
 __e( defaults.prefix ) +
-'-closechat-form" data-validate-form="true">\n\t\t\t\t\t<label for="' +
-__e( defaults.prefix ) +
-'-send-dialog">\n\t\t\t\t\t\t<input type="checkbox" name="sendDialog" id="' +
-__e( defaults.prefix ) +
-'-send-dialog" />\n\t\t\t\t\t\t<span>' +
-__e( panels.CLOSE_CHAT.send_dialog_label ) +
-'</span>\n\t\t\t\t\t</label>\n\t\t\t\t\t<input type="email" name="email" placeholder="' +
-__e( panels.CLOSE_CHAT.PLACEHOLDERS.email ) +
-'">\n\t\t\t\t\t<select name="rating">\n\t\t\t\t\t\t<option value="">--- ' +
+'-closechat-form" data-validate-form="true">\n\t\t\t\t\t<p>' +
+__e( panels.CLOSE_CHAT.close_chat_header ) +
+'</p>\n\t\t\t\t\t<select name="rating">\n\t\t\t\t\t\t<option value="">--- ' +
 __e( panels.CLOSE_CHAT.rate_agent ) +
 ' ---</option>\n\t\t\t\t\t\t<option value="5">' +
 __e( frases.AGENT_RATES.excellent ) +
@@ -745,19 +677,25 @@ __e( frases.AGENT_RATES.fair ) +
 __e( frases.AGENT_RATES.bad ) +
 '</option>\n\t\t\t\t\t</select>\n\t\t\t\t\t<textarea placeholder="' +
 __e( panels.CLOSE_CHAT.PLACEHOLDERS.comment ) +
-'" name="text" maxlength="1500"></textarea>\n\n\t\t\t\t\t<!-- End chat and close widget button -->\n\t\t\t\t\t<button \n\t\t\t\t\t\ttype="submit" \n\t\t\t\t\t\tclass="' +
+'" name="text" maxlength="1500"></textarea>\n\t\t\t\t\t<input type="email" name="email" placeholder="' +
+__e( panels.CLOSE_CHAT.PLACEHOLDERS.email ) +
+'">\n\t\t\t\t\t<label for="' +
+__e( defaults.prefix ) +
+'-send-dialog">\n\t\t\t\t\t\t<input type="checkbox" name="sendDialog" id="' +
+__e( defaults.prefix ) +
+'-send-dialog" />\n\t\t\t\t\t\t<span>' +
+__e( panels.CLOSE_CHAT.send_dialog_label ) +
+'</span>\n\t\t\t\t\t</label>\n\n\t\t\t\t\t<hr>\n\n\t\t\t\t\t<!-- End chat and close widget button -->\n\t\t\t\t\t<button \n\t\t\t\t\t\ttype="submit" \n\t\t\t\t\t\tclass="' +
 __e( defaults.prefix ) +
 '-button ' +
 __e( defaults.prefix ) +
 '-button-primary ' +
 __e( defaults.prefix ) +
 '-block" \n\t\t\t\t\t\tstyle="\n\t\t\t\t\t\t\tbackground: ' +
-__e( defaults.styles.primary.backgroundColor ) +
+__e( defaults.styles.backgroundColor ) +
 '; \n\t\t\t\t\t\t\tcolor: ' +
-__e( defaults.styles.primary.color ) +
-'; \n\t\t\t\t\t\t\tborder: 1px solid ' +
-__e( defaults.styles.primary.color ) +
-';">\n\n\t\t\t\t\t\t' +
+__e( defaults.styles.color ) +
+'; ">\n\n\t\t\t\t\t\t' +
 __e( panels.CLOSE_CHAT.finish_dialog_button ) +
 '\n\t\t\t\t\t\t\t\n\t\t\t\t\t</button>\n\n\t\t\t\t\t<!-- "Back to the chat" button -->\n\t\t\t\t\t<a href="#messages" class="' +
 __e( defaults.prefix ) +
@@ -812,12 +750,10 @@ __e( defaults.prefix ) +
 '-block ' +
 __e( defaults.prefix ) +
 '-hidden"\n\t\t\t\t\t\tstyle="background: ' +
-__e( defaults.styles.primary.backgroundColor ) +
+__e( defaults.styles.backgroundColor ) +
 '; color: ' +
-__e( defaults.styles.primary.color ) +
-'; border: 1px solid ' +
-__e( defaults.styles.primary.color ) +
-';"\n\t\t\t\t\t\tdata-' +
+__e( defaults.styles.color ) +
+'; "\n\t\t\t\t\t\tdata-' +
 __e( defaults.prefix ) +
 '-handler="initCall">\n\t\t\t\t\t\t' +
 __e( panels.AUDIO_CALL.try_again ) +
@@ -842,9 +778,9 @@ __e( defaults.prefix ) +
 '-text-center">\n\t\t\t\t\t<h3>' +
 __e( panels.AUDIO_CALL_FALLBACK.DOWNLOAD_MSG ) +
 '</h3>\n\t\t\t\t\t<br>\n\t\t\t\t\t';
- if(channels.webcall && channels.webcall.fallback) { ;
+ if(channelsObject.webcall && channelsObject.webcall.fallback) { ;
 __p += '\n\t\t\t\t\t\t<a href="' +
-__e( channels.webcall.fallback.sipCall ) +
+__e( channelsObject.webcall.fallback.sipCall ) +
 '">call.jnlp</a>\n\t\t\t\t\t';
  } ;
 __p += '\n\t\t\t\t</div>\n\t\t\t\t<form>\n\t\t\t\t\t<hr>\n\t\t\t\t\t<a href="#chooseConnection" class="' +
@@ -878,7 +814,7 @@ __e( defaults.prefix ) +
 '-shown" style="position: relative;">\n\t\t\t\t\t\t<span></span>\n\t\t\t\t\t\t<span></span>\n\t\t\t\t\t\t<span></span>\n\t\t\t\t\t</h3>\n\t\t\t\t</div>\n\t\t\t\t<form id="' +
 __e( defaults.prefix ) +
 '-callback-settings">\n\t\t\t\t\t';
- if(channels.callback && channels.callback.time !== false) { ;
+ if(channelsObject.callback && channelsObject.callback.time !== false) { ;
 __p += '\n\t\t\t\t\t\t<p class="' +
 __e( defaults.prefix ) +
 '-text-center">' +
@@ -896,7 +832,7 @@ __e( panels.CALLBACK.LABELS.phone ) +
 '</label>\n\t\t\t\t\t<input type="tel" name="phone" placeholder="' +
 __e( panels.CALLBACK.PLACEHOLDERS.phone ) +
 '" required>\n\t\t\t\t\t';
- if(channels.callback && channels.callback.time !== false) { ;
+ if(channelsObject.callback && channelsObject.callback.time !== false) { ;
 __p += '\n\t\t\t\t\t\t<label>' +
 __e( panels.CALLBACK.LABELS.time ) +
 '</label>\n\t\t\t\t\t\t<select name="time">\n\t\t\t\t\t\t\t';
@@ -910,7 +846,7 @@ __e( point.label ) +
 __p += '\n\t\t\t\t\t\t</select>\n\t\t\t\t\t';
  } ;
 __p += '\n\t\t\t\t\t';
- if(channels.callback && channels.callback.message !== undefined) { ;
+ if(channelsObject.callback && channelsObject.callback.message !== undefined) { ;
 __p += '\n\t\t\t\t\t\t<label>' +
 __e( panels.CALLBACK.LABELS.message ) +
 '</label>\n\t\t\t\t\t\t<textarea name="message" placeholder="' +
@@ -924,11 +860,9 @@ __e( defaults.prefix ) +
 '-button-primary ' +
 __e( defaults.prefix ) +
 '-block"\n\t\t\t\t\t\tstyle="\n\t\t\t\t\t\t\tbackground: ' +
-__e( defaults.styles.primary.backgroundColor ) +
+__e( defaults.styles.backgroundColor ) +
 '; \n\t\t\t\t\t\t\tcolor: ' +
-__e( defaults.styles.primary.color ) +
-'; \n\t\t\t\t\t\t\tborder: 1px solid ' +
-__e( defaults.styles.primary.color ) +
+__e( defaults.styles.color ) +
 ';"\n\t\t\t\t\t\tdata-' +
 __e( defaults.prefix ) +
 '-handler="setCallback">\n\n\t\t\t\t\t\t' +
@@ -954,7 +888,7 @@ __e( defaults.prefix ) +
 '-icon-check ' +
 __e( defaults.prefix ) +
 '-text-success"></h3>\n\t\t\t\t\t';
- if(channels.callback && channels.callback.time !== false) { ;
+ if(channelsObject.callback && channelsObject.callback.time !== false) { ;
 __p += '\n\t\t\t\t\t\t<p class="' +
 __e( defaults.prefix ) +
 '-text-center">' +
@@ -985,9 +919,15 @@ __e( panels.CALLBACK.close ) +
 __e( defaults.prefix ) +
 '-btn-cont" class="' +
 __e( defaults.prefix ) +
-'-btn-cont">\n\t\t<div class="' +
+'-btn-cont">\n\t\t<div \n\t\t\tclass="' +
 __e( defaults.prefix ) +
-'-wg-btn">\n\t\t\t<div class="' +
+'-wg-btn" \n\t\t\tstyle="\n\t\t\t\tbackground: ' +
+__e( defaults.buttonStyles.backgroundColor ) +
+';\n\t\t\t\tbox-shadow: ' +
+__e( defaults.buttonStyles.boxShadow ) +
+';\n\t\t\t\tborder: ' +
+__e( defaults.buttonStyles.border ) +
+'"\n\t\t>\n\t\t\t<div class="' +
 __e( defaults.prefix ) +
 '-lastmsg-cont">\n\t\t\t\t<span class="' +
 __e( defaults.prefix ) +
@@ -1007,9 +947,11 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-lastmsg">\n\t\t\t\t</div>\t\n\t\t\t</div>\n\t\t\t<a href="#" class="' +
 __e( defaults.prefix ) +
-'-btn-link">\n\t\t\t\t<span class="' +
+'-btn-link">\n\t\t\t\t<span \n\t\t\t\t\tclass="' +
 __e( defaults.prefix ) +
-'-btn-icon"></span>\n\t\t\t</a>\n\t\t</div>\n\t</div>\n\t<!-- ***** Floating button container ends ***** -->\n\n</div>';
+'-btn-icon"\n\t\t\t\t\tstyle="color: ' +
+__e( defaults.buttonStyles.color ) +
+';"\n\t\t\t\t></span>\n\t\t\t</a>\n\t\t</div>\n\t</div>\n\t<!-- ***** Floating button container ends ***** -->\n\n</div>';
 
 }
 return __p

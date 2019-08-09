@@ -275,7 +275,7 @@
 
 				input[type="file"] {
 					position: absolute;
-					display: none;
+					display: none !important;
 				}
 			}
 
@@ -289,10 +289,11 @@
 		textarea {
 			font: 14px $font-stack;
 			display: block;
-			width: 100%;
+			width: 100% !important;
+			height: 50px !important;
 			// height: 50px;
-			max-height: 200px;
-			min-height: 50px;
+			max-height: 200px !important;
+			min-height: 50px !important;
 			margin: 0;
 			padding: 10px 40px;
 			// padding: 6px 10px;

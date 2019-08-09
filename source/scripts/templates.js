@@ -80,7 +80,7 @@ __e( defaults.prefix ) +
 '-message-content" ';
  if(message.entity === "user") { ;
 __p += ' style="border-color:\'' +
-__e( defaults.styles.primary.backgroundColor ) +
+__e( defaults.styles.backgroundColor ) +
 '" ';
  } ;
 __p += '>\n\t\t<form id="' +
@@ -160,11 +160,11 @@ __e( defaults.prefix ) +
 '-button-primary ' +
 __e( defaults.prefix ) +
 '-block"\n\t\t\t\tstyle="background-color: ' +
-__e( defaults.styles.primary.backgroundColor ) +
+__e( defaults.styles.backgroundColor ) +
 '; color: ' +
-__e( defaults.styles.primary.color ) +
+__e( defaults.styles.color ) +
 '; border: 1px solid ' +
-__e( defaults.styles.primary.backgroundColor ) +
+__e( defaults.styles.backgroundColor ) +
 ';">' +
 __e( frases.FORMS.send ) +
 '</button>\n\t\t\t\n\t\t</form>\n\t</div>\n\t<span class="' +
@@ -343,6 +343,8 @@ __e( channel.backgroundColor || '#fff' ) +
 __e( defaults.prefix ) +
 '-icon-' +
 ((__t = ( channel.iconClass )) == null ? '' : __t) +
+'" style="color: ' +
+__e( channel.iconColor ) +
 '"></span>\n\t\t\t\t\t\t\t\t<span>' +
 ((__t = ( channel.btnText )) == null ? '' : __t) +
 '</span>\n\n\t\t\t\t\t\t\t</a>\n\n\t\t\t\t\t\t';
@@ -436,7 +438,7 @@ __e( translations[lang].lang ) +
 __p += '\n\t\t\t\t\t\t\t\t</select>\n\t\t\t\t\t\t\t';
  } else if(item.name === 'message') { ;
 __p += '\n\t\t\t\t\t\t\t\t<textarea\n\t\t\t\t\t\t\t\t\tname="message"\n\t\t\t\t\t\t\t\t\tplaceholder="' +
-((__t = ( panels.INTRO.PLACEHOLDERS[item.name] )) == null ? '' : __t) +
+((__t = ( item.placeholder || panels.INTRO.PLACEHOLDERS[item.name] )) == null ? '' : __t) +
 ' ';
  if(item.required){ ;
 __p += ' * ';
@@ -482,7 +484,7 @@ __e( item.placeholder ) +
 __p += '\n\t\t\t\t\t\t\t\t<input \n\t\t\t\t\t\t\t\t\ttype="' +
 ((__t = ( item.type || 'text' )) == null ? '' : __t) +
 '"\n\t\t\t\t\t\t\t\t\tplaceholder="' +
-((__t = ( panels.INTRO.PLACEHOLDERS[item.name] )) == null ? '' : __t) +
+((__t = ( item.placeholder || panels.INTRO.PLACEHOLDERS[item.name] )) == null ? '' : __t) +
 ' ';
  if(item.required){ ;
 __p += ' * ';
@@ -573,9 +575,11 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-file-select">\n\t\t\t\t\t\n\t\t\t\t\t<span \n\t\t\t\t\t\tclass="' +
 __e( defaults.prefix ) +
-'-icon-file_upload" \n\t\t\t\t\t\tstyle="color: ' +
+'-icon-attach_file" \n\t\t\t\t\t\tstyle="color: ' +
 __e( defaults.styles.backgroundColor ) +
-'">\n\t\t\t\t\t</span>\n\n\t\t\t\t</label>\n\n\t\t\t\t<div id="' +
+'"\n\t\t\t\t\t\ttitle="' +
+__e( panels.MESSAGES.send_file_button ) +
+'"\n\t\t\t\t\t>\n\t\t\t\t\t</span>\n\n\t\t\t\t</label>\n\n\t\t\t\t<div id="' +
 __e( defaults.prefix ) +
 '-message-text-clone"  class="' +
 __e( defaults.prefix ) +
@@ -589,9 +593,11 @@ __e( panels.MESSAGES.PLACEHOLDERS.message ) +
 __e( defaults.prefix ) +
 '-sendmsg-btn ' +
 __e( defaults.prefix ) +
-'-button" \n\t\t\t\t\tdata-' +
+'-button" \n\t\t\t\t\ttitle="' +
+__e(panels.MESSAGES.send_message_button ) +
+'"\n\t\t\t\t\tdata-' +
 __e( defaults.prefix ) +
-'-handler="sendMessage">\n\n\t\t\t\t\t<span \n\t\t\t\t\t\tclass="' +
+'-handler="sendMessage"\n\n\t\t\t\t>\n\n\t\t\t\t\t<span \n\t\t\t\t\t\tclass="' +
 __e( defaults.prefix ) +
 '-icon-send" \n\t\t\t\t\t\tstyle="color: ' +
 __e( defaults.styles.backgroundColor ) +

@@ -25,211 +25,179 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.swc-icon-ringotel_emblem:before {
-  content: "\e933";
-}
-.swc-icon-livechat_email:before {
+.swc-icon-ringotel_emblem_phone:before {
   content: "\e900";
 }
-.swc-icon-livechat_newmessage:before {
+.swc-icon-livechat_email:before {
   content: "\e901";
 }
-.swc-icon-livechat_chat:before {
+.swc-icon-livechat_newmessage:before {
   content: "\e902";
 }
-.swc-icon-livechat_ongoing:before {
+.swc-icon-livechat_chat:before {
   content: "\e903";
 }
-.swc-icon-livechat_call:before {
+.swc-icon-livechat_ongoing:before {
   content: "\e904";
 }
-.swc-icon-spinner:before {
-  content: "\f110";
+.swc-icon-livechat_call:before {
+  content: "\e905";
 }
 .swc-icon-facebook:before {
-  content: "\e905";
-  color: #4172b8;
-}
-.swc-icon-instagram:before {
-  content: "\e934";
-  color: #e4405f;
+  content: "\e906";
 }
 .swc-icon-messenger:before {
-  content: "\e906";
-  color: #00b2ff;
+  content: "\e907";
 }
 .swc-icon-skype:before {
-  content: "\e907";
-  color: #00aff0;
+  content: "\e908";
 }
 .swc-icon-telegram:before {
-  content: "\e908";
-  color: #2ca5e0;
+  content: "\e909";
 }
 .swc-icon-twitter:before {
-  content: "\e909";
-  color: #1da1f2;
+  content: "\e90a";
 }
 .swc-icon-viber:before {
-  content: "\e90a";
-  color: #665cac;
+  content: "\e90b";
 }
 .swc-icon-whatsapp:before {
-  content: "\e90b";
-  color: #25d366;
-}
-.swc-icon-mic:before {
   content: "\e90c";
 }
-.swc-icon-mic_off:before {
+.swc-icon-mic:before {
   content: "\e90d";
 }
-.swc-icon-new_releases:before {
-  content: "\e930";
-}
-.swc-icon-videocam:before {
+.swc-icon-mic_off:before {
   content: "\e90e";
 }
-.swc-icon-videocam_off:before {
+.swc-icon-videocam:before {
   content: "\e90f";
 }
-.swc-icon-volume_off:before {
+.swc-icon-videocam_off:before {
   content: "\e910";
 }
-.swc-icon-volume_up:before {
+.swc-icon-volume_off:before {
   content: "\e911";
 }
-.swc-icon-video_call:before {
+.swc-icon-volume_up:before {
   content: "\e912";
 }
-.swc-icon-call:before {
+.swc-icon-video_call:before {
   content: "\e913";
 }
-.swc-icon-call_end:before {
+.swc-icon-call:before {
   content: "\e914";
 }
-.swc-icon-dialpad:before {
+.swc-icon-call_end:before {
   content: "\e915";
 }
+.swc-icon-dialpad:before {
+  content: "\e916";
+}
 .swc-icon-email:before {
-  content: "\e916";
-}
-.swc-icon-mail:before {
-  content: "\e916";
-}
-.swc-icon-markunread:before {
-  content: "\e916";
-}
-.swc-icon-local_post_office:before {
-  content: "\e916";
+  content: "\e917";
 }
 .swc-icon-forum:before {
-  content: "\e917";
-}
-.swc-icon-question_answer:before {
-  content: "\e917";
-}
-.swc-icon-chat_bubble:before {
-  content: "\e931";
-}
-.swc-icon-voicemail:before {
   content: "\e918";
 }
-.swc-icon-add:before {
+.swc-icon-voicemail:before {
   content: "\e919";
 }
-.swc-icon-clear:before {
+.swc-icon-add:before {
   content: "\e91a";
 }
 .swc-icon-close:before {
-  content: "\e91a";
-}
-.swc-icon-send:before {
   content: "\e91b";
 }
-.swc-icon-attach_file:before {
+.swc-icon-send:before {
   content: "\e91c";
 }
+.swc-icon-attach_file:before {
+  content: "\e91d";
+}
 .swc-icon-file_download:before {
-  content: "\e91d";
-}
-.swc-icon-get_app:before {
-  content: "\e91d";
-}
-.swc-icon-file_upload:before {
   content: "\e91e";
 }
-.swc-icon-check:before {
+.swc-icon-file_upload:before {
   content: "\e91f";
 }
-.swc-icon-keyboard_control:before {
+.swc-icon-check:before {
   content: "\e920";
 }
-.swc-icon-phone_callback:before {
+.swc-icon-keyboard_control:before {
   content: "\e921";
 }
-.swc-icon-notifications:before {
+.swc-icon-phone_callback:before {
   content: "\e922";
 }
-.swc-icon-notifications_off:before {
+.swc-icon-notifications:before {
   content: "\e923";
 }
-.swc-icon-sentiment_dissatisfied:before {
+.swc-icon-notifications_off:before {
   content: "\e924";
 }
-.swc-icon-sentiment_neutral:before {
+.swc-icon-sentiment_dissatisfied:before {
   content: "\e925";
 }
-.swc-icon-sentiment_satisfied:before {
+.swc-icon-sentiment_neutral:before {
   content: "\e926";
 }
-.swc-icon-sentiment_very_dissatisfied:before {
+.swc-icon-sentiment_satisfied:before {
   content: "\e927";
 }
-.swc-icon-sentiment_very_satisfied:before {
+.swc-icon-sentiment_very_dissatisfied:before {
   content: "\e928";
 }
-.swc-icon-thumb_down_alt:before {
+.swc-icon-sentiment_very_satisfied:before {
   content: "\e929";
 }
-.swc-icon-thumb_up_alt:before {
+.swc-icon-thumb_down_alt:before {
   content: "\e92a";
 }
-.swc-icon-star:before {
-  content: "\e932";
-}
-.swc-icon-grade:before {
-  content: "\e932";
-}
-.swc-icon-delete:before {
+.swc-icon-thumb_up_alt:before {
   content: "\e92b";
 }
+.swc-icon-delete:before {
+  content: "\e92c";
+}
 .swc-icon-launch:before {
-  content: "\e92c";
-}
-.swc-icon-open_in_new:before {
-  content: "\e92c";
-}
-.swc-icon-update:before {
   content: "\e92d";
 }
-.swc-icon-thumb_down_off_alt:before {
+.swc-icon-update:before {
   content: "\e92e";
 }
-.swc-icon-thumb_up_off_alt:before {
+.swc-icon-thumb_down_off_alt:before {
   content: "\e92f";
 }
-.swc-icon-file-empty:before {
+.swc-icon-thumb_up_off_alt:before {
+  content: "\e930";
+}
+.swc-icon-new_releases:before {
+  content: "\e931";
+}
+.swc-icon-chat_bubble:before {
+  content: "\e932";
+}
+.swc-icon-star:before {
+  content: "\e933";
+}
+.swc-icon-ringotel_emblem:before {
+  content: "\e934";
+}
+.swc-icon-instagram:before {
   content: "\e935";
 }
-.swc-icon-file-music:before {
+.swc-icon-file-empty:before {
   content: "\e936";
 }
-.swc-icon-file-play:before {
+.swc-icon-file-music:before {
   content: "\e937";
 }
-.swc-icon-file-video:before {
+.swc-icon-file-play:before {
   content: "\e938";
+}
+.swc-icon-file-video:before {
+  content: "\e939";
 }
 .swc-icon-file-pdf:before {
   content: "\eadf";
@@ -242,4 +210,7 @@
 }
 .swc-icon-file-excel:before {
   content: "\eae2";
+}
+.swc-icon-spinner:before {
+  content: "\f110";
 }

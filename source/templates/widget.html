@@ -83,7 +83,7 @@
 									color: #222;"
 								>
 
-								<span class="<%- defaults.prefix %>-icon-<%= channel.iconClass %>"></span>
+								<span class="<%- defaults.prefix %>-icon-<%= channel.iconClass %>" style="color: <%- channel.iconColor %>"></span>
 								<span><%= channel.btnText %></span>
 
 							</a>
@@ -167,7 +167,7 @@
 							<% } else if(item.name === 'message') { %>
 								<textarea
 									name="message"
-									placeholder="<%= panels.INTRO.PLACEHOLDERS[item.name] %> <% if(item.required){ %> * <% } %>"
+									placeholder="<%= item.placeholder || panels.INTRO.PLACEHOLDERS[item.name] %> <% if(item.required){ %> * <% } %>"
 								></textarea>
 							<% } else if(item.name === 'consent') { %>
 								<label for="<%-defaults.sid %>-<%- item.name %>">
@@ -190,7 +190,7 @@
 							<% } else { %>
 								<input 
 									type="<%= item.type || 'text' %>"
-									placeholder="<%= panels.INTRO.PLACEHOLDERS[item.name] %> <% if(item.required){ %> * <% } %>" 
+									placeholder="<%= item.placeholder || panels.INTRO.PLACEHOLDERS[item.name] %> <% if(item.required){ %> * <% } %>" 
 									name="<%- item.name %>" 
 									<% if(item.save){ %> value="<%- credentials[item.name] %>" <% } %> 
 									<% if(item.required){ %> required <% } %>>
@@ -261,8 +261,10 @@
 						id="<%- defaults.prefix %>-file-select">
 					
 					<span 
-						class="<%- defaults.prefix %>-icon-file_upload" 
-						style="color: <%- defaults.styles.backgroundColor %>">
+						class="<%- defaults.prefix %>-icon-attach_file" 
+						style="color: <%- defaults.styles.backgroundColor %>"
+						title="<%- panels.MESSAGES.send_file_button %>"
+					>
 					</span>
 
 				</label>
@@ -280,7 +282,10 @@
 				<a 
 					href="#" 
 					class="<%- defaults.prefix %>-sendmsg-btn <%- defaults.prefix %>-button" 
-					data-<%- defaults.prefix %>-handler="sendMessage">
+					title="<%-panels.MESSAGES.send_message_button %>"
+					data-<%- defaults.prefix %>-handler="sendMessage"
+
+				>
 
 					<span 
 						class="<%- defaults.prefix %>-icon-send" 

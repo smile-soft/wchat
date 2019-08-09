@@ -33,6 +33,8 @@
     			}
     		},
     		"MESSAGES": {
+                "send_file_button": "Відправити файл",
+                "send_message_button": "Відправити повідомлення",
                 "end_dialog": "Закінчити діалог",
     			"PLACEHOLDERS": {
     				"message": "Ваше повідомлення тут..."
@@ -177,6 +179,8 @@
     			}
     		},
     		"MESSAGES": {
+                "send_file_button": "Отправить файл",
+                "send_message_button": "Отправить сообщение",
                 "end_dialog": "Завершить диалог",
     			"PLACEHOLDERS": {
     				"message": "Ваше сообщение здесь..."
@@ -321,6 +325,8 @@
 				}
 			},
 			"MESSAGES": {
+                "send_file_button": "Send file",
+                "send_message_button": "Send message",
                 "end_dialog": "End dialog",
 				"PLACEHOLDERS": {
 					"message": "Your message here..."

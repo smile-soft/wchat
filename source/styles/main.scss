@@ -3,8 +3,8 @@ $wg-height: 450px;
 $wg-width: 320px;
 $btn-width: 54px;
 $btn-height: 54px;
-$btn-link-width: 64px;
-$btn-link-height: 64px;
+$btn-link-width: 64px !important;
+$btn-link-height: 64px !important;
 $font-stack: "Helvetica Neue",Helvetica,Arial,sans-serif;
 // $font-stack: "Trebuchet MS", Helvetica, sans-serif;
 $border-radius: 5px;
@@ -13,8 +13,8 @@ $header-height: 60px;
 
 // $btn-icon: 'images/logo.png';
 
-// $btn-icon-call: '\e904';
-$btn-icon: '\e933';
+$btn-icon-call: '\e900';
+$btn-icon: '\e934';
 
 $btn-color-online: rgba(255,255,255,0.8);
 // $btn-icon-online: '\e933';
@@ -76,7 +76,7 @@ $secondary-color: #BBBBBB;
 }
 
 .swc-wg-cont {
-	font: 16px $font-stack;
+	font: 16px $font-stack !important;
 	position: fixed;
 	bottom: 20px;
 	z-index: 99999;
@@ -100,9 +100,9 @@ $secondary-color: #BBBBBB;
 				right: 5px;
 			}
 		}
-		.swc-btn-link {
-			float: right;
-		}
+		// .swc-btn-link {
+		// 	float: right;
+		// }
 		.swc-lastmsg-cont {
 		// .swc-unnotify-btn {
 			right: 75px;
@@ -118,9 +118,9 @@ $secondary-color: #BBBBBB;
 				left: 5px;
 			}
 		}
-		.swc-btn-link {
-			float: left;
-		}
+		// .swc-btn-link {
+		// 	float: left;
+		// }
 		.swc-lastmsg-cont {
 		// .swc-unnotify-btn {
 			left: 75px;
@@ -184,6 +184,13 @@ $secondary-color: #BBBBBB;
 
 	a.swc-button {
 		text-decoration: none;
+	}
+
+	input[type="checkbox"]
+	{
+		display: initial !important;
+		margin: auto !important;
+		width: auto !important;
 	}
 
 	&.active {
@@ -252,11 +259,11 @@ $secondary-color: #BBBBBB;
 			// 	content: $btn-icon;
 			// }
 		// }
-		// &.webrtc-enabled {
-		// 	.swc-btn-icon:before {
-		// 		content: $btn-icon-call;
-		// 	}
-		// }
+		&.webrtc-enabled {
+			.swc-btn-icon:before {
+				content: $btn-icon-call;
+			}
+		}
 
 		.swc-wg-state-cont {
 			.swc-wg-state-icon {

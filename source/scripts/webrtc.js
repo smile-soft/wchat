@@ -3,7 +3,7 @@ var events = {},
 // JsSIP = require('jssip'),
 // JsSIP = require('./libs/jssip'),
 JsSIP,
-options,
+options = {},
 sipClient,
 sipSession,
 sipCallEvents;
@@ -123,8 +123,9 @@ function createRemoteAudio(){
 	return el;
 }
 
-function init(options){
+function init(params){
 	debug.log('Initiating WebRTC module:', options);
+	options = extend(options, params);
 	JsSIP = global.JsSIP;
 
 	debug.log('JsSIP: ', global, JsSIP);
@@ -143,6 +144,15 @@ function init(options){
 	initJsSIPEvents();
 	sipClient.start();
 	// return sipClient;
+}
+
+function extend( a, b ) {
+    for( var key in b ) {
+        if( b.hasOwnProperty( key ) ) {
+            a[key] = b[key];
+        }
+    }
+    return a;
 }
 
 module.exports = {

@@ -54,6 +54,7 @@ var defaults = {
 		color: 'rgb(70,70,70)'
 	},
 	widgetWindowOptions: 'left=10,top=10,width=350,height=550,resizable',
+	widgetWindowName: 'wchat',
 	path: '/ipcc/webchat/', // absolute path to the wchat folder
 	clientPath: 'https://cdn.smile-soft.com/wchat/v1/', // absolute path to the clients files. If not set, files requested from defaults.server + defaults.path.
 	stylesPath: '', // absolute path to the css flie
@@ -159,8 +160,11 @@ function Widget(options){
 	// defaults.clientPath = options.clientPath ? options.clientPath : (defaults.clientPath || (defaults.server + defaults.path));
 	
 	// serverUrl = require('url').parse(defaults.server, true);
+	defaults.channels = Array.isArray(defaults.channels) ? defaults.channels : Object.keys(defaults.channels).map(function(key) { var cParams = defaults.channels[key]; cParams.type = key; return cParams; });
 
 	defaults.webcallOnly = (!defaults.chat && !getChannelParams('callback').task && getChannelParams('webcall').hotline);
+
+	debug.log('Widget defaults', defaults, getChannelParams('webcall'));
 
 	api = new Core(defaults, { sid: storage.getState('sid') })
 	.on('session/create', onSessionSuccess);
@@ -347,12 +351,6 @@ function initSession() {
 	if(defaults.webcallOnly && !defaults.webrtcEnabled) return;
 	
 	if(defaults.buttonSelector) setHandlers(defaults.buttonSelector);
-	if(defaults.themeColor) {
-		defaults.styles.backgroundColor = defaults.buttonStyles.color = defaults.themeColor;
-		defaults.styles.color = defaults.buttonStyles.backgroundColor = getThemeTextColor(defaults.themeColor);
-		// defaults.buttonStyles.boxShadow = ("0px 0px 10px 0px " + defaults.buttonStyles.backgroundColor);
-		defaults.buttonStyles.border = ("1px solid " + defaults.buttonStyles.color);
-	}
 
 	defaults.channels = addChannelsParams(defaults.channels);
 	defaults.channelsObject = defaults.channels.reduce(function(result, item) { result[item.type] = item; return result; }, {});
@@ -512,6 +510,10 @@ function initWidget(){
 		addWgState('webrtc-enabled');
 	}
 
+	if(defaults.buttonStyles.view === 'box') {
+		addWgState('button-view-box');
+	}
+
 	if(widget && defaults.intro && defaults.intro.length) {
 		// Add languages to the template
 		widgetState.langs.forEach(function(lang) {
@@ -650,6 +652,7 @@ function startChat(params){
 	}
 
 	addWgState('chat');
+	setTimeout(function() {focusOnElement(document.getElementById("swc-message-text"))}, 1000);
 }
 
 function sendMessage(params){
@@ -981,14 +984,12 @@ function onQueueTimeout() {
 
 function onSessionTimeout(){
 	debug.log('Session timeout:');
-	var el = null;
+	var el = widget.querySelector('.'+defaults.prefix+'-wg-pane[data-swc-pane="closechat"] a[href="#messages"]');
+	if(el) el.innerText = frases.PANELS.CLOSE_CHAT.new_chat;
 
 	if(storage.getState('chat', 'session') === true) {
 		storage.saveState('chat', false, 'session');
 		switchPane('closechat');
-
-		el = widget.querySelector('.'+defaults.prefix+'-wg-pane[data-swc-pane="closechat"] a[href="#messages"]');
-		if(el) el.innerText = frases.PANELS.CLOSE_CHAT.new_chat;
 	}
 
 	widgetState.timeoutSession = true;
@@ -1168,7 +1169,7 @@ function openWidget(e){
 		// set external flag to indicate that the module loads not in the main window
 		opts.external = true;
 
-		widgetWindow = window.open('', 'wchat', defaults.widgetWindowOptions);
+		widgetWindow = window.open('', defaults.widgetWindowName, defaults.widgetWindowOptions);
 		widgetWindow = constructWindow(widgetWindow);
 		// widgetWindow[globalSettings] = opts;
 
@@ -1526,23 +1527,19 @@ function initWidgetState(e){
 	// if(hasWgState('timeout')) {
 	// 	initModule();
 	// } else 
-	if(chatInProgress){
+	if(chatInProgress || callInProgress){
 		showWidget();
 	} else if(isOffline()){
 		switchPane('sendemail');
 		showWidget();
 	} else if(defaults.webrtcEnabled){
 		// if call is in progress - just show the widget
-		if(callInProgress) {
-			showWidget();
+		if(!defaults.chat && !getChannelParams('callback').task) {
+			initCall();
 		} else {
-			if(!defaults.chat && !getChannelParams('callback').task) {
-				initCall();
-			} else {
-				switchPane('chooseConnection');
-			}
-			showWidget();
+			switchPane('chooseConnection');
 		}
+		showWidget();
 	} else if(getChannelParams('callback').task) {
 		if(!defaults.chat && !defaults.webrtcEnabled) {
 			switchPane('callback');
@@ -1686,12 +1683,30 @@ function getWidgetState() {
 
 function setStyles() {
 
-	// backward-compatibility
-	defaults.styles.backgroundColor = defaults.styles.primary ? defaults.styles.primary.backgroundColor : defaults.styles.backgroundColor;
-	defaults.styles.color = defaults.styles.primary ? defaults.styles.primary.color : defaults.styles.color;
+	var bgr = defaults.styles.primary ? defaults.styles.primary.backgroundColor : defaults.styles.backgroundColor;
+	var color = defaults.styles.primary ? defaults.styles.primary.color : defaults.styles.color;
+	var border = "1px solid ";
+
+	if(defaults.themeColor) {
+		bgr = defaults.themeColor;
+		color = getThemeTextColor(defaults.themeColor);
+		// border += color;
+	}
+
+	defaults.styles.backgroundColor = bgr;
+	defaults.styles.color = color;
+
+	if(defaults.buttonStyles.view === 'box') {
+		defaults.buttonStyles.color = color;
+		defaults.buttonStyles.backgroundColor = bgr;
+		defaults.buttonStyles.border = border + (defaults.buttonStyles.border || color);
+	} else {
+		defaults.buttonStyles.color = bgr;
+		defaults.buttonStyles.backgroundColor = color;
+		defaults.buttonStyles.border = border + (defaults.buttonStyles.border || bgr);
+	}
 
 	// defaults.buttonStyles.boxShadow = defaults.buttonStyles.boxShadow || ("0px 0px 10px 0px " + defaults.buttonStyles.backgroundColor);
-	defaults.buttonStyles.border = defaults.buttonStyles.border || ("1px solid " + defaults.buttonStyles.color);
 }
 
 // TODO: This is not a good solution or maybe not a good implementation
@@ -1731,7 +1746,7 @@ function showWidget(){
 }
 
 function closeWidget(){
-	if(window.opener) {
+	if(window.opener && window.name === defaults.widgetWindowName) {
 		window.close();
 	} else {
 		widgetState.active = false;
@@ -1822,7 +1837,6 @@ function getFileContent(element, cb){
 }
 
 function checkFileParams(file) {
-	debug.log('checkFileParams: ', file, file.size, file.name, defaults.allowedFileExtensions, (defaults.maxFileSize*1000*1000));	
 	var errors = [];
 	var fileExt = file.name.split('.')[file.name.split('.').length-1];
 	if(fileExt && defaults.allowedFileExtensions && defaults.allowedFileExtensions.length && defaults.allowedFileExtensions.indexOf(fileExt.toLowerCase()) === -1) errors.push('file_type_error');
@@ -1856,28 +1870,39 @@ function addChannelsParams(channels) {
 	var channelParams = {
 		webcall: {
 			iconClass: "call",
+			iconColor: "#222",
 			btnText: frases.PANELS.CONNECTION_TYPES.call_agent_btn,
 			callback: "initCall"
 		},
 		callback: {
 			iconClass: "phone_callback",
+			iconColor: "#222",
 			btnText: frases.PANELS.CONNECTION_TYPES.callback_btn,
 			callback: "initCallback"
 		},
 		viber: {
 			iconClass: "viber",
+			iconColor: "#665CAC",
 			btnText: "Viber"
 		},
 		telegram: {
 			iconClass: "telegram",
+			iconColor: "#0088CC",
 			btnText: "Telegram"
 		},
 		messenger: {
 			iconClass: "messenger",
+			iconColor: "#00C6FF",
 			btnText: "Messenger"
 		},
 		facebook: {
 			iconClass: "facebook",
+			iconColor: "#1778F2",
+			btnText: "Facebook"
+		},
+		skype: {
+			iconClass: "facebook",
+			iconColor: "#00AFF0",
 			btnText: "Facebook"
 		}
 	};
@@ -1959,16 +1984,16 @@ function parseMessage(params){
 	var filename, form, imgUrl;
 	if(fileData || isLinkToFile(text)) {
 		filename = isLinkToFile(text) ? text.substring(text.lastIndexOf('/')+1) : text.substring(text.indexOf('_')+1);
-		imgUrl = isLinkToFile(text) ? text : toBlobUrl(fileData);
+		imgUrl = fileData ? toBlobUrl(fileData) : text;
 		if(isImage(filename)) {
 			return {
 				type: 'image',
-				content: '<img src="'+imgUrl+'" alt="'+filename+'" />'
+				content: '<a href="'+imgUrl+'" target="_blank"><img src="'+imgUrl+'" alt="'+filename+'" /></a>'
 			};
 		} else {
 			return {
 				type: 'file',
-				content: '<a href="'+text+'" download="'+filename+'">'+filename+'</a>'
+				content: '<a href="'+imgUrl+'" download="'+filename+'">'+filename+'</a>'
 			};
 		}
 	} else if(isLink(text) && isImage(text)) {
@@ -2158,4 +2183,8 @@ function addEvent(obj, evType, fn) {
 function removeEvent(obj, evType, fn) {
   if (obj.removeEventListener) obj.removeEventListener(evType, fn, false);
   else if (obj.detachEvent) obj.detachEvent("on"+evType, fn);
+}
+
+function focusOnElement(el) {
+	return el.focus();
 }

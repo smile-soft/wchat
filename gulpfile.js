@@ -1,6 +1,7 @@
 var gulp = require('gulp');
 var source = require('vinyl-source-stream');
 var sass = require('gulp-sass');
+var buffer = require('vinyl-buffer');
 var streamify = require('gulp-streamify');
 var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
@@ -38,7 +39,7 @@ var destAssets = {
 	fonts: basePath.dest + 'fonts/'
 };
 
-gulp.task('bundle', function() {
+gulp.task('bundle', function(cb) {
 	var bundleStream = browserify(srcAssets.scripts+'main.js', {
 		standalone: nameSpace,
 		debug: true
@@ -46,15 +47,18 @@ gulp.task('bundle', function() {
 
 	bundleStream
 	.pipe(source('main.js'))
+	.pipe(buffer())
 	// .pipe(source('wchat.js'))
 	// .pipe(gulp.dest(basePath.dest))
-	.pipe(streamify(uglify()))
-	.pipe(rename({suffix: '.min'}))
-	.pipe(gulp.dest(basePath.dest))
-	.pipe(streamify(gulp.src([basePath.dest+'main.min.js', srcAssets.scripts+'libs/jssip.min.js'])))
+	.pipe(uglify())
+	// .pipe(rename({suffix: '.min'}))
+	// .pipe(gulp.dest(basePath.dest))
+	.pipe(gulp.src([srcAssets.scripts+'libs/jssip.min.js']))
 	.pipe(concat('wchat.min.js'))
 	.pipe(gulp.dest(basePath.dest))
 	.pipe(notify({ message: 'bundle task complete' }));
+
+	cb();
 });
 
 gulp.task('styles', function() {
@@ -90,7 +94,7 @@ gulp.task('fonts', function() {
 	.pipe(gulp.dest(destAssets.fonts));
 });
 
-gulp.task('cp', function() {
+gulp.task('cp', function(cb) {
 
 	gulp.src(basePath.src+'translations.json')
 	.pipe(gulp.dest(basePath.dest));
@@ -98,19 +102,20 @@ gulp.task('cp', function() {
 	gulp.src(basePath.src+'forms.json')
 	.pipe(gulp.dest(basePath.dest));
 
-	gulp.start('sounds', 'fonts');
+	gulp.series('sounds', 'fonts');
 
-	gulp.src(basePath.src+'loader.js')
-	.pipe(gulp.dest(basePath.dest));
+	cb();
+	// gulp.src(basePath.src+'loader.js')
+	// .pipe(gulp.dest(basePath.dest));
 });
 
-gulp.task('build', function() {
-	gulp.start('styles', 'images', 'templates', 'cp', 'fonts', 'bundle');
+gulp.task('build', gulp.series('styles', 'images', 'templates', 'cp', 'fonts', 'bundle'), function(cb) {
+	cb();
 });
 
-gulp.task('default', function() {
-	gulp.start('bundle');
-});
+// gulp.task('default', function() {
+// 	gulp.start('bundle');
+// });
 
 gulp.task('test', function() {
 	return gulp.src(basePath.dest+'**/*')

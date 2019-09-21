@@ -490,6 +490,7 @@ function onNewLanguages(languages){
 function initWidget(){
 	var options = '',
 		wgState = (defaults.webcallOnly ? 'online' : getWidgetState()),
+		introForm = global[defaults.prefix+'IntroForm'],
 		selected;
 
 	// debug.log('Init widget!');
@@ -530,7 +531,8 @@ function initWidget(){
 				options += '<option value="'+lang+'" '+selected+' >'+frases.lang+'</option>';
 			}
 		});
-		global[defaults.prefix+'IntroForm'].lang.innerHTML = options;
+		
+		if(introForm.lang) introForm.lang.innerHTML = options;
 	}
 
 	// Widget is initiated

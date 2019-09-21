@@ -85,6 +85,7 @@ WchatAPI.prototype.onSessionTimeout = function(){
 };
 
 WchatAPI.prototype.sendData = function(data){
+	if(this.websocket.readyState !== 1) return debug.log('socket is not opened');
 	if(this.websocket) this.websocket.send(JSON.stringify(data));
 };
 

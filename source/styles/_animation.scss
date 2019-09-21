@@ -2,7 +2,7 @@
   0% {
   	opacity: 0;
     @include transform(scale(0))
-  },
+  }
   100% {
   	opacity: 1;
     @include transform(scale(1))
@@ -13,10 +13,10 @@
   0% {
   	opacity: 0;
     // @include transform(tranlateY(100px))
-  },
+  }
   80% {
   	opacity: 0.1
-  },
+  }
   100% {
   	opacity: 1;
     // @include transform(tranlateY(0))
@@ -27,7 +27,7 @@
   0% {
     opacity: 0;
     @include transform(tranlateY(100px))
-  },
+  }
   100% {
     opacity: 1;
     @include transform(tranlateY(0))
@@ -37,10 +37,10 @@
 @include keyframes(oncallBackground) {
   0% {
     background-color: $btn-color-oncall;
-  },
+  }
   50% {
     background-color: $btn-color-online;
-  },
+  }
   100% {
     background-color: $btn-color-oncall;
   }

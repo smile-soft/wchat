@@ -62,7 +62,8 @@ var defaults = {
 	host: window.location.host, // displayed in the email template
 	webrtcEnabled: false,
 	maxFileSize: 100, // in MB, if 0 - no restrictions
-	allowedFileExtensions: [] // Allowed file types for uploading. If empty array - no restriction. Ex: ['txt', 'gif', 'png', 'jpeg', 'pdf']
+	allowedFileExtensions: [], // Allowed file types for uploading. If empty array - no restriction. Ex: ['txt', 'gif', 'png', 'jpeg', 'pdf']
+	listeners: []
 };
 
 // Current widget state
@@ -116,6 +117,10 @@ var publicApi = {
 	getEntity: function(){ return api.session.entity; },
 	on: function(evt, listener) {
 		api.on(evt, listener);
+		return this;
+	},
+	off: function(evt, listener) {
+		api.removeListener(evt, listener);
 		return this;
 	},
 	emit: function (evt, listener){
@@ -192,6 +197,9 @@ function Widget(options){
 	});
 
 	addWidgetStyles();
+	if(defaults.listeners) setUserListeners(api, defaults.listeners);
+
+	api.emit('module/init');
 
 	return publicApi;
 }
@@ -273,7 +281,7 @@ function initSession() {
 
 	debug.log('initSession: ', api, defaults, frases, widgetState.initiated);
 
-	if(widgetState.initiated) return api.emit('session/init', {session: api.session, options: defaults, url: global.location.href });;
+	if(widgetState.initiated) return api.emit('session/init', {session: api.session, options: defaults, url: global.location.href });
 
 	if(defaults.chat) {
 		api
@@ -1378,6 +1386,10 @@ function setHandlers(selector) {
 	els.map(function(el) { addEvent(el, 'click', fn); return el; });
 }
 
+function setUserListeners(api, array) {
+	array.forEach(function(item) { api.on(item.name, function(params){ item.handler(params, api); }); });
+}
+
 /********************************
  * Widget event handlers *
  ********************************/
@@ -1738,6 +1750,7 @@ function showWidget(){
 	addWgState('active');
 	removeWgState('notified');
 
+	api.emit('widget/opened');
 	// reset button height
 	// resetStyles(btn.children[0]);
 	// setButtonStyle(widgetState.state);
@@ -1753,6 +1766,7 @@ function closeWidget(){
 		storage.saveState('opened', false, 'session');
 		removeWgState('active');
 	}
+	api.emit('widget/closed');
 }
 
 function onFormSubmit(params){

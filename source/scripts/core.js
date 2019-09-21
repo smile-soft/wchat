@@ -644,7 +644,9 @@ WchatAPI.prototype.userIsTyping = function(){
 WchatAPI.prototype.userReadMessages = function(){
 	var data = {
 		method: 'messageRead',
-		params: {}
+		params: {
+			sid: this.session.sid
+		}
 	};
 
 	if(this.websocket) {

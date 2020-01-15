@@ -22,48 +22,47 @@ var pollTurns = 1;
 
 // Widget initiation options
 var defaults = {
-	wsServer: "main.ringotel.net/chatbot/WebChat/",
-	prefix: 'swc', // prefix for CSS classes and ids. 
-				// Change it only if the default prefix 
-				// matches with existed classes or ids on the website
+	allowedFileExtensions: [], // Allowed file types for uploading. No restriction if empty array provided. Ex: ['txt', 'gif', 'png', 'jpeg', 'pdf']
 	autoStart: true, // Init module on page load
-	intro: false, // whether or not to ask user 
-				// to introduce him self before the chat session
-	introMessage: "", // message that asks user for introduction
-	concentText: "", // message that contains the text of concent that user should accept in order to start a chat
-	widget: true, // whether or not to add widget to the webpage
-	chat: true, // enable chat feature
-	sounds: true,
-	channels: [],
-	cobrowsing: false, // enable cobrowsing feature
 	buttonSelector: "", // DOM element[s] selector that opens a widget
-	reCreateSession: true,
-	title: '',
-	lang: '',
-	langFromUrl: true,
-	position: 'right',
-	hideOfflineButton: false,
-	offer: false,
-	themeColor: "",
-	styles: {
-		backgroundColor: '#74b9ff',
-		color: '#FFFFFF'
-	},
 	buttonStyles: {
 		backgroundColor: 'rgba(255,255,255)',
 		color: 'rgb(70,70,70)'
 	},
-	widgetWindowOptions: 'left=10,top=10,width=350,height=550,resizable',
-	widgetWindowName: 'wchat',
-	path: '/ipcc/webchat/', // absolute path to the wchat folder
+	channels: [], // list of channels and their settings
+	chat: true, // enable chat feature
 	clientPath: 'https://cdn.smile-soft.com/wchat/v1/', // absolute path to the clients files. If not set, files requested from defaults.server + defaults.path.
-	stylesPath: '', // absolute path to the css flie
-	translationsPath: '', // absolute path to the translations.json flie
+	cobrowsing: false, // [deprecated] enable cobrowsing feature
+	concentText: "", // message that contains the text of concent that user should accept in order to start a chat
+	hideOfflineButton: false, // hide chat button if widget is offline
 	host: window.location.host, // displayed in the email template
+	intro: false, // whether or not to ask user to introduce him self before the chat session
+	introMessage: "", // message that asks user for introduction
+	lang: '', // widget language
+	langFromUrl: true, // detect widget language from current url
+	listeners: [], // list the events to subscribe for
+	maxFileSize: 100, // maximum filesize to upload (MB), if 0 - no restrictions
+	offer: false, // greet users on the web page
+	path: '/ipcc/webchat/', // absolute path to the wchat folder
+	prefix: 'swc', // prefix for CSS classes and ids. 
+					// Change it only if the default prefix 
+					// matches with existed classes or ids on the website
+	position: 'right', // button position on the page
+	reCreateSession: true,
+	sounds: true,
+	styles: {
+		backgroundColor: '#74b9ff',
+		color: '#FFFFFF'
+	},
+	stylesPath: '', // absolute path to the css flie
+	themeColor: "",
+	title: '',
+	translationsPath: '', // absolute path to the translations.json flie
 	webrtcEnabled: false,
-	maxFileSize: 100, // in MB, if 0 - no restrictions
-	allowedFileExtensions: [], // Allowed file types for uploading. If empty array - no restriction. Ex: ['txt', 'gif', 'png', 'jpeg', 'pdf']
-	listeners: []
+	widget: true, // whether or not to add widget to the webpage
+	widgetWindowName: 'wchat',
+	widgetWindowOptions: 'left=10,top=10,width=350,height=550,resizable',
+	wsServer: "main.ringotel.net/chatbot/WebChat/"
 };
 
 // Current widget state

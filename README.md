@@ -9,70 +9,158 @@ This module could be used only with Smile IPCC server. Appropriate licence must 
 ### Examples
 #### Initiate module
 ```js
+window.WchatSettings = {
+    pageid: "1234567890123" // the only required property
+};
+
+(function(w,d,s,l,g,a,b,o){w[a]=w[a]||{};w[a].clientPath=w[a].clientPath||l;
+   if(w[g]){w[g](w[a]||{})}else{b=d.createElement(s),o=d.getElementsByTagName(s)[0];
+   b.async=1;b.src=l+"wchat.min.js";o.parentNode.insertBefore(b,o)}
+})(window,document,'script','https://cdn.smile-soft.com/wchat/v1/','Wchat','WchatSettings');
+
+// Alternatively, you can initiate module like this
 Wchat({
-	server: 'http://ipcc-server-domain.com:8880', 
-	lang: 'uk',
-	title: 'SmileSoft',
-	position: 'left',
-	offer: {
-		inSeconds: 0.20,
-		from: 'SmileSoft support'
-	},
-	styles: {
-		primary: {
-			backgroundColor: "#33C3F0",
-			color: "#fff"
-		}
-	}
+	pageid: "1234567890123"
 }).initModule();
+// in this case, you need to wait until the script loads and Wchat function will be loaded into global scope
+```
+#### Initiate module with settings
+```js
+window.WchatSettings = {
+    pageid: "1234567890123",
+    lang: "uk",
+    intro: [{
+        name: "uname",
+        required: true,
+        save: true
+    }, {
+        name: "email",
+        placeholder: "Ваш логін"
+    }, {
+        name: "message"
+    }],
+    offer: {
+        from: "Онлайн підтримка",
+        text: "Ми тут якщо потрібна допомога :)",
+        inSeconds: 1
+    },
+    channels:[
+        {
+            type: "telegram",
+            link: "tg://resolve?domain=CloutalkBot"
+        },
+        {
+            type: "viber",
+            link: "viber://pa?chatURI=cloutalk"
+        },
+        {
+            type: "messenger",
+            link: "http://m.me/185667542056310"
+        },
+        {
+            type: "callback",
+            task: "Incoming.Callback"
+        }
+    ]
+};
+
+(function(w,d,s,l,g,a,b,o){w[a]=w[a]||{};w[a].clientPath=w[a].clientPath||l;
+   if(w[g]){w[g](w[a]||{})}else{b=d.createElement(s),o=d.getElementsByTagName(s)[0];
+   b.async=1;b.src=l+"wchat.min.js";o.parentNode.insertBefore(b,o)}
+})(window,document,'script','https://cdn.smile-soft.com/wchat/v1/','Wchat','WchatSettings');
+````
+#### Default settings
+```js
+var defaults = {
+	allowedFileExtensions: [], // Allowed file types for uploading. No restriction if empty array provided. Ex: ['txt', 'gif', 'png', 'jpeg', 'pdf']
+	autoStart: true, // Init module on page load
+	buttonSelector: "", // DOM element[s] selector that opens a widget
+	buttonStyles: {
+		backgroundColor: 'rgba(255,255,255)',
+		color: 'rgb(70,70,70)'
+	},
+	channels: [], // list of channels and their settings
+	chat: true, // enable chat feature
+	clientPath: 'https://cdn.smile-soft.com/wchat/v1/', // absolute path to the clients files. If not set, files requested from defaults.server + defaults.path.
+	cobrowsing: false, // [deprecated] enable cobrowsing feature
+	concentText: "", // message that contains the text of concent that user should accept in order to start a chat
+	hideOfflineButton: false, // hide chat button if widget is offline
+	host: window.location.host, // displayed in the email template
+	intro: false, // whether or not to ask user to introduce him self before the chat session
+	introMessage: "", // message that asks user for introduction
+	lang: '', // widget language
+	langFromUrl: true, // detect widget language from current url
+	listeners: [], // list the events to subscribe for
+	maxFileSize: 100, // maximum filesize to upload (MB), if 0 - no restrictions
+	offer: false, // greet users on the web page
+	path: '/ipcc/webchat/', // absolute path to the wchat folder
+	prefix: 'swc', // prefix for CSS classes and ids. 
+					// Change it only if the default prefix 
+					// matches with existed classes or ids on the website
+	position: 'right', // button position on the page
+	reCreateSession: true,
+	sounds: true,
+	styles: {
+		backgroundColor: '#74b9ff',
+		color: '#FFFFFF'
+	},
+	stylesPath: '', // absolute path to the css flie
+	themeColor: "",
+	title: '',
+	translationsPath: '', // absolute path to the translations.json flie
+	webrtcEnabled: false,
+	widget: true, // whether or not to add widget to the webpage
+	widgetWindowName: 'wchat',
+	widgetWindowOptions: 'left=10,top=10,width=350,height=550,resizable'
+};
 ```
 #### Initiate module without widget icon
 ```js
-var wchat = Wchat({ server: 'http://ipcc-server-domain.com:8880', widget: false })
+window.WchatSettings = {
+    pageid: "1234567890123",
+    widget: false,
+    buttonSelector: '.chat-button'
+};
+
+(function(w,d,s,l,g,a,b,o){w[a]=w[a]||{};w[a].clientPath=w[a].clientPath||l;
+   if(w[g]){w[g](w[a]||{})}else{b=d.createElement(s),o=d.getElementsByTagName(s)[0];
+   b.async=1;b.src=l+"wchat.min.js";o.parentNode.insertBefore(b,o)}
+})(window,document,'script','https://cdn.smile-soft.com/wchat/v1/','Wchat','WchatSettings');
+
+// Alternatively, you can do it like this
+var wchat = Wchat({ 
+	page: '1234567890123', 
+	... // any other settings
+	widget: false })
 document.getElementById('openWidget').addEventListener('click', wchat.openWidget, false);
 wchat.initModule();
+// in this case, you need to wait until the script loads and Wchat function will be loaded into global scope
 ```
 #### Initiate module and subscribe to events
 ```js
-Wchat({ server: 'http://ipcc-server-domain.com:8880' })
-.on('session/create', sessionCreateedHandler)
-.on('widget/init', widgetInitHandler)
-.on('chat/start', chatStartedHandler)
-.on('chat/close', chatClosedHandler)
-.initModule();
+window.WchatSettings = {
+    pageid: "1234567890123",
+    widget: false,
+    buttonSelector: '.chat-button'
+    listeners: [{
+		name: 'widget/load’,
+		handler: function(params, api) {
+			api.setDefaultCredentials({ uname: 'Bob', phone: '0501234567' })
+		}
+	}, {
+		name: 'message/new',
+		handler: newMessageHandler
+	}, {
+		name: 'chat/close',
+		handler: chatCloseHandler
+	}]
+};
+
+(function(w,d,s,l,g,a,b,o){w[a]=w[a]||{};w[a].clientPath=w[a].clientPath||l;
+   if(w[g]){w[g](w[a]||{})}else{b=d.createElement(s),o=d.getElementsByTagName(s)[0];
+   b.async=1;b.src=l+"wchat.min.js";o.parentNode.insertBefore(b,o)}
+})(window,document,'script','https://cdn.smile-soft.com/wchat/v1/','Wchat','WchatSettings');
 ```
-### Getting Started
-1) Please ensure that all files from `dist` folder exist on the IPCC webserver and available for reading. The default files path is: *path-to-the-ipcc-directory>/web/ipcc/webchat*.
-**Note**: if you prefer to change the default directory for the webchat files, then change the path property in the module's options declaration.
-
-2) Add a script tag to the webpages where the module should be loaded.
-```html
-<script src="ipcc-server-domain-or-ip/ipcc/webchat/wchat.min.js" charset="UTF-8"></script>
-```
-**Note**: do not use non minified version of the script, it's very big and is used only for debugging purposes.
-
-3) Initiate module with the appropriate options (listed below).
-```js
-Wchat({ server: 'http://ipcc-server-domain.com:8880' }).initModule();
-```
-
-Option            | Type    | Default     | Description
-------------------|---------|-------------|-----------------
-server            | String  |             | Required. IPCC server IP address and http port
-title             | String  | Live chat   | Displayed in the widget's header element
-lang              | String  | en          | Default language of interface and dialog. Used when automaticaly determined user language is not supported (ask your IPCC administrator for additional information).
-langFromUrl	  | Boolean | false	  | Experimental. This feature parses page url to figure out user's preferred language
-widget            | Boolean | true        | Whether the webchat widget should be opened within the main tab (if `true`) or in a separate window (if `false`)
-position          | String  | right       | Widget position on the page. Option is actual if `widget` is set to true. Possible values are `right` and `left`
-hideOfflineButton | Boolean | false       | If set to `true`, then widget's button will be hidden when there are no registered IPCC agents that could serve current task
-intro             | Array   | []          | If defined, then the user must introduce him/herself before starting a dialog. [Read more](#intro-setting)
-offer             | Object  | false       | When set, the predefined message will be shown to the user after a certain number of minutes. [Read more](#offer-setting)
-styles            | Obejct  |             | A basic widget styles. [Read more](#widget-styles)
-buttonStyles      | Object  |             | A set of widget's button styles. [Read more](#button-styles)
-path              | String  | /ipcc/webchat | Absolute path to the module's folder on the web server
-webrtc		  | Object  |		  | Settings for the WebRTC call feature. [Read more](#webrtc-setting)
-callback		| Object |			| Settings for the Callback feature. [Read more](#callback-setting)
-
 ### API
 Module's API exposes the following methods:
 
@@ -90,6 +178,9 @@ Subscribe to specified event.
 
 #### `emit`
 Emit a specified event.
+
+#### `setDefaultCredentials`
+Set default credentials. Cloud be used to auto-identify user before starting a chat.
 
 ### Events
 Module emits the following events:

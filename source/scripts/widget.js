@@ -604,6 +604,8 @@ function initChat(params){
 		} else {
 			switchPane('credentials');
 		}
+	} else if(defaults.credentials) {
+		requestChat(defaults.credentials);
 	} else {
 		requestChat({ lang: api.session.lang, message: (params ? params.message : null) });
 	}
@@ -761,7 +763,10 @@ function newMessage(message){
 }
 
 function onReadMessages() {
-	if(widgetState.unreadMessages) api.userReadMessages();
+	if(widgetState.unreadMessages) {
+		api.userReadMessages();
+		widgetState.unreadMessages = false;
+	}
 }
 
 function clearUndelivered(){
@@ -1368,8 +1373,8 @@ function setListeners(widget){
 	addEvent(textField, 'focus', wgTextareaFocusHandler);
 	addEvent(textField, 'blur', wgTextareaBlurHandler);
 
-	addEvent(global, 'DOMMouseScroll', wgGlobalScrollHandler);
-	addEvent(global, 'wheel', wgGlobalScrollHandler);
+	addEvent(global, 'DOMMouseScroll', wgGlobalScrollHandler, { passive: false });
+	addEvent(global, 'wheel', wgGlobalScrollHandler, { passive: false });
 	// window.ontouchmove  = wgGlobalScrollHandler; // mobile
 
 	addEvent(widget, 'mouseenter', onMouseEnter);
@@ -1389,7 +1394,9 @@ function setHandlers(selector) {
 }
 
 function setUserListeners(api, array) {
-	array.forEach(function(item) { api.on(item.name, function(params){ item.handler(params, api); }); });
+	var apiObj = { options: defaults, session: api.session };
+	apiObj = extend(apiObj, publicApi);
+	array.forEach(function(item) { api.on(item.name, function(params){ item.handler(params, apiObj); }); });
 }
 
 /********************************
@@ -1604,13 +1611,13 @@ function wgTypingHandler(e){
 		}
 	}
 
-	clone.innerText = targ.value;
-	targ.style.height = clone.clientHeight+'px';
+	// clone.innerText = targ.value;
+	// targ.style.height = clone.clientHeight+'px';
 
-	// if(targ.value.length >= 80 && !hasWgState('type-extend'))
-	// 	addWgState('type-extend');
-	// if(targ.value.length < 80 && hasWgState('type-extend'))
-	// 	removeWgState('type-extend');
+	if(targ.value.length >= 80 && !hasWgState('type-extend'))
+		addWgState('type-extend');
+	if(targ.value.length < 80 && hasWgState('type-extend'))
+		removeWgState('type-extend');
 }
 
 function wgTextareaFocusHandler(e) {
@@ -2192,13 +2199,15 @@ function setCallerId(callerid, uri) {
 	return ('sip:'+callerid+'@'+uri.split('@')[1]);
 }
 
-function addEvent(obj, evType, fn) {
-  if (obj.addEventListener) obj.addEventListener(evType, fn, false);
-  else if (obj.attachEvent) obj.attachEvent("on"+evType, fn);
+function addEvent(obj, evType, fn, opts) {
+	var options = opts ? extend({ capture: false}, opts) : { capture: false};
+	if (obj.addEventListener) obj.addEventListener(evType, fn, options);
+	else if (obj.attachEvent) obj.attachEvent("on"+evType, fn);
 }
-function removeEvent(obj, evType, fn) {
-  if (obj.removeEventListener) obj.removeEventListener(evType, fn, false);
-  else if (obj.detachEvent) obj.detachEvent("on"+evType, fn);
+function removeEvent(obj, evType, fn, opts) {
+	var options = opts ? extend({ capture: false}, opts) : { capture: false};
+	if (obj.removeEventListener) obj.removeEventListener(evType, fn, options);
+	else if (obj.detachEvent) obj.detachEvent("on"+evType, fn);
 }
 
 function focusOnElement(el) {

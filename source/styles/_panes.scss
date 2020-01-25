@@ -122,17 +122,18 @@
 		}
 
 		.swc-pane-header {
-			position: relative;
-			// min-height: 120px;
-			overflow: hidden;
-			background-size: cover;
-			background-position: center;
-			background-repeat: no-repeat;
-			// background-image: url("images/bgr-01.jpg");
+			margin: 15px 0 20px 0;
 		}
 
 		.swc-pane-body {
 			padding: 10px;
+
+			@include bp-small {
+				position: relative;
+			    height: 100%;
+				padding-bottom: 30px;
+			    overflow: scroll;
+			}
 		}
 
 		.swc-pane-footer {

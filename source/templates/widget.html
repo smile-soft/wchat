@@ -55,17 +55,8 @@
 			data-<%- defaults.prefix %>-pane="chooseConnection">
 			
 			<!-- Panel's image container -->
-			<div class="<%- defaults.prefix %>-pane-header <%- defaults.prefix %>-dark">
-
-				<!-- The text displayed on image -->
-				<div class="<%- defaults.prefix %>-backdrop-cont <%- defaults.prefix %>-white">
-					<br>
-					<p><%- panels.CONNECTION_TYPES.choose_conn_type %></p>
-				</div>
-
-			</div>
 			<div class="<%- defaults.prefix %>-pane-body">
-
+				<p class="<%- defaults.prefix %>-pane-header"><%- panels.CONNECTION_TYPES.choose_conn_type %></p>
 				<form 
 					id="<%- defaults.prefix %>-init-form" 
 					name="<%- defaults.prefix %>InitForm">
@@ -135,18 +126,8 @@
 				class="<%- defaults.prefix %>-wg-pane" 
 				data-<%- defaults.prefix %>-pane="credentials">
 
-				<!-- Panel's image container -->
-				<div class="<%- defaults.prefix %>-pane-header <%- defaults.prefix %>-dark">
-
-					<!-- The text displayed on image -->
-					<div class="<%- defaults.prefix %>-backdrop-cont <%- defaults.prefix %>-white">
-						<br>
-						<p><%- defaults.introMessage || panels.INTRO.intro_message %></p>
-					</div>
-
-				</div>
-
 				<div class="<%- defaults.prefix %>-pane-body">
+					<p class="<%- defaults.prefix %>-pane-header"><%- defaults.introMessage || panels.INTRO.intro_message %></p>
 					<form 
 						id="<%- defaults.prefix %>-intro-form" 
 						name="<%- defaults.prefix %>IntroForm" 
@@ -302,17 +283,8 @@
 			class="<%- defaults.prefix %>-wg-pane" 
 			data-<%- defaults.prefix %>-pane="sendemail">
 
-			<!-- Panel's image container -->
-			<div class="<%- defaults.prefix %>-pane-header <%- defaults.prefix %>-dark">
-
-				<!-- The text displayed on image -->
-				<div class="<%- defaults.prefix %>-backdrop-cont <%- defaults.prefix %>-dark">
-					<p><%- panels.OFFLINE.offline_message %></p>
-				</div>
-
-			</div>
-
 			<div class="<%- defaults.prefix %>-pane-body">
+				<p class="<%- defaults.prefix %>-pane-header"><%- panels.OFFLINE.offline_message %></p>
 				<h4 class="<%- defaults.prefix %>-uppercase"><%- panels.OFFLINE.send_message_header %></h4>
 				<form id="<%- defaults.prefix %>-sendmail-form" data-validate-form="true">
 					<input type="text" name="uname" placeholder="<%- panels.OFFLINE.PLACEHOLDERS.uname %>">
@@ -346,28 +318,23 @@
 			class="<%- defaults.prefix %>-wg-pane" 
 			data-<%- defaults.prefix %>-pane="closechat">
 
-			<!-- Panel's image container -->
-			<div class="<%- defaults.prefix %>-pane-header <%- defaults.prefix %>-white">
-
-			</div>
-
 			<div class="<%- defaults.prefix %>-pane-body">
 				<form id="<%- defaults.prefix %>-closechat-form" data-validate-form="true">
 					<p><%- panels.CLOSE_CHAT.close_chat_header %></p>
-					<select name="rating">
-						<option value="">--- <%- panels.CLOSE_CHAT.rate_agent %> ---</option>
-						<option value="5"><%- frases.AGENT_RATES.excellent %></option>
-						<option value="4"><%- frases.AGENT_RATES.good %></option>
-						<option value="3"><%- frases.AGENT_RATES.fair %></option>
-						<option value="2"><%- frases.AGENT_RATES.bad %></option>
-					</select>
+					<label class="<%- defaults.prefix %>-agent-rating-label"><%- panels.CLOSE_CHAT.rate_agent_label %></label>
+					<div class="<%- defaults.prefix %>-agent-rating" id="<%- defaults.prefix %>-agent-rating">
+						<input type="radio" name="rating" value='0' id="<%- defaults.prefix %>-rating-0" checked>
+						<label class="hidden" for="<%- defaults.prefix %>-rating-0"><i class="<%- defaults.prefix %>-icon-star"></i></label>
+						<% for(var i=1; i<=defaults.agentRates; i++) { %>
+							<input type="radio" name="rating" value='<%- i %>' id="<%- defaults.prefix %>-rating-<%- i %>">
+							<label for="<%- defaults.prefix %>-rating-<%- i %>"><i class="<%- defaults.prefix %>-icon-star"></i></label>	
+						<% } %>
+					</div>
 					<textarea placeholder="<%- panels.CLOSE_CHAT.PLACEHOLDERS.comment %>" name="text" maxlength="1500"></textarea>
 					<input type="email" name="email" placeholder="<%- panels.CLOSE_CHAT.PLACEHOLDERS.email %>">
-					<label for="<%- defaults.prefix %>-send-dialog">
-						<input type="checkbox" name="sendDialog" id="<%- defaults.prefix %>-send-dialog" />
-						<span><%- panels.CLOSE_CHAT.send_dialog_label %></span>
-					</label>
-
+					<br><br>
+					<input type="checkbox" name="sendDialog" id="<%- defaults.prefix %>-send-dialog" />
+					<label for="<%- defaults.prefix %>-send-dialog"><%- panels.CLOSE_CHAT.send_dialog_label %></label>
 					<hr>
 
 					<!-- End chat and close widget button -->
@@ -461,13 +428,13 @@
 				</div>
 				<form id="<%- defaults.prefix %>-callback-settings">
 					<% if(channelsObject.callback && channelsObject.callback.time !== false) { %>
-						<p class="<%- defaults.prefix %>-text-center"><%- panels.CALLBACK.title %></p>
+						<p><%- panels.CALLBACK.title %></p>
 					<% } else { %>
-						<p class="<%- defaults.prefix %>-text-center"><%- panels.CALLBACK.title_asap %></p>
+						<p><%- panels.CALLBACK.title_asap %></p>
 					<% } %>
 					<hr>
 					<label><%- panels.CALLBACK.LABELS.phone %></label>
-					<input type="tel" name="phone" placeholder="<%- panels.CALLBACK.PLACEHOLDERS.phone %>" required>
+					<input type="tel" name="phone" placeholder="<%- channelsObject.callback.placeholder || panels.CALLBACK.PLACEHOLDERS.phone %>" required>
 					<% if(channelsObject.callback && channelsObject.callback.time !== false) { %>
 						<label><%- panels.CALLBACK.LABELS.time %></label>
 						<select name="time">

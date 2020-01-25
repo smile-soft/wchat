@@ -9,6 +9,7 @@ var cobrowsing = require('./cobrowsing');
 var templates = require('./templates');
 var WebRTC = require('./webrtc');
 var audio = require('./audio-control');
+var helpers = require('./helpers');
 // var serverUrl = {};
 var forms;
 var api;
@@ -22,6 +23,7 @@ var pollTurns = 1;
 
 // Widget initiation options
 var defaults = {
+	agentRates: 5,
 	allowedFileExtensions: [], // Allowed file types for uploading. No restriction if empty array provided. Ex: ['txt', 'gif', 'png', 'jpeg', 'pdf']
 	autoStart: true, // Init module on page load
 	buttonSelector: "", // DOM element[s] selector that opens a widget
@@ -34,6 +36,7 @@ var defaults = {
 	clientPath: 'https://cdn.smile-soft.com/wchat/v1/', // absolute path to the clients files. If not set, files requested from defaults.server + defaults.path.
 	cobrowsing: false, // [deprecated] enable cobrowsing feature
 	concentText: "", // message that contains the text of concent that user should accept in order to start a chat
+	emailPattern: /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
 	hideOfflineButton: false, // hide chat button if widget is offline
 	host: window.location.host, // displayed in the email template
 	intro: false, // whether or not to ask user to introduce him self before the chat session
@@ -44,10 +47,11 @@ var defaults = {
 	maxFileSize: 100, // maximum filesize to upload (MB), if 0 - no restrictions
 	offer: false, // greet users on the web page
 	path: '/ipcc/webchat/', // absolute path to the wchat folder
+	phonePattern: /^\+?\d{9,15}/,
+	position: 'right', // button position on the page
 	prefix: 'swc', // prefix for CSS classes and ids. 
 					// Change it only if the default prefix 
 					// matches with existed classes or ids on the website
-	position: 'right', // button position on the page
 	reCreateSession: true,
 	sounds: true,
 	styles: {
@@ -69,6 +73,7 @@ var defaults = {
 var widgetState = {
 	initiated: false,
 	active: false,
+	activePane: '',
 	state: '', // "online" | "offline" | "timeout",
 	share: false,
 	sounds: true,
@@ -260,6 +265,7 @@ function initSession() {
 	}
 
 	widgetState.timeoutSession = false;
+	removeWgState(timeout);
 
 	if(api.session.properties) {
 		if(api.session.properties.channels && !Array.isArray(api.session.properties.channels)) {
@@ -373,9 +379,9 @@ function initSession() {
 	}
 
 	// If timeout was occured, init chat after a session is created
-	// if(hasWgState('timeout')) {
-	// 	removeWgState('timeout');
-	// }
+	if(hasWgState('timeout')) {
+		removeWgState('timeout');
+	}
 
 	api.emit('session/init', {session: api.session, options: defaults, url: global.location.href });
 }
@@ -384,6 +390,7 @@ function onSessionInit(params){
 	debug.log('session/init', params);
 
 	storage.saveState('init', true, 'session');
+	removeWgState('timeout');
 	
 	if(widgetWindow && !widgetWindow.closed) widgetWindow.sessionStorage.setItem(defaults.prefix+'.init', true);
 }
@@ -567,7 +574,7 @@ function setOffer() {
 
 function showOffer(message) {
 	// Return if user already interact with the widget
-	if(widgetState.state !== 'online' || isInteracted()) return;
+	if(!hasWgState('online') || isInteracted()) return;
 	newMessage(message);
 	// newMessage({ messages: [message] });
 }
@@ -595,7 +602,9 @@ function initChat(params){
 	} else if(widgetState.timeoutSession) {
 		api.createSession()
 		api.once('session/init', function() {
-			if(api.session.langs.length) initChat(params);
+			if(api.session.langs.length) {
+				initChat(params);
+			}
 		})
 	} else if(defaults.intro && defaults.intro.length) {
 		if(storage.getState('chat', 'session') || storage.getState('credentials', 'session')) {
@@ -616,7 +625,7 @@ function requestChat(credentials){
 	var message = credentials.message;
 	var saveParams = {};
 
-	// if(!credentials.uname) credentials.uname = api.session.sid;
+	if(credentials.phone) credentials.phone = helpers.formatPhoneNumber(credentials.phone);
 	if(agentid) credentials.agentid = agentid;
 
 	// Save user language based on preferable dialog language
@@ -921,7 +930,7 @@ function submitCloseChatForm(form, data){
 			alert(frases.ERRORS.email);
 			return;
 		}
-		// debug.log('send dialog');
+		
 		sendDialog({
 			to: data.email,
 			subject: frases.EMAIL_SUBJECTS.dialog+' '+defaults.host,
@@ -933,7 +942,7 @@ function submitCloseChatForm(form, data){
 			alert(frases.ERRORS.email);
 			return;
 		} else {
-			// debug.log('send complain!');
+			
 			sendComplain({
 				email: data.email,
 				subject: frases.EMAIL_SUBJECTS.complain+' '+data.email,
@@ -942,8 +951,11 @@ function submitCloseChatForm(form, data){
 		}
 	}
 	// if(chatTimeout) clearTimeout(chatTimeout);
-	if(form) form.reset();
+	if(form) {
+		form.reset();
+	}
 	
+	debug.log('submitCloseChatForm', data);
 	closeChat(rating);
 	closeWidget();
 }
@@ -961,6 +973,18 @@ function closeChat(rating) {
 
 function onChatClose(){
 	if(storage.getState('shared', 'session')) cobrowsing.unshare();
+}
+
+function onCloseChatFormChange(e) {
+	var form = e.currentTarget;
+	var el = e.target;
+	// if(el.name === 'rating') {
+	// 	_.forEach(form.rating, function(rateEl) {
+	// 		if(parseInt(rateEl.value, 10) < parseInt(el.value, 10)) rateEl.parentNode.classList.add('active');
+	// 		else rateEl.parentNode.classList.remove('active');
+	// 	})
+	// }
+
 }
 
 function onChatTimeout(){
@@ -993,7 +1017,8 @@ function onAgentTyping(){
 
 function onQueueTimeout() {
 	storage.saveState('chat', false, 'session');
-	widgetState.timeoutSession = true;	
+	widgetState.timeoutSession = true;
+	changeWgState({ state: 'timeout' });
 }
 
 function onSessionTimeout(){
@@ -1007,8 +1032,7 @@ function onSessionTimeout(){
 	}
 
 	widgetState.timeoutSession = true;
-
-	// changeWgState({ state: 'timeout' });
+	changeWgState({ state: 'timeout' });
 
 }
 
@@ -1030,13 +1054,16 @@ function setCallback(){
 	var form = document.getElementById(defaults.prefix+'-callback-settings'),
 		formData = getFormData(form),
 		cbSpinner = document.getElementById(defaults.prefix+'-callback-spinner'),
-		cbSent = document.getElementById(defaults.prefix+'-callback-sent');
+		cbSent = document.getElementById(defaults.prefix+'-callback-sent'),
+		valid = validateForm(form);
 	
-	formData.phone = formData.phone ? formatPhoneNumber(formData.phone) : null;
+	if(!valid) return false;
 
-	if(!formData.phone || formData.phone.length < 10) {
-		return alert(frases.ERRORS.tel);
-	}
+	formData.phone = formData.phone ? helpers.formatPhoneNumber(formData.phone) : null;
+
+	// if(!formData.phone || formData.phone.length < 10) {
+	// 	return alert(frases.ERRORS.tel);
+	// }
 
 	if(formData.time) {
 		formData.time = parseFloat(formData.time);
@@ -1349,6 +1376,7 @@ function setListeners(widget){
 	var btn = document.getElementById(defaults.prefix+'-btn-cont');
 	var panes = [].slice.call(widget.querySelectorAll('.'+defaults.prefix+'-wg-pane'));
 	var messagesCont = document.getElementById(defaults.prefix+'-messages-cont');
+	var closeChatForm = document.getElementById(defaults.prefix+'-closechat-form');
 
 	inputs.forEach(function(input){
 		var label = input.nextElementSibling,
@@ -1381,6 +1409,8 @@ function setListeners(widget){
 	
 	addEvent(window, 'focus', onWindowFocus);
 	addEvent(window, 'blur', onWindowBlur);
+
+	addEvent(closeChatForm, 'change', onCloseChatFormChange);
 
 	// if(defaults.buttonElement) 
 	// 	defaults.buttonElement.addEventListener('click', publicApi.openWidget, false);
@@ -1500,7 +1530,7 @@ function btnClickHandler(e){
 function wgGlobalScrollHandler(e) {
 	var targ = document.getElementById(defaults.prefix+'-messages-cont');
 	var dir = getScrollDirection(e);
-	if(mouseFocused) {
+	if(mouseFocused && widgetState.activePane === 'messages') {
 		if(targ.scrollTop === 0 && dir === 'up') {
 			e.stopPropagation();
 			e.preventDefault();
@@ -1666,12 +1696,14 @@ function switchPane(pane){
 		}
 	});
 
+	widgetState.activePane = pane;
+
 	// if(!widgetState.active) showWidget();
 }
 
 function changeWgState(params){
 	debug.log('changeWgState: ', params);
-	if(!widget || widgetState.state === params.state) return;
+	if(!widget || hasWgState(params.state)) return;
 	if(params.state === 'offline') {
 		closeChat();
 		removeWgState('online');
@@ -1684,7 +1716,7 @@ function changeWgState(params){
 	var state = document.querySelector('.'+defaults.prefix+'-wg-state');
 	if(state) state.textContent = frases.TOP_BAR.STATUS[params.state];
 
-	widgetState.state = params.state;
+	// widgetState.state = params.state;
 	addWgState(params.state);
 	// setButtonStyle(params.state);
 	api.emit('widget/statechange', { state: params.state });
@@ -1694,9 +1726,9 @@ function changeWgState(params){
 function getWidgetState() {
 	var state = ''; 
 	if(defaults.isIpcc)
-		state = widgetState.state ? widgetState.state : (widgetState.langs.length ? 'online' : 'offline');
+		state = widgetState.langs.length ? 'online' : 'offline';
 	else
-		state = widgetState.state ? widgetState.state : (api.session.state ? 'online' : 'offline');
+		state = api.session.state ? 'online' : 'offline';
 	
 	return state;
 }
@@ -1738,7 +1770,7 @@ function setStyles() {
 // }
 
 function addWgState(state){
-	if(widget) widget.classList.add(state);
+	if(widget && !widget.classList.contains(state)) widget.classList.add(state);
 }
 
 function hasWgState(state){
@@ -1781,11 +1813,11 @@ function onFormSubmit(params){
 	var form = params.formElement;
 	var formData = params.formData;
 	debug.log('onFormSubmit: ', form, formData);
-	if(form.getAttribute('data-validate-form')) {
-		var valid = validateForm(form);
-		if(!valid) return;
-		// debug.log('onFormSubmit valid: ', valid);
-	}
+	
+	if(form.getAttribute('data-validate-form') && !validateForm(form)) return false;
+
+	debug.log('onFormSubmit', form.getAttribute('data-validate-form'), validateForm(form));
+
 	if(form.id === defaults.prefix+'-closechat-form') {
 		submitCloseChatForm(form, formData);
 	} else if(form.id === defaults.prefix+'-sendmail-form') {
@@ -2090,7 +2122,8 @@ function getFormData(form){
 	[].slice.call(form.elements).forEach(function(el) {
 		if(el.type === 'checkbox') formData[el.name] = el.checked;
 		else {
-			if(el.value) formData[el.name] = el.value;
+			if(el.name) formData[el.name] = form[el.name].value;
+			else if(el.value) formData[el.name] = el.value;
 		}
 	});
 	return formData;
@@ -2098,14 +2131,17 @@ function getFormData(form){
 
 function validateForm(form){
 	var valid = true;
-	[].slice.call(form.elements).every(function(el) {
+	[].slice.call(form.elements).forEach(function(el) {
 		// debug.log('validateForm el:', el, el.hasAttribute('required'), el.value, el.type);
 		if(el.hasAttribute('required') && (el.value === "" || el.value === null)) {
 			alert(frases.ERRORS[el.type] || frases.ERRORS.required);
 			valid = false;
-			return false;
-		} else {
-			return true;
+		} else if(el.type === 'tel' && el.value && defaults.phonePattern && helpers.validateByPattern(helpers.formatPhoneNumber(el.value), defaults.phonePattern) !== true) {
+			alert(helpers.interpolate(frases.ERRORS[el.type], { phonePattern: defaults.phonePattern }) || frases.ERRORS.required);
+			valid = false;
+		} else if(el.type === 'email' && el.value && defaults.emailPattern && helpers.validateByPattern(el.value, defaults.emailPattern) !== true) {
+			alert(frases.ERRORS[el.type] || frases.ERRORS.required);
+			valid = false;
 		}
 	});
 	// debug.log('validateForm valid: ', valid);
@@ -2184,10 +2220,6 @@ function convertTime(seconds){
 		secsRemain = seconds % 60,
 		str = (minutes > 9 ? minutes : '0' + minutes) + ':' + (secsRemain > 9 ? secsRemain : '0' + secsRemain);
 	return str;
-}
-
-function formatPhoneNumber(phone) {
-	return phone.replace(/\D+/g, "");
 }
 
 function isBrowserSupported() {

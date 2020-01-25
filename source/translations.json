@@ -20,7 +20,7 @@
     			"cancel": "Відміна"
     		},
     		"INTRO": {
-    			"intro_message": "Для підвищення якості нашого обслуговування , просимо Вас представитися та залишити контакти для зворотнього зв'язку.",
+    			"intro_message": "Перед початком діалогу, будь ласка, заповніть форму нижче.",
     			"start_dialog_button": "Розпочати діалог",
     			"cancel": "Відміна",
     			"PLACEHOLDERS": {
@@ -54,14 +54,15 @@
     		},
     		"CLOSE_CHAT": {
     			"close_chat_header": "Дякуємо, що звернулися до нас!",
-				"send_dialog_label": "Відправити діалог на ваш email?",
+                "rate_agent_label": "Будь ласка, оцініть роботу оператора",
+				"send_dialog_label": "Відправити діалог на email",
     			"finish_dialog_button": "Закінчити діалог",
     			"rate_agent": "Оцінити роботу оператора",
     			"back": "Назад",
                 "new_chat": "Почати новий чат",
     			"PLACEHOLDERS": {
     				"email": "Ваша електронна адреса",
-					"comment": "Будь ласка, залиште тут свій коментар..."
+					"comment": "Залиште своє повідомлення для адміністратора тут ..."
     			}
     		},
     		"AUDIO_CALL": {
@@ -92,7 +93,7 @@
                     "message": "Ваше повідомлення (не обов'язково)"
                 },
                 "PLACEHOLDERS": {
-                    "phone": "+380 67 123 45 67",
+                    "phone": "Ваш номер телефону",
                     "message": "Будь ласка, передзвоніть мені якнайшвидше!"
                 },
                 "TIME_POINTS": [
@@ -140,7 +141,7 @@
     	"ERRORS": {
     		"required": "Будь ласка, заповніть всі необхідні поля",
 			"email": "Будь ласка, введіть свою електронну адресу",
-			"tel": "Будь ласка, введіть свій номер телефону",
+			"tel": "Будь ласка, введіть дійсний номер телефону",
             "file_size_error": "Файл більше дозволеного розміру",
             "file_type_error": "Неприпустимий тип файлу"
     	}
@@ -166,7 +167,7 @@
     			"cancel": "Отмена"
     		},
     		"INTRO": {
-    			"intro_message": "Для повышения качества нашего обслуживания, просим Вас представиться и оставить контакты для обратной связи.",
+    			"intro_message": "Перед началом диалога, пожалуйста, заполните форму ниже.",
     			"start_dialog_button": "Начать диалог",
     			"cancel": "Отмена",
     			"PLACEHOLDERS": {
@@ -200,14 +201,15 @@
     		},
     		"CLOSE_CHAT": {
     			"close_chat_header": "Спасибо, что обратились к нам!",
-    			"send_dialog_label": "Отправить диалог на ваш email?",
+                "rate_agent_label": "Пожалуйста, оцените работу оператора",
+    			"send_dialog_label": "Отправить диалог на email",
     			"finish_dialog_button": "Завершить диалог",
     			"rate_agent": "Оценить работу оператора",
     			"back": "Назад",
                 "new_chat": "Начать новый чат",
     			"PLACEHOLDERS": {
     				"email": "Ваш электронный адрес",
-    				"comment": "Пожалуйста, оставьте здесь свой комментарий..."
+    				"comment": "Оставьте свое сообщение для администратора здесь..."
     			}
     		},
     		"AUDIO_CALL": {
@@ -238,7 +240,7 @@
                     "message": "Ваше сообщение (не обязательно)"
                 },
                 "PLACEHOLDERS": {
-                    "phone": "+380 67 123 45 67",
+                    "phone": "Ваш номер телефона",
                     "message": "Пожалуйста, свяжитесь со мной как можно скорее!"
                 },
                 "TIME_POINTS": [
@@ -286,7 +288,7 @@
     	"ERRORS": {
     		"required": "Пожалуйста, заполните все необходимые поля",
     		"email": "Пожалуйста, введите свой электронный адрес",
-    		"tel": "Пожалуйста, введите свой номер телефона",
+    		"tel": "Пожалуйста, введите действительный номер телефона.",
             "file_size_error": "Файл превышает разрешенный размер",
             "file_type_error": "Недопустимый тип файлу"
     	}
@@ -305,14 +307,14 @@
 		},
 		"PANELS": {
 			"CONNECTION_TYPES": {
-				"choose_conn_type": "How do you want to contact us?",
+				"choose_conn_type": "How would you like to contact us?",
                 "call_agent_btn": "Call agent",
 				"callback_btn": "Call me",
 				"chat_agent_btn": "Start chat",
 				"cancel": "Cancel"
 			},
 			"INTRO": {
-				"intro_message": "To improve the quality of our service, please leave your contact information for feedback.",
+				"intro_message": "To start a dialog, please fill in the form below.",
 				"start_dialog_button": "Start dialog",
 				"cancel": "Cancel",
 				"PLACEHOLDERS": {
@@ -346,14 +348,15 @@
 			},
 			"CLOSE_CHAT": {
 				"close_chat_header": "Thank you for reaching us!",
-				"send_dialog_label": "Send dialog to your email?",
+                "rate_agent_label": "Please, rate this agent",
+				"send_dialog_label": "Send dialog to email",
 				"finish_dialog_button": "End dialog",
-				"rate_agent": "Rate agent service",
+				"rate_agent": "Rate this agent",
 				"back": "Back",
                 "new_chat": "Start new chat",
 				"PLACEHOLDERS": {
 					"email": "Your email",
-					"comment": "Please, leave your comment here..."
+					"comment": "Please, leave your message to the supervisor here..."
 				}
 			},
 			"AUDIO_CALL": {
@@ -384,7 +387,7 @@
                     "message": "Your message (optional)"
                 },
                 "PLACEHOLDERS": {
-                    "phone": "+353 85 123 45 67",
+                    "phone": "Your phone number",
                     "message": "Please call me back ASAP!"
                 },
                 "TIME_POINTS": [
@@ -432,7 +435,7 @@
 		"ERRORS": {
 			"required": "Please fill in all required fields",
 			"email": "Please fill in your email",
-			"tel": "Please fill in your telephone number",
+			"tel": "Please enter a valid telephone number",
             "file_size_error": "File size exceeded",
             "file_type_error": "Unsupported file type"
 		}

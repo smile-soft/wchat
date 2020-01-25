@@ -101,10 +101,13 @@ WchatAPI.prototype.onWebsocketMessage = function(e){
 	
 	if(data.method) {
 		if(data.method === 'session') {
-			if(data.params.reason && data.params.reason === 1)
+			if(data.params.reason && data.params.reason === 1) {
 				this.emit('session/queue_timeout');
-			else
+			} else if(data.params.reason && data.params.reason === 3) {
+				this.onSessionTimeout();
+			} else {
 				this.emit('session/create', data.params);
+			}
 
 		} else if(data.method === 'messages') {
 			if(data.params.list) {

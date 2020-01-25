@@ -176,6 +176,11 @@ $secondary-color: #BBBBBB;
 		margin-bottom: 35px;
 		border-width: 0;
 		border-top: 1px solid #E1E1E1;
+
+		@include bp-small {
+			margin-top: 20px;
+			margin-bottom: 25px;
+		}
 	}
 
 	a {
@@ -186,8 +191,17 @@ $secondary-color: #BBBBBB;
 		text-decoration: none;
 	}
 
-	input[type="checkbox"]
-	{
+	input[type="checkbox"] {
+		-webkit-appearance: checkbox !important;
+	}
+
+	input[type="radio"] {
+		-webkit-appearance: radio !important;
+	}
+
+	input[type="checkbox"],	
+	input[type="radio"]
+	{	
 		display: initial !important;
 		margin: auto !important;
 		width: auto !important;
@@ -299,7 +313,13 @@ $secondary-color: #BBBBBB;
 			@include transform(translateY(0));
 		}
 	}
-	// &.timeout {
+	&.timeout {
+		#swc-closechat-form {
+			#swc-agent-rating,
+			.swc-agent-rating-label {
+				display: none;
+			}
+		}
 		// .swc-wg-btn {
 			// background-color: #F1F1F1;
 			// background-color: $btn-color-timeout;
@@ -310,7 +330,7 @@ $secondary-color: #BBBBBB;
 				// content: $btn-icon-timeout;
 			// }
 		// }
-	// }
+	}
 	// &.chat {
 		// .swc-wg-btn {
 			// background-color: $btn-color-chat;

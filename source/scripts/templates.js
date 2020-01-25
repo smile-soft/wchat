@@ -305,17 +305,11 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-pane="chooseConnection">\n\t\t\t\n\t\t\t<!-- Panel\'s image container -->\n\t\t\t<div class="' +
 __e( defaults.prefix ) +
-'-pane-header ' +
+'-pane-body">\n\t\t\t\t<p class="' +
 __e( defaults.prefix ) +
-'-dark">\n\n\t\t\t\t<!-- The text displayed on image -->\n\t\t\t\t<div class="' +
-__e( defaults.prefix ) +
-'-backdrop-cont ' +
-__e( defaults.prefix ) +
-'-white">\n\t\t\t\t\t<br>\n\t\t\t\t\t<p>' +
+'-pane-header">' +
 __e( panels.CONNECTION_TYPES.choose_conn_type ) +
-'</p>\n\t\t\t\t</div>\n\n\t\t\t</div>\n\t\t\t<div class="' +
-__e( defaults.prefix ) +
-'-pane-body">\n\n\t\t\t\t<form \n\t\t\t\t\tid="' +
+'</p>\n\t\t\t\t<form \n\t\t\t\t\tid="' +
 __e( defaults.prefix ) +
 '-init-form" \n\t\t\t\t\tname="' +
 __e( defaults.prefix ) +
@@ -403,19 +397,13 @@ __p += '\n\t\t\t<div \n\t\t\t\tclass="' +
 __e( defaults.prefix ) +
 '-wg-pane" \n\t\t\t\tdata-' +
 __e( defaults.prefix ) +
-'-pane="credentials">\n\n\t\t\t\t<!-- Panel\'s image container -->\n\t\t\t\t<div class="' +
+'-pane="credentials">\n\n\t\t\t\t<div class="' +
 __e( defaults.prefix ) +
-'-pane-header ' +
+'-pane-body">\n\t\t\t\t\t<p class="' +
 __e( defaults.prefix ) +
-'-dark">\n\n\t\t\t\t\t<!-- The text displayed on image -->\n\t\t\t\t\t<div class="' +
-__e( defaults.prefix ) +
-'-backdrop-cont ' +
-__e( defaults.prefix ) +
-'-white">\n\t\t\t\t\t\t<br>\n\t\t\t\t\t\t<p>' +
+'-pane-header">' +
 __e( defaults.introMessage || panels.INTRO.intro_message ) +
-'</p>\n\t\t\t\t\t</div>\n\n\t\t\t\t</div>\n\n\t\t\t\t<div class="' +
-__e( defaults.prefix ) +
-'-pane-body">\n\t\t\t\t\t<form \n\t\t\t\t\t\tid="' +
+'</p>\n\t\t\t\t\t<form \n\t\t\t\t\t\tid="' +
 __e( defaults.prefix ) +
 '-intro-form" \n\t\t\t\t\t\tname="' +
 __e( defaults.prefix ) +
@@ -605,19 +593,13 @@ __e( defaults.styles.backgroundColor ) +
 __e( defaults.prefix ) +
 '-wg-pane" \n\t\t\tdata-' +
 __e( defaults.prefix ) +
-'-pane="sendemail">\n\n\t\t\t<!-- Panel\'s image container -->\n\t\t\t<div class="' +
+'-pane="sendemail">\n\n\t\t\t<div class="' +
 __e( defaults.prefix ) +
-'-pane-header ' +
+'-pane-body">\n\t\t\t\t<p class="' +
 __e( defaults.prefix ) +
-'-dark">\n\n\t\t\t\t<!-- The text displayed on image -->\n\t\t\t\t<div class="' +
-__e( defaults.prefix ) +
-'-backdrop-cont ' +
-__e( defaults.prefix ) +
-'-dark">\n\t\t\t\t\t<p>' +
+'-pane-header">' +
 __e( panels.OFFLINE.offline_message ) +
-'</p>\n\t\t\t\t</div>\n\n\t\t\t</div>\n\n\t\t\t<div class="' +
-__e( defaults.prefix ) +
-'-pane-body">\n\t\t\t\t<h4 class="' +
+'</p>\n\t\t\t\t<h4 class="' +
 __e( defaults.prefix ) +
 '-uppercase">' +
 __e( panels.OFFLINE.send_message_header ) +
@@ -661,37 +643,53 @@ __e( panels.OFFLINE.close ) +
 __e( defaults.prefix ) +
 '-wg-pane" \n\t\t\tdata-' +
 __e( defaults.prefix ) +
-'-pane="closechat">\n\n\t\t\t<!-- Panel\'s image container -->\n\t\t\t<div class="' +
-__e( defaults.prefix ) +
-'-pane-header ' +
-__e( defaults.prefix ) +
-'-white">\n\n\t\t\t</div>\n\n\t\t\t<div class="' +
+'-pane="closechat">\n\n\t\t\t<div class="' +
 __e( defaults.prefix ) +
 '-pane-body">\n\t\t\t\t<form id="' +
 __e( defaults.prefix ) +
 '-closechat-form" data-validate-form="true">\n\t\t\t\t\t<p>' +
 __e( panels.CLOSE_CHAT.close_chat_header ) +
-'</p>\n\t\t\t\t\t<select name="rating">\n\t\t\t\t\t\t<option value="">--- ' +
-__e( panels.CLOSE_CHAT.rate_agent ) +
-' ---</option>\n\t\t\t\t\t\t<option value="5">' +
-__e( frases.AGENT_RATES.excellent ) +
-'</option>\n\t\t\t\t\t\t<option value="4">' +
-__e( frases.AGENT_RATES.good ) +
-'</option>\n\t\t\t\t\t\t<option value="3">' +
-__e( frases.AGENT_RATES.fair ) +
-'</option>\n\t\t\t\t\t\t<option value="2">' +
-__e( frases.AGENT_RATES.bad ) +
-'</option>\n\t\t\t\t\t</select>\n\t\t\t\t\t<textarea placeholder="' +
+'</p>\n\t\t\t\t\t<label class="' +
+__e( defaults.prefix ) +
+'-agent-rating-label">' +
+__e( panels.CLOSE_CHAT.rate_agent_label ) +
+'</label>\n\t\t\t\t\t<div class="' +
+__e( defaults.prefix ) +
+'-agent-rating" id="' +
+__e( defaults.prefix ) +
+'-agent-rating">\n\t\t\t\t\t\t<input type="radio" name="rating" value=\'0\' id="' +
+__e( defaults.prefix ) +
+'-rating-0" checked>\n\t\t\t\t\t\t<label class="hidden" for="' +
+__e( defaults.prefix ) +
+'-rating-0"><i class="' +
+__e( defaults.prefix ) +
+'-icon-star"></i></label>\n\t\t\t\t\t\t';
+ for(var i=1; i<=defaults.agentRates; i++) { ;
+__p += '\n\t\t\t\t\t\t\t<input type="radio" name="rating" value=\'' +
+__e( i ) +
+'\' id="' +
+__e( defaults.prefix ) +
+'-rating-' +
+__e( i ) +
+'">\n\t\t\t\t\t\t\t<label for="' +
+__e( defaults.prefix ) +
+'-rating-' +
+__e( i ) +
+'"><i class="' +
+__e( defaults.prefix ) +
+'-icon-star"></i></label>\t\n\t\t\t\t\t\t';
+ } ;
+__p += '\n\t\t\t\t\t</div>\n\t\t\t\t\t<textarea placeholder="' +
 __e( panels.CLOSE_CHAT.PLACEHOLDERS.comment ) +
 '" name="text" maxlength="1500"></textarea>\n\t\t\t\t\t<input type="email" name="email" placeholder="' +
 __e( panels.CLOSE_CHAT.PLACEHOLDERS.email ) +
-'">\n\t\t\t\t\t<label for="' +
+'">\n\t\t\t\t\t<br><br>\n\t\t\t\t\t<input type="checkbox" name="sendDialog" id="' +
 __e( defaults.prefix ) +
-'-send-dialog">\n\t\t\t\t\t\t<input type="checkbox" name="sendDialog" id="' +
+'-send-dialog" />\n\t\t\t\t\t<label for="' +
 __e( defaults.prefix ) +
-'-send-dialog" />\n\t\t\t\t\t\t<span>' +
+'-send-dialog">' +
 __e( panels.CLOSE_CHAT.send_dialog_label ) +
-'</span>\n\t\t\t\t\t</label>\n\n\t\t\t\t\t<hr>\n\n\t\t\t\t\t<!-- End chat and close widget button -->\n\t\t\t\t\t<button \n\t\t\t\t\t\ttype="submit" \n\t\t\t\t\t\tclass="' +
+'</label>\n\t\t\t\t\t<hr>\n\n\t\t\t\t\t<!-- End chat and close widget button -->\n\t\t\t\t\t<button \n\t\t\t\t\t\ttype="submit" \n\t\t\t\t\t\tclass="' +
 __e( defaults.prefix ) +
 '-button ' +
 __e( defaults.prefix ) +
@@ -821,22 +819,18 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-callback-settings">\n\t\t\t\t\t';
  if(channelsObject.callback && channelsObject.callback.time !== false) { ;
-__p += '\n\t\t\t\t\t\t<p class="' +
-__e( defaults.prefix ) +
-'-text-center">' +
+__p += '\n\t\t\t\t\t\t<p>' +
 __e( panels.CALLBACK.title ) +
 '</p>\n\t\t\t\t\t';
  } else { ;
-__p += '\n\t\t\t\t\t\t<p class="' +
-__e( defaults.prefix ) +
-'-text-center">' +
+__p += '\n\t\t\t\t\t\t<p>' +
 __e( panels.CALLBACK.title_asap ) +
 '</p>\n\t\t\t\t\t';
  } ;
 __p += '\n\t\t\t\t\t<hr>\n\t\t\t\t\t<label>' +
 __e( panels.CALLBACK.LABELS.phone ) +
 '</label>\n\t\t\t\t\t<input type="tel" name="phone" placeholder="' +
-__e( panels.CALLBACK.PLACEHOLDERS.phone ) +
+__e( channelsObject.callback.placeholder || panels.CALLBACK.PLACEHOLDERS.phone ) +
 '" required>\n\t\t\t\t\t';
  if(channelsObject.callback && channelsObject.callback.time !== false) { ;
 __p += '\n\t\t\t\t\t\t<label>' +

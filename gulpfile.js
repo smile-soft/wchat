@@ -119,7 +119,7 @@ function cp(cb) {
 	gulp.src(basePath.src+'forms.json')
 	.pipe(gulp.dest(basePath.dest));
 
-	gulp.series('sounds', 'fonts');
+	gulp.series(sounds, fonts);
 
 	cb();
 	// gulp.src(basePath.src+'loader.js')

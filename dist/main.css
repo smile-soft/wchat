@@ -694,13 +694,15 @@
       position: relative;
       margin-top: 25px; }
     .swc-wg-panes .swc-wg-pane .swc-pane-header {
-      position: relative;
-      overflow: hidden;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat; }
+      margin: 15px 0 20px 0; }
     .swc-wg-panes .swc-wg-pane .swc-pane-body {
       padding: 10px; }
+      @media only screen and (max-width: 750px) {
+        .swc-wg-panes .swc-wg-pane .swc-pane-body {
+          position: relative;
+          height: 100%;
+          padding-bottom: 30px;
+          overflow: scroll; } }
     .swc-wg-panes .swc-wg-pane .swc-pane-footer {
       padding: 10px;
       border-top: 1px solid #eee; }
@@ -886,7 +888,6 @@
   .swc-wg-panes .swc-wg-pane form {
     margin: 0; }
     .swc-wg-panes .swc-wg-pane form label {
-      display: block;
       margin-bottom: 5px;
       color: #222; }
     .swc-wg-panes .swc-wg-pane form input:focus,
@@ -895,7 +896,9 @@
     .swc-wg-panes .swc-wg-pane form button:focus,
     .swc-wg-panes .swc-wg-pane form a:focus {
       outline: #3b99fc auto 5px; }
-    .swc-wg-panes .swc-wg-pane form input:not([type="checkbox"]), .swc-wg-panes .swc-wg-pane form textarea, .swc-wg-panes .swc-wg-pane form select {
+    .swc-wg-panes .swc-wg-pane form input:not([type="radio"]):not([type="checkbox"]),
+    .swc-wg-panes .swc-wg-pane form textarea,
+    .swc-wg-panes .swc-wg-pane form select {
       width: 100% !important;
       height: 38px !important;
       min-height: 38px !important;
@@ -907,7 +910,8 @@
       border-radius: 4px;
       box-shadow: none;
       color: #222; }
-    .swc-wg-panes .swc-wg-pane form input[type="checkbox"] {
+    .swc-wg-panes .swc-wg-pane form input[type="checkbox"],
+    .swc-wg-panes .swc-wg-pane form input([type="radio"]) {
       margin: 0; }
     .swc-wg-panes .swc-wg-pane form textarea {
       height: 100px !important; }
@@ -961,6 +965,20 @@
     .swc-wg-panes .swc-wg-pane form .swc-block {
       display: block;
       width: 100%; }
+    .swc-wg-panes .swc-wg-pane form .swc-agent-rating {
+      display: flex;
+      padding: 15px 0; }
+      .swc-wg-panes .swc-wg-pane form .swc-agent-rating label {
+        flex: 0;
+        font-size: 24px;
+        padding: 0 10px; }
+      .swc-wg-panes .swc-wg-pane form .swc-agent-rating input:checked ~ label {
+        color: #aaa; }
+      .swc-wg-panes .swc-wg-pane form .swc-agent-rating label,
+      .swc-wg-panes .swc-wg-pane form .swc-agent-rating input:checked + label {
+        color: #fad619; }
+      .swc-wg-panes .swc-wg-pane form .swc-agent-rating input {
+        display: none !important; }
 
 .swc-no-scroll {
   overflow: hidden; }
@@ -1099,11 +1117,20 @@
     margin-bottom: 35px;
     border-width: 0;
     border-top: 1px solid #E1E1E1; }
+    @media only screen and (max-width: 750px) {
+      .swc-wg-cont hr {
+        margin-top: 20px;
+        margin-bottom: 25px; } }
   .swc-wg-cont a {
     color: #428bca; }
   .swc-wg-cont a.swc-button {
     text-decoration: none; }
   .swc-wg-cont input[type="checkbox"] {
+    -webkit-appearance: checkbox !important; }
+  .swc-wg-cont input[type="radio"] {
+    -webkit-appearance: radio !important; }
+  .swc-wg-cont input[type="checkbox"],
+  .swc-wg-cont input[type="radio"] {
     display: initial !important;
     margin: auto !important;
     width: auto !important; }
@@ -1152,6 +1179,9 @@
     -ms-transform: translateY(0);
     -o-transform: translateY(0);
     transform: translateY(0); }
+  .swc-wg-cont.timeout #swc-closechat-form #swc-agent-rating,
+  .swc-wg-cont.timeout #swc-closechat-form .swc-agent-rating-label {
+    display: none; }
   .swc-wg-cont.agent-typing .swc-loader {
     display: block !important; }
   .swc-wg-cont.type-extend .swc-msg-textarea {

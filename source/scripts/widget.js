@@ -265,7 +265,7 @@ function initSession() {
 	}
 
 	widgetState.timeoutSession = false;
-	removeWgState(timeout);
+	removeWgState('timeout');
 
 	if(api.session.properties) {
 		if(api.session.properties.channels && !Array.isArray(api.session.properties.channels)) {

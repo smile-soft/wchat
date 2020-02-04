@@ -683,13 +683,27 @@ __p += '\n\t\t\t\t\t</div>\n\t\t\t\t\t<textarea placeholder="' +
 __e( panels.CLOSE_CHAT.PLACEHOLDERS.comment ) +
 '" name="text" maxlength="1500"></textarea>\n\t\t\t\t\t<input type="email" name="email" placeholder="' +
 __e( panels.CLOSE_CHAT.PLACEHOLDERS.email ) +
-'">\n\t\t\t\t\t<br><br>\n\t\t\t\t\t<input type="checkbox" name="sendDialog" id="' +
+'">\n\t\t\t\t\t<br><br>\n\t\t\t\t\t<div class="' +
 __e( defaults.prefix ) +
-'-send-dialog" />\n\t\t\t\t\t<label for="' +
+'-switch ' +
+__e( defaults.prefix ) +
+'-switch-md">\n\t\t\t\t\t\t<input type="checkbox" class="' +
+__e( defaults.prefix ) +
+'-cmn-toggle ' +
+__e( defaults.prefix ) +
+'-cmn-toggle-round"  name="sendDialog" id="' +
+__e( defaults.prefix ) +
+'-send-dialog" />\n\t\t\t\t\t\t<label \n\t\t\t            \tfor="' +
+__e( defaults.prefix ) +
+'-send-dialog" \n\t\t\t            \tid="' +
+__e( defaults.prefix ) +
+'-send-dialog-toggle"\n\t\t\t            ></label>\n\t\t\t\t\t</div>\n\t\t\t\t\t<label for="' +
 __e( defaults.prefix ) +
 '-send-dialog">' +
 __e( panels.CLOSE_CHAT.send_dialog_label ) +
-'</label>\n\t\t\t\t\t<hr>\n\n\t\t\t\t\t<!-- End chat and close widget button -->\n\t\t\t\t\t<button \n\t\t\t\t\t\ttype="submit" \n\t\t\t\t\t\tclass="' +
+'</label>\n\t\t\t\t\t<!-- <input type="checkbox" name="sendDialog" id="' +
+__e( defaults.prefix ) +
+'-send-dialog" /> -->\n\t\t\t\t\t<hr>\n\n\t\t\t\t\t<!-- End chat and close widget button -->\n\t\t\t\t\t<button \n\t\t\t\t\t\ttype="submit" \n\t\t\t\t\t\tclass="' +
 __e( defaults.prefix ) +
 '-button ' +
 __e( defaults.prefix ) +

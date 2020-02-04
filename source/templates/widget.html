@@ -333,8 +333,15 @@
 					<textarea placeholder="<%- panels.CLOSE_CHAT.PLACEHOLDERS.comment %>" name="text" maxlength="1500"></textarea>
 					<input type="email" name="email" placeholder="<%- panels.CLOSE_CHAT.PLACEHOLDERS.email %>">
 					<br><br>
-					<input type="checkbox" name="sendDialog" id="<%- defaults.prefix %>-send-dialog" />
+					<div class="<%- defaults.prefix %>-switch <%- defaults.prefix %>-switch-md">
+						<input type="checkbox" class="<%- defaults.prefix %>-cmn-toggle <%- defaults.prefix %>-cmn-toggle-round"  name="sendDialog" id="<%- defaults.prefix %>-send-dialog" />
+						<label 
+			            	for="<%- defaults.prefix %>-send-dialog" 
+			            	id="<%- defaults.prefix %>-send-dialog-toggle"
+			            ></label>
+					</div>
 					<label for="<%- defaults.prefix %>-send-dialog"><%- panels.CLOSE_CHAT.send_dialog_label %></label>
+					<!-- <input type="checkbox" name="sendDialog" id="<%- defaults.prefix %>-send-dialog" /> -->
 					<hr>
 
 					<!-- End chat and close widget button -->

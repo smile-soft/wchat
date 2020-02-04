@@ -987,6 +987,10 @@ function onCloseChatFormChange(e) {
 
 }
 
+function onSendDialogToggle() {
+	console.log('onSendDialogToggle');
+}
+
 function onChatTimeout(){
 	debug.log('chat timeout!');
 	// switchPane('closechat');
@@ -1377,6 +1381,7 @@ function setListeners(widget){
 	var panes = [].slice.call(widget.querySelectorAll('.'+defaults.prefix+'-wg-pane'));
 	var messagesCont = document.getElementById(defaults.prefix+'-messages-cont');
 	var closeChatForm = document.getElementById(defaults.prefix+'-closechat-form');
+	var sendDialogToggle = document.getElementById(defaults.prefix+'-send-dialog-toggle');
 
 	inputs.forEach(function(input){
 		var label = input.nextElementSibling,
@@ -1411,6 +1416,8 @@ function setListeners(widget){
 	addEvent(window, 'blur', onWindowBlur);
 
 	addEvent(closeChatForm, 'change', onCloseChatFormChange);
+	
+	addEvent(sendDialogToggle, 'click', onSendDialogToggle);
 
 	// if(defaults.buttonElement) 
 	// 	defaults.buttonElement.addEventListener('click', publicApi.openWidget, false);

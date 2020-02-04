@@ -707,7 +707,9 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-block">' +
 __e( panels.CLOSE_CHAT.back ) +
-'</a>\n\t\t\t\t</form>\n\t\t\t</div>\n\t\t</div>\n\t\t<!-- ***** Close chat pane ends ***** -->\n\n\t\t<!-- ***** Audio call pane ***** -->\n\t\t<div class="' +
+'</a>\n\t\t\t\t</form>\n\t\t\t</div>\n\t\t</div>\n\t\t<!-- ***** Close chat pane ends ***** -->\n\n\t\t<!-- ***** Audio call pane ***** -->\n\t\t';
+ if(channelsObject.webcall) { ;
+__p += '\n\t\t<div class="' +
 __e( defaults.prefix ) +
 '-wg-pane" data-' +
 __e( defaults.prefix ) +
@@ -771,7 +773,7 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-handler="endCall">\n\n\t\t\t\t\t\t' +
 __e( panels.AUDIO_CALL.end_call ) +
-'\n\n\t\t\t\t\t</button>\n\t\t\t\t</form>\n\t\t\t</div>\n\t\t</div>\n\t\t<!-- ***** Audio call pane ends ***** -->\n\n\t\t<!-- ***** Audio call fallback pane ***** -->\n\t\t<div class="' +
+'\n\n\t\t\t\t\t</button>\n\t\t\t\t</form>\n\t\t\t</div>\n\t\t</div>\n\t\t<!-- ***** Audio call pane ends ***** -->\n\n\t\t<!-- ***** Audio call fallback pane ***** -->\n\t\t\n\t\t<div class="' +
 __e( defaults.prefix ) +
 '-wg-pane" data-' +
 __e( defaults.prefix ) +
@@ -793,7 +795,11 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-block">' +
 __e( panels.CALLBACK.back ) +
-'</a>\n\t\t\t\t</form>\n\t\t\t</div>\n\t\t</div>\n\t\t<!-- ***** Audio call fallback pane ends ***** -->\n\n\t\t<!-- ***** Callback pane ***** -->\n\t\t<div \n\t\t\tclass="' +
+'</a>\n\t\t\t\t</form>\n\t\t\t</div>\n\t\t</div>\n\t\t';
+ } ;
+__p += '\n\t\t<!-- ***** Audio call fallback pane ends ***** -->\n\n\t\t<!-- ***** Callback pane ***** -->\n\t\t';
+ if(channelsObject.callback) { ;
+__p += '\n\t\t<div \n\t\t\tclass="' +
 __e( defaults.prefix ) +
 '-wg-pane" \n\t\t\tdata-' +
 __e( defaults.prefix ) +
@@ -915,7 +921,9 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-handler="closeWidget">' +
 __e( panels.CALLBACK.close ) +
-'</a>\n\t\t\t\t\t</form>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n\t\t<!-- ***** Callback sent pane ends ***** -->\n\n\t</div>\n\t<!-- ***** Panes container ends ***** -->\n\n\t<!-- ***** Floating button container ***** -->\n\t<div id="' +
+'</a>\n\t\t\t\t\t</form>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n\n\t\t';
+ } ;
+__p += '\n\n\t\t<!-- ***** Callback sent pane ends ***** -->\n\n\t</div>\n\t<!-- ***** Panes container ends ***** -->\n\n\t<!-- ***** Floating button container ***** -->\n\t<div id="' +
 __e( defaults.prefix ) +
 '-btn-cont" class="' +
 __e( defaults.prefix ) +

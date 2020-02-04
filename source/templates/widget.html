@@ -357,6 +357,7 @@
 		<!-- ***** Close chat pane ends ***** -->
 
 		<!-- ***** Audio call pane ***** -->
+		<% if(channelsObject.webcall) { %>
 		<div class="<%- defaults.prefix %>-wg-pane" data-<%- defaults.prefix %>-pane="callAgent">
 			<div class="<%- defaults.prefix %>-pane-body">
 				<div id="<%- defaults.prefix %>-call-spinner" class="<%- defaults.prefix %>-spinner-pane">
@@ -395,6 +396,7 @@
 		<!-- ***** Audio call pane ends ***** -->
 
 		<!-- ***** Audio call fallback pane ***** -->
+		
 		<div class="<%- defaults.prefix %>-wg-pane" data-<%- defaults.prefix %>-pane="callAgentFallback">
 			<div class="<%- defaults.prefix %>-pane-body">
 				<div class="<%- defaults.prefix %>-text-center">
@@ -410,9 +412,11 @@
 				</form>
 			</div>
 		</div>
+		<% } %>
 		<!-- ***** Audio call fallback pane ends ***** -->
 
 		<!-- ***** Callback pane ***** -->
+		<% if(channelsObject.callback) { %>
 		<div 
 			class="<%- defaults.prefix %>-wg-pane" 
 			data-<%- defaults.prefix %>-pane="callback">
@@ -485,6 +489,9 @@
 				</div>
 			</div>
 		</div>
+
+		<% } %>
+
 		<!-- ***** Callback sent pane ends ***** -->
 
 	</div>

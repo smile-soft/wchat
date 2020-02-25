@@ -1,4 +1,6 @@
 <% var prefix = defaults.prefix; %>
+<% var themeColor = defaults.themeColor; %>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -14,12 +16,11 @@
         </style>
         <![endif]-->
         <style type="text/css">
-            /* Basics */
             body {
-            Margin: 0;
+                margin: 0;
                 padding: 0;
                 min-width: 100%;
-                background-color: #ffffff;
+                background-color: #f7f7f7;
             }
             table {
                 border-spacing: 0;
@@ -37,54 +38,49 @@
                 table-layout: fixed;
                 -webkit-text-size-adjust: 100%;
                 -ms-text-size-adjust: 100%;
-                background-color: #F1F1F1;
             }
             .webkit {
                 max-width: 500px;
             }
             .outer {
-            Margin: 0 auto;
+                margin: 0 auto;
                 height: 100%;
                 width: 95%;
                 max-width: 500px;
                 padding: 10px;
             }
             p {
-                Margin: 0;
+                margin: 0;
             }
             a {
-                color: #ee6a56;
+                color: <%- themeColor || "#ee6a56" %>;
                 text-decoration: underline;
             }
             .h1 {
                 font-size: 21px;
                 font-weight: bold;
-                Margin-bottom: 18px;
+                margin-bottom: 18px;
             }
             .h2 {
                 font-size: 18px;
                 font-weight: bold;
-                Margin-bottom: 12px;
+                margin-bottom: 12px;
             }
              
-            /* One column layout */
             .one-column .contents {
                 text-align: left;
-                color:#505050;
-                font-family:Arial;
+                color: #505050;
+                font-family: "Arial";
                 font-size:14px;
                 line-height:150%;
             }
             .one-column p {
                 font-size: 14px;
-                Margin-bottom: 10px;
+                margin-bottom: 10px;
             }
             .<%- prefix %>-message {
                 display: block;
                 margin-bottom: 10px;
-                padding: 10px;
-                background-color: #FFFFFF;
-                border-bottom: 4px solid #CCCCCC;
             }
             .<%- prefix %>-message img {
                 width: 100%;
@@ -95,16 +91,39 @@
                 font-weight: bold;
                 color: #999999;
             }
+            .<%- prefix %>-message .<%- prefix %>-message-content {
+                display: inline-block;
+                max-width: 80%;
+                padding: 10px;
+                border-radius: 5px;
+                background-color: #FFFFFF;
+            }
+            .<%- prefix %>-message .<%- prefix %>-message-from {
+                display: block;
+            }
+            .<%- prefix %>-message .<%- prefix %>-message-time {
+                display: block;
+            }
+            .<%- prefix %>-agent-msg {
+                text-align: left;
+            }
             .<%- prefix %>-agent-msg .<%- prefix %>-message-from {
                 color: #555555;
+            }
+            .<%- prefix %>-agent-msg .<%- prefix %>-message-content {
+                border-top-left-radius: 0;
+                border: 1px solid <%- themeColor || "#CCCCCC" %>;
+            }
+            .<%- prefix %>-user-msg {
+                text-align: right;
             }
             .<%- prefix %>-user-msg .<%- prefix %>-message-from {
                 color: #F75B5D;
             }
-
-            .<%- prefix %>-message .<%- prefix %>-message-time {
-                position: relative;
-                float: right;
+            .<%- prefix %>-user-msg .<%- prefix %>-message-content {
+                border-top-right-radius: 0;
+                text-align: left;
+                border: 1px solid #CCCCCC;
             }
             .copyright {
                 margin-top: 5px;

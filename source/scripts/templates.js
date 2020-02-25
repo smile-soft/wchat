@@ -20,25 +20,51 @@ function print() { __p += __j.call(arguments, '') }
 with (obj) {
 
  var prefix = defaults.prefix; ;
-__p += '\n<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n<html xmlns="http://www.w3.org/1999/xhtml">\n    <head>\n        <meta http-equiv="Content-Type" content="text/html; charset=windows-1251" />\n        <!--[if !mso]><!-->\n            <meta http-equiv="X-UA-Compatible" content="IE=edge" />\n        <!--<![endif]-->\n        <meta name="viewport" content="width=device-width, initial-scale=1.0">\n        <title></title>\n        <!--[if (gte mso 9)|(IE)]>\n        <style type="text/css">\n            table {border-collapse: collapse;}\n        </style>\n        <![endif]-->\n        <style type="text/css">\n            /* Basics */\n            body {\n            Margin: 0;\n                padding: 0;\n                min-width: 100%;\n                background-color: #ffffff;\n            }\n            table {\n                border-spacing: 0;\n                font-family: sans-serif;\n                color: #333333;\n            }\n            td {\n                padding: 0;\n            }\n            img {\n                border: 0;\n            }\n            .wrapper {\n                width: 100%;\n                table-layout: fixed;\n                -webkit-text-size-adjust: 100%;\n                -ms-text-size-adjust: 100%;\n                background-color: #F1F1F1;\n            }\n            .webkit {\n                max-width: 500px;\n            }\n            .outer {\n            Margin: 0 auto;\n                height: 100%;\n                width: 95%;\n                max-width: 500px;\n                padding: 10px;\n            }\n            p {\n                Margin: 0;\n            }\n            a {\n                color: #ee6a56;\n                text-decoration: underline;\n            }\n            .h1 {\n                font-size: 21px;\n                font-weight: bold;\n                Margin-bottom: 18px;\n            }\n            .h2 {\n                font-size: 18px;\n                font-weight: bold;\n                Margin-bottom: 12px;\n            }\n             \n            /* One column layout */\n            .one-column .contents {\n                text-align: left;\n                color:#505050;\n                font-family:Arial;\n                font-size:14px;\n                line-height:150%;\n            }\n            .one-column p {\n                font-size: 14px;\n                Margin-bottom: 10px;\n            }\n            .' +
+__p += '\n';
+ var themeColor = defaults.themeColor; ;
+__p += '\n\n<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n<html xmlns="http://www.w3.org/1999/xhtml">\n    <head>\n        <meta http-equiv="Content-Type" content="text/html; charset=windows-1251" />\n        <!--[if !mso]><!-->\n            <meta http-equiv="X-UA-Compatible" content="IE=edge" />\n        <!--<![endif]-->\n        <meta name="viewport" content="width=device-width, initial-scale=1.0">\n        <title></title>\n        <!--[if (gte mso 9)|(IE)]>\n        <style type="text/css">\n            table {border-collapse: collapse;}\n        </style>\n        <![endif]-->\n        <style type="text/css">\n            body {\n                margin: 0;\n                padding: 0;\n                min-width: 100%;\n                background-color: #f7f7f7;\n            }\n            table {\n                border-spacing: 0;\n                font-family: sans-serif;\n                color: #333333;\n            }\n            td {\n                padding: 0;\n            }\n            img {\n                border: 0;\n            }\n            .wrapper {\n                width: 100%;\n                table-layout: fixed;\n                -webkit-text-size-adjust: 100%;\n                -ms-text-size-adjust: 100%;\n            }\n            .webkit {\n                max-width: 500px;\n            }\n            .outer {\n                margin: 0 auto;\n                height: 100%;\n                width: 95%;\n                max-width: 500px;\n                padding: 10px;\n            }\n            p {\n                margin: 0;\n            }\n            a {\n                color: ' +
+__e( themeColor || "#ee6a56" ) +
+';\n                text-decoration: underline;\n            }\n            .h1 {\n                font-size: 21px;\n                font-weight: bold;\n                margin-bottom: 18px;\n            }\n            .h2 {\n                font-size: 18px;\n                font-weight: bold;\n                margin-bottom: 12px;\n            }\n             \n            .one-column .contents {\n                text-align: left;\n                color: #505050;\n                font-family: "Arial";\n                font-size:14px;\n                line-height:150%;\n            }\n            .one-column p {\n                font-size: 14px;\n                margin-bottom: 10px;\n            }\n            .' +
 __e( prefix ) +
-'-message {\n                display: block;\n                margin-bottom: 10px;\n                padding: 10px;\n                background-color: #FFFFFF;\n                border-bottom: 4px solid #CCCCCC;\n            }\n            .' +
+'-message {\n                display: block;\n                margin-bottom: 10px;\n            }\n            .' +
 __e( prefix ) +
 '-message img {\n                width: 100%;\n                max-width: 500px;\n                height: auto;\n            }\n            .' +
 __e( prefix ) +
 '-message span {\n                font-weight: bold;\n                color: #999999;\n            }\n            .' +
 __e( prefix ) +
+'-message .' +
+__e( prefix ) +
+'-message-content {\n                display: inline-block;\n                max-width: 80%;\n                padding: 10px;\n                border-radius: 5px;\n                background-color: #FFFFFF;\n            }\n            .' +
+__e( prefix ) +
+'-message .' +
+__e( prefix ) +
+'-message-from {\n                display: block;\n            }\n            .' +
+__e( prefix ) +
+'-message .' +
+__e( prefix ) +
+'-message-time {\n                display: block;\n            }\n            .' +
+__e( prefix ) +
+'-agent-msg {\n                text-align: left;\n            }\n            .' +
+__e( prefix ) +
 '-agent-msg .' +
 __e( prefix ) +
 '-message-from {\n                color: #555555;\n            }\n            .' +
 __e( prefix ) +
+'-agent-msg .' +
+__e( prefix ) +
+'-message-content {\n                border-top-left-radius: 0;\n                border: 1px solid ' +
+__e( themeColor || "#CCCCCC" ) +
+';\n            }\n            .' +
+__e( prefix ) +
+'-user-msg {\n                text-align: right;\n            }\n            .' +
+__e( prefix ) +
 '-user-msg .' +
 __e( prefix ) +
-'-message-from {\n                color: #F75B5D;\n            }\n\n            .' +
+'-message-from {\n                color: #F75B5D;\n            }\n            .' +
 __e( prefix ) +
-'-message .' +
+'-user-msg .' +
 __e( prefix ) +
-'-message-time {\n                position: relative;\n                float: right;\n            }\n            .copyright {\n                margin-top: 5px;\n                font-size: 12px;\n                font-style: italic;\n                color: #CCCCCC;\n                text-align: right;\n            }\n\n        </style>\n    </head>\n    <body>\n        <center class="wrapper">\n            <div class="webkit">\n                <!--[if (gte mso 9)|(IE)]>\n                <table width="500" align="center" cellpadding="0" cellspacing="0" border="0">\n                <tr>\n                <td>\n                <![endif]-->\n                <table class="outer" align="center" cellpadding="0" cellspacing="0" border="0">\n                    <tr>\n                        <td class="one-column">\n                            <table width="100%">\n                                <tr>\n                                    <td class="inner contents">\n                                        ' +
+'-message-content {\n                border-top-right-radius: 0;\n                text-align: left;\n                border: 1px solid #CCCCCC;\n            }\n            .copyright {\n                margin-top: 5px;\n                font-size: 12px;\n                font-style: italic;\n                color: #CCCCCC;\n                text-align: right;\n            }\n\n        </style>\n    </head>\n    <body>\n        <center class="wrapper">\n            <div class="webkit">\n                <!--[if (gte mso 9)|(IE)]>\n                <table width="500" align="center" cellpadding="0" cellspacing="0" border="0">\n                <tr>\n                <td>\n                <![endif]-->\n                <table class="outer" align="center" cellpadding="0" cellspacing="0" border="0">\n                    <tr>\n                        <td class="one-column">\n                            <table width="100%">\n                                <tr>\n                                    <td class="inner contents">\n                                        ' +
 ((__t = ( content )) == null ? '' : __t) +
 '\n                                    </td>\n                                </tr>\n                            </table>\n                        </td>\n                    </tr>\n                </table>\n                <!--[if (gte mso 9)|(IE)]>\n                </td>\n                </tr>\n                </table>\n                <![endif]-->\n            </div>\n        </center>\n    </body>\n</html>';
 

@@ -10,7 +10,6 @@ var templates = require('./templates');
 var WebRTC = require('./webrtc');
 var audio = require('./audio-control');
 var helpers = require('./helpers');
-// var serverUrl = {};
 var forms;
 var api;
 var globalSettings = "WchatSettings";

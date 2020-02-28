@@ -63,7 +63,7 @@
 
 					<% _.forEach(channels, function(channel) { %>
 
-						<% if(channel.link) { %>
+						<% if(channel.link && channel.hasCustomProtocol !== true) { %>
 
 							<a 
 								href="<%- channel.link %>" 
@@ -74,7 +74,10 @@
 									color: #222;"
 								>
 
-								<span class="<%- defaults.prefix %>-icon-<%= channel.iconClass %>" style="color: <%- channel.iconColor %>"></span>
+								<span 
+									class="<%- defaults.prefix %>-icon-<%= channel.iconClass %>" 
+									style="color: <%- channel.iconColor || '#222' %>"
+								></span>
 								<span><%= channel.btnText %></span>
 
 							</a>
@@ -87,9 +90,14 @@
 								style="
 									background: <%- channel.backgroundColor || '#fff' %>; 
 									color: <%- channel.color || '#222' %>;"
-								data-<%- defaults.prefix %>-handler="<%- channel.callback %>">
+								data-<%- defaults.prefix %>-handler="<%- channel.callback %>"
+								data-<%- defaults.prefix %>-handlerdata="<%- channel.type %>"
+								>
 
-								<span class="<%- defaults.prefix %>-icon-<%= channel.iconClass %>"></span>
+								<span 
+									class="<%- defaults.prefix %>-icon-<%= channel.iconClass %>"
+									style="color: <%- channel.iconColor || '#222' %>"
+								></span>
 								<span><%= channel.btnText %></span>
 
 							</button>
@@ -127,7 +135,7 @@
 				data-<%- defaults.prefix %>-pane="credentials">
 
 				<div class="<%- defaults.prefix %>-pane-body">
-					<p class="<%- defaults.prefix %>-pane-header"><%- defaults.introMessage || panels.INTRO.intro_message %></p>
+					<p class="<%- defaults.prefix %>-pane-header"><%- panels.INTRO.intro_message %></p>
 					<form 
 						id="<%- defaults.prefix %>-intro-form" 
 						name="<%- defaults.prefix %>IntroForm" 

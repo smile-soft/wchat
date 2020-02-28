@@ -1,4 +1,5 @@
 var domify = require('domify');
+var checkCustomProtocol = require('./custom-protocol-check');
 var Core = require('./core');
 var storage = require('./storage');
 var request = require('./request');
@@ -39,7 +40,6 @@ var defaults = {
 	hideOfflineButton: false, // hide chat button if widget is offline
 	host: window.location.host, // displayed in the email template
 	intro: false, // whether or not to ask user to introduce him self before the chat session
-	introMessage: "", // message that asks user for introduction
 	lang: '', // widget language
 	langFromUrl: true, // detect widget language from current url
 	listeners: [], // list the events to subscribe for
@@ -51,7 +51,6 @@ var defaults = {
 	prefix: 'swc', // prefix for CSS classes and ids. 
 					// Change it only if the default prefix 
 					// matches with existed classes or ids on the website
-	reCreateSession: true,
 	sounds: true,
 	styles: {
 		backgroundColor: '#74b9ff',
@@ -60,12 +59,14 @@ var defaults = {
 	stylesPath: '', // absolute path to the css flie
 	themeColor: "",
 	title: '',
+	translations: null,
 	translationsPath: '', // absolute path to the translations.json flie
+	webcallOnly: false,
 	webrtcEnabled: false,
 	widget: true, // whether or not to add widget to the webpage
 	widgetWindowName: 'wchat',
 	widgetWindowOptions: 'left=10,top=10,width=350,height=550,resizable',
-	wsServer: "main.ringotel.net/chatbot/WebChat/"
+	wsServer: "main.ringotel.net/chatbot/WebChat/",
 };
 
 // Current widget state
@@ -476,7 +477,28 @@ function getFrases() {
 	request.get('frases', (defaults.translationsPath || defaults.clientPath)+'translations.json', function (err, result){
 		if(err) return api.emit('Error', err);
 		frases = JSON.parse(result);
+
+		// if defaults.translations object provided - add frases
+		if(defaults.translations && Object.keys(defaults.translations).length) {
+			frases = Object.keys(defaults.translations).reduce(extendFrases, frases);
+		}
+
+		debug.log('getFrases result', frases);
 	});
+}
+
+function extendFrases(frases, key) {
+	var splitKey = key.split('.');
+	var ref = frases;
+
+	for (var i = 0; i < splitKey.length-1; i++) {
+		if(ref && ref.hasOwnProperty(splitKey[i])) ref = ref[splitKey[i]];
+	}
+
+	if(ref) ref[splitKey[splitKey.length-1]] = defaults.translations[key];
+
+	return frases;
+
 }
 
 function onNewLanguages(languages){
@@ -1031,7 +1053,7 @@ function onSessionTimeout(){
 
 	if(storage.getState('chat', 'session') === true) {
 		storage.saveState('chat', false, 'session');
-		switchPane('closechat');
+		// switchPane('closechat');
 	}
 
 	widgetState.timeoutSession = true;
@@ -1051,6 +1073,20 @@ function initFallbackCall(){
 
 function initCallback(){
 	switchPane('callback');
+}
+
+function initChannel(type) {
+	var item = defaults.channelsObject[type];
+	var url = '';
+	if(item && item.link && hasCustomProtocol(item.link)) {
+		checkCustomProtocol(item.link, function(err) {
+			url = item.fallbackLink || (channelParams[item.type] ? channelParams[item.type].fallbackLink : item.link);
+			debug.log('custom app failed, opening fallback url', url);
+			window.location = url;
+		}, function(success) {
+			debug.log('custom app opened');
+		})
+	}
 }
 
 function setCallback(){
@@ -1458,6 +1494,7 @@ function onWindowBlur() {
 function wgClickHandler(e){
 	var targ = e.target,
 		handler,
+		handlerData,
 		pane,
 		href,
 		dataHref;
@@ -1466,6 +1503,7 @@ function wgClickHandler(e){
 		targ = targ.parentNode;
 	
 	handler = targ.getAttribute('data-'+defaults.prefix+'-handler');
+	handlerData = targ.getAttribute('data-'+defaults.prefix+'-handlerdata');
 	dataHref = targ.getAttribute('data-'+defaults.prefix+'-link');
 
 	if(handler === 'closeWidget') {
@@ -1492,6 +1530,8 @@ function wgClickHandler(e){
 		initFallbackCall();
 	} else if(handler === 'initCallback') {
 		initCallback();
+	} else if(handler === 'initChannel') {
+		initChannel(handlerData);
 	} else if(handler === 'setCallback') {
 		setCallback();
 	} else if(handler === 'initChat') {
@@ -1943,12 +1983,15 @@ function addChannelsParams(channels) {
 		viber: {
 			iconClass: "viber",
 			iconColor: "#665CAC",
-			btnText: "Viber"
+			btnText: "Viber",
+			callback: 'initChannel',
+			fallbackLink: 'https://www.viber.com/download/'
 		},
 		telegram: {
 			iconClass: "telegram",
 			iconColor: "#0088CC",
-			btnText: "Telegram"
+			btnText: "Telegram",
+			fallbackLink: "https://telegram.org/"
 		},
 		messenger: {
 			iconClass: "messenger",
@@ -1961,15 +2004,16 @@ function addChannelsParams(channels) {
 			btnText: "Facebook"
 		},
 		skype: {
-			iconClass: "facebook",
+			iconClass: "skype",
 			iconColor: "#00AFF0",
-			btnText: "Facebook"
+			btnText: "Skype"
 		}
 	};
 
 	var channelsArray = Array.isArray(channels) ? channels : Object.keys(channels).map(function(key) { var cParams = channels[key]; cParams.type = key; return cParams; });
 
 	return channelsArray.map(function(item, index){
+		if(item.link && hasCustomProtocol(item.link)) item.hasCustomProtocol = true;
 		if(item.type === 'webcall' && !defaults.webrtcEnabled) return null;
 		else if(item.type === 'callback' && !item.task) return null;
 		else return extend(item, channelParams[item.type]);
@@ -1981,8 +2025,12 @@ function addChannelsParams(channels) {
  * Helper functions *
  ********************************/
 
+function hasCustomProtocol(link) {
+	var proto = link.split('://')[0];
+	return proto && proto !== 'http' && proto !== 'https';
+}
 
- function detectLanguage(frases){
+function detectLanguage(frases){
 	// var storageLang = storage.getState('lang', 'session'),
 	var availableLangs = ['uk', 'ru', 'en'], lang, path;
 

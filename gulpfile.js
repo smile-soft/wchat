@@ -8,7 +8,7 @@ var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
 var copy = require('gulp-copy');
 var notify = require('gulp-notify');
-var imagemin = require('gulp-imagemin');
+// var imagemin = require('gulp-imagemin');
 var template = require('gulp-lodash-template');
 var concat = require('gulp-concat');
 var browserify = require('browserify');
@@ -77,13 +77,13 @@ function styles(cb) {
 	cb();
 }
 
-function images(cb) {
-	gulp.src(srcAssets.images+'*')
-	.pipe(imagemin())
-	.pipe(gulp.dest(destAssets.images));
+// function images(cb) {
+// 	gulp.src(srcAssets.images+'*')
+// 	.pipe(imagemin())
+// 	.pipe(gulp.dest(destAssets.images));
 
-	cb();
-}
+// 	cb();
+// }
 
 function templates(cb) {
 	gulp.src(srcAssets.templates+'*.html')
@@ -130,7 +130,7 @@ exports.bundle = bundle;
 exports.styles = styles;
 exports.cp = cp;
 exports.templates = templates;
-exports.images = images;
+// exports.images = images;
 // exports.build = gulp.series(styles, images, templates, cp, bundle);
 
 // gulp.task('default', function() {

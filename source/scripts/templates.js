@@ -240,7 +240,7 @@ __p += ' \n\t\t\tstyle="border-color:' +
 ((__t = ( defaults.styles.backgroundColor )) == null ? '' : __t) +
 '" \n\t\t';
  } ;
-__p += '>\n\t\t<p>' +
+__p += '>\n\t\t<p style="margin: 0">' +
 ((__t = ( message.content )) == null ? '' : __t) +
 '</p>\n\t</div>\n\t<span class="' +
 __e( defaults.prefix ) +
@@ -342,7 +342,7 @@ __e( defaults.prefix ) +
 'InitForm">\n\n\t\t\t\t\t';
  _.forEach(channels, function(channel) { ;
 __p += '\n\n\t\t\t\t\t\t';
- if(channel.link) { ;
+ if(channel.link && channel.hasCustomProtocol !== true) { ;
 __p += '\n\n\t\t\t\t\t\t\t<a \n\t\t\t\t\t\t\t\thref="' +
 __e( channel.link ) +
 '" \n\t\t\t\t\t\t\t\ttarget="';
@@ -359,13 +359,13 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-block" \n\t\t\t\t\t\t\t\tstyle="\n\t\t\t\t\t\t\t\t\tbackground: ' +
 __e( channel.backgroundColor || '#fff' ) +
-'; \n\t\t\t\t\t\t\t\t\tcolor: #222;"\n\t\t\t\t\t\t\t\t>\n\n\t\t\t\t\t\t\t\t<span class="' +
+'; \n\t\t\t\t\t\t\t\t\tcolor: #222;"\n\t\t\t\t\t\t\t\t>\n\n\t\t\t\t\t\t\t\t<span \n\t\t\t\t\t\t\t\t\tclass="' +
 __e( defaults.prefix ) +
 '-icon-' +
 ((__t = ( channel.iconClass )) == null ? '' : __t) +
-'" style="color: ' +
-__e( channel.iconColor ) +
-'"></span>\n\t\t\t\t\t\t\t\t<span>' +
+'" \n\t\t\t\t\t\t\t\t\tstyle="color: ' +
+__e( channel.iconColor || '#222' ) +
+'"\n\t\t\t\t\t\t\t\t></span>\n\t\t\t\t\t\t\t\t<span>' +
 ((__t = ( channel.btnText )) == null ? '' : __t) +
 '</span>\n\n\t\t\t\t\t\t\t</a>\n\n\t\t\t\t\t\t';
  } else { ;
@@ -383,11 +383,17 @@ __e( channel.color || '#222' ) +
 __e( defaults.prefix ) +
 '-handler="' +
 __e( channel.callback ) +
-'">\n\n\t\t\t\t\t\t\t\t<span class="' +
+'"\n\t\t\t\t\t\t\t\tdata-' +
+__e( defaults.prefix ) +
+'-handlerdata="' +
+__e( channel.type ) +
+'"\n\t\t\t\t\t\t\t\t>\n\n\t\t\t\t\t\t\t\t<span \n\t\t\t\t\t\t\t\t\tclass="' +
 __e( defaults.prefix ) +
 '-icon-' +
 ((__t = ( channel.iconClass )) == null ? '' : __t) +
-'"></span>\n\t\t\t\t\t\t\t\t<span>' +
+'"\n\t\t\t\t\t\t\t\t\tstyle="color: ' +
+__e( channel.iconColor || '#222' ) +
+'"\n\t\t\t\t\t\t\t\t></span>\n\t\t\t\t\t\t\t\t<span>' +
 ((__t = ( channel.btnText )) == null ? '' : __t) +
 '</span>\n\n\t\t\t\t\t\t\t</button>\n\n\t\t\t\t\t\t';
  } ;
@@ -428,7 +434,7 @@ __e( defaults.prefix ) +
 '-pane-body">\n\t\t\t\t\t<p class="' +
 __e( defaults.prefix ) +
 '-pane-header">' +
-__e( defaults.introMessage || panels.INTRO.intro_message ) +
+__e( panels.INTRO.intro_message ) +
 '</p>\n\t\t\t\t\t<form \n\t\t\t\t\t\tid="' +
 __e( defaults.prefix ) +
 '-intro-form" \n\t\t\t\t\t\tname="' +

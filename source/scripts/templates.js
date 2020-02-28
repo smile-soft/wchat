@@ -400,7 +400,7 @@ __e( channel.iconColor || '#222' ) +
 __p += '\n\n\t\t\t\t\t';
  }) ;
 __p += '\n\n\t\t\t\t\t<!-- Init chat button -->\n\t\t\t\t\t';
- if(defaults.chat) { ;
+ if(defaults.chat && !channelsObject.webchat) { ;
 __p += '\n\t\t\t\t\t<button\n\t\t\t\t\t\ttype="button" \n\t\t\t\t\t\tclass="' +
 __e( defaults.prefix ) +
 '-button ' +

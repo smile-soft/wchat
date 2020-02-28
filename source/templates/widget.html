@@ -107,7 +107,7 @@
 					<% }) %>
 
 					<!-- Init chat button -->
-					<% if(defaults.chat) { %>
+					<% if(defaults.chat && !channelsObject.webchat) { %>
 					<button
 						type="button" 
 						class="<%- defaults.prefix %>-button <%- defaults.prefix %>-button-primary <%- defaults.prefix %>-block" 

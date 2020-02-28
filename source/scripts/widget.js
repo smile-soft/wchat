@@ -1968,6 +1968,12 @@ function getChannelParams(type) {
 
 function addChannelsParams(channels) {
 	var channelParams = {
+		webchat: {
+			iconClass: "forum",
+			iconColor: "#222",
+			btnText: frases.PANELS.CONNECTION_TYPES.chat_agent_btn,
+			callback: "initChat"
+		},
 		webcall: {
 			iconClass: "call",
 			iconColor: "#222",
@@ -2016,7 +2022,7 @@ function addChannelsParams(channels) {
 		if(item.link && hasCustomProtocol(item.link)) item.hasCustomProtocol = true;
 		if(item.type === 'webcall' && !defaults.webrtcEnabled) return null;
 		else if(item.type === 'callback' && !item.task) return null;
-		else return extend(item, channelParams[item.type]);
+		else return extend(channelParams[item.type], item);
 	}).filter(Boolean);
 
 }

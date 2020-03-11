@@ -33,6 +33,7 @@ var defaults = {
 	},
 	channels: [], // list of channels and their settings
 	chat: true, // enable chat feature
+	cleanPhoneNumber: true,
 	clientPath: 'https://cdn.smile-soft.com/wchat/v1/', // absolute path to the clients files. If not set, files requested from defaults.server + defaults.path.
 	cobrowsing: false, // [deprecated] enable cobrowsing feature
 	concentText: "", // message that contains the text of concent that user should accept in order to start a chat
@@ -46,7 +47,7 @@ var defaults = {
 	maxFileSize: 100, // maximum filesize to upload (MB), if 0 - no restrictions
 	offer: false, // greet users on the web page
 	path: '/ipcc/webchat/', // absolute path to the wchat folder
-	phonePattern: /^\+?\d{9,15}/,
+	phonePattern: /^\+?\d{10,12}$/,
 	position: 'right', // button position on the page
 	prefix: 'swc', // prefix for CSS classes and ids. 
 					// Change it only if the default prefix 
@@ -162,16 +163,16 @@ function Widget(options){
 
 	if(widgetState.initiated) return publicApi;
 
+	if(options.channels) {
+		options.channels = 
+			Array.isArray(options.channels) ? 
+			options.channels : 
+			Object.keys(options.channels).map(function(key) { var cParams = options.channels[key]; cParams.type = key; return cParams; });
+	}
+
 	_.merge(defaults, options || {});
 
-	// _.assign(defaults, options || {});
-
-	// defaults.clientPath = options.clientPath ? options.clientPath : (defaults.clientPath || (defaults.server + defaults.path));
-	
-	// serverUrl = require('url').parse(defaults.server, true);
-	defaults.channels = Array.isArray(defaults.channels) ? defaults.channels : Object.keys(defaults.channels).map(function(key) { var cParams = defaults.channels[key]; cParams.type = key; return cParams; });
-
-	defaults.webcallOnly = (!defaults.chat && !getChannelParams('callback').task && getChannelParams('webcall').hotline);
+	defaults.webcallOnly = (defaults.chat === false && getChannelParams('callback').task === undefined && getChannelParams('webcall').hotline !== undefined);
 
 	debug.log('Widget defaults', defaults, getChannelParams('webcall'));
 
@@ -299,7 +300,7 @@ function initSession() {
 		.on('form/reject', closeForm);	
 	}
 
-	// if window is not a opened window
+	// if window is not an opened window
 	if(defaults.chat && !defaults.external) {
 		api.updateUrl(window.location.href);
 	}
@@ -516,7 +517,7 @@ function onNewLanguages(languages){
 
 function initWidget(){
 	var options = '',
-		wgState = (defaults.webcallOnly ? 'online' : getWidgetState()),
+		wgState = getWidgetState(),
 		introForm = global[defaults.prefix+'IntroForm'],
 		selected;
 
@@ -1093,10 +1094,10 @@ function setCallback(){
 	var form = document.getElementById(defaults.prefix+'-callback-settings'),
 		formData = getFormData(form),
 		cbSpinner = document.getElementById(defaults.prefix+'-callback-spinner'),
-		cbSent = document.getElementById(defaults.prefix+'-callback-sent'),
-		valid = validateForm(form);
+		cbSent = document.getElementById(defaults.prefix+'-callback-sent');
+	// 	valid = validateForm(form);
 	
-	if(!valid) return false;
+	// if(!valid) return false;
 
 	formData.phone = formData.phone ? helpers.formatPhoneNumber(formData.phone) : null;
 
@@ -1532,8 +1533,8 @@ function wgClickHandler(e){
 		initCallback();
 	} else if(handler === 'initChannel') {
 		initChannel(handlerData);
-	} else if(handler === 'setCallback') {
-		setCallback();
+	// } else if(handler === 'setCallback') {
+		// setCallback();
 	} else if(handler === 'initChat') {
 		initChat();
 	} else if(handler === 'endCall') {
@@ -1630,7 +1631,7 @@ function initWidgetState(e){
 		showWidget();
 	} else if(defaults.webrtcEnabled){
 		// if call is in progress - just show the widget
-		if(!defaults.chat && !getChannelParams('callback').task) {
+		if(defaults.chat === false && getChannelParams('callback').task === undefined) {
 			initCall();
 		} else {
 			switchPane('chooseConnection');
@@ -1751,7 +1752,7 @@ function changeWgState(params){
 	debug.log('changeWgState: ', params);
 	if(!widget || hasWgState(params.state)) return;
 	if(params.state === 'offline') {
-		closeChat();
+		if(storage.getState('chat', 'session') === true) closeChat();
 		removeWgState('online');
 		switchPane('sendemail');
 	} else if(params.state === 'online') {
@@ -1771,10 +1772,13 @@ function changeWgState(params){
 
 function getWidgetState() {
 	var state = ''; 
-	if(defaults.isIpcc)
+	if(defaults.webcallOnly) {
+		state = 'online';
+	} else if(defaults.isIpcc) {
 		state = widgetState.langs.length ? 'online' : 'offline';
-	else
+	} else {
 		state = api.session.state ? 'online' : 'offline';
+	}
 	
 	return state;
 }
@@ -1858,11 +1862,10 @@ function closeWidget(){
 function onFormSubmit(params){
 	var form = params.formElement;
 	var formData = params.formData;
-	debug.log('onFormSubmit: ', form, formData);
+	var formValid = validateForm(form);
+	debug.log('onFormSubmit: ', form, formData, formValid);
 	
-	if(form.getAttribute('data-validate-form') && !validateForm(form)) return false;
-
-	debug.log('onFormSubmit', form.getAttribute('data-validate-form'), validateForm(form));
+	if(form.getAttribute('data-validate-form') && !formValid) return false;
 
 	if(form.id === defaults.prefix+'-closechat-form') {
 		submitCloseChatForm(form, formData);
@@ -1870,6 +1873,8 @@ function onFormSubmit(params){
 		submitSendMailForm(form, formData);
 	} else if(form.id === defaults.prefix+'-intro-form') {
 		requestChat(formData);
+	} else if(form.id === defaults.prefix+'-callback-settings'){
+		setCallback();
 	} else if(form.id === defaults.prefix+'-call-btn-form'){
 		initCall();
 	} else if(form.id === defaults.prefix+'-chat-btn-form'){
@@ -2190,21 +2195,27 @@ function getFormData(form){
 }
 
 function validateForm(form){
-	var valid = true;
+	var valid = true, number = '';
+
 	[].slice.call(form.elements).forEach(function(el) {
 		// debug.log('validateForm el:', el, el.hasAttribute('required'), el.value, el.type);
 		if(el.hasAttribute('required') && (el.value === "" || el.value === null)) {
+			valid = false;
 			alert(frases.ERRORS[el.type] || frases.ERRORS.required);
-			valid = false;
-		} else if(el.type === 'tel' && el.value && defaults.phonePattern && helpers.validateByPattern(helpers.formatPhoneNumber(el.value), defaults.phonePattern) !== true) {
-			alert(helpers.interpolate(frases.ERRORS[el.type], { phonePattern: defaults.phonePattern }) || frases.ERRORS.required);
-			valid = false;
-		} else if(el.type === 'email' && el.value && defaults.emailPattern && helpers.validateByPattern(el.value, defaults.emailPattern) !== true) {
-			alert(frases.ERRORS[el.type] || frases.ERRORS.required);
-			valid = false;
+
+		} else if(el.type === 'tel' && el.value && defaults.phonePattern !== undefined) {
+			if(defaults.cleanPhoneNumber) number = helpers.formatPhoneNumber(el.value);
+			else number = el.value;
+			valid = helpers.validateByPattern(number, defaults.phonePattern)
+			if(!valid) alert(frases.ERRORS[el.type] || frases.ERRORS.required);
+
+		} else if(el.type === 'email' && el.value && defaults.emailPattern) {
+			valid = helpers.validateByPattern(el.value, defaults.emailPattern);
+			if(!valid) alert(frases.ERRORS[el.type] || frases.ERRORS.required);
+
 		}
 	});
-	// debug.log('validateForm valid: ', valid);
+
 	return valid;
 }
 

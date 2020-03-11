@@ -869,7 +869,7 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-shown" style="position: relative;">\n\t\t\t\t\t\t<span></span>\n\t\t\t\t\t\t<span></span>\n\t\t\t\t\t\t<span></span>\n\t\t\t\t\t</h3>\n\t\t\t\t</div>\n\t\t\t\t<form id="' +
 __e( defaults.prefix ) +
-'-callback-settings">\n\t\t\t\t\t';
+'-callback-settings" data-validate-form="true">\n\t\t\t\t\t';
  if(channelsObject.callback && channelsObject.callback.time !== false) { ;
 __p += '\n\t\t\t\t\t\t<p>' +
 __e( panels.CALLBACK.title ) +

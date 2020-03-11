@@ -81,6 +81,7 @@ var defaults = {
 	},
 	channels: [], // list of channels and their settings
 	chat: true, // enable chat feature
+	cleanPhoneNumber: true, // if true, a phone number string will be sanitized before validating with the regexp in the phonePattern field
 	clientPath: 'https://cdn.smile-soft.com/wchat/v1/', // absolute path to the clients files. If not set, files requested from defaults.server + defaults.path.
 	cobrowsing: false, // [deprecated] enable cobrowsing feature
 	concentText: "", // message that contains the text of concent that user should accept in order to start a chat
@@ -94,6 +95,7 @@ var defaults = {
 	maxFileSize: 100, // maximum filesize to upload (MB), if 0 - no restrictions
 	offer: false, // greet users on the web page
 	path: '/ipcc/webchat/', // absolute path to the wchat folder
+	phonePattern: /^\+?\d{10,12}$/, // regexp to validate a phone number
 	prefix: 'swc', // prefix for CSS classes and ids. 
 					// Change it only if the default prefix 
 					// matches with existed classes or ids on the website

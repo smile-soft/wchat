@@ -6,10 +6,15 @@ module.exports = {
 };
 
 function log(args, method){
+    var func = global.console[method] ? global.console[method] : global.console.log;
     if(global.localStorage.getItem('swc.debug')) {
         [].forEach.call(args, function(arg){
-            global.console[method] ? global.console[method](arg) : global.console.log(arg);
+            func(getCurrentTime(), arg);
         });
         return;
     }
+}
+
+function getCurrentTime() {
+    return new Date().toISOString();
 }

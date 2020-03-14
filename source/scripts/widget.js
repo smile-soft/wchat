@@ -20,6 +20,7 @@ var widgetWindow;
 var mouseFocused = false;
 var windowFocused = false;
 var pollTurns = 1;
+var connectionClosedAt = 0;
 
 // Widget initiation options
 var defaults = {
@@ -186,7 +187,9 @@ function Widget(options){
 		.on('session/join', onSessionJoinRequest)
 		.on('session/joined', onSessionJoin)
 		.on('session/disjoin', onSessionDisjoin)
-		.on('session/init', onSessionInit);
+		.on('session/init', onSessionInit)
+		.on('websocket/closed', onConnectionClosed)
+		.on('websocket/opened', onConnectionOpened);
 	}
 		
 	// .on('chat/languages', function() {
@@ -207,6 +210,22 @@ function Widget(options){
 	api.emit('module/init');
 
 	return publicApi;
+}
+
+function onConnectionClosed(params) {
+	debug.log('onConnectionClosed', params.time);
+	connectionClosedAt = params.time;
+}
+
+function onConnectionOpened(params) {
+	debug.log('onConnectionOpened', params.time);
+	if(connectionClosedAt !== 0 && widgetState.timeoutSession !== true) {
+		if(storage.getState('chat', 'session') === true) {
+			requestChat(storage.getState('credentials', 'session') || {});
+		}
+
+		connectionClosedAt = 0;
+	}
 }
 
 function initModule(){

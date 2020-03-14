@@ -720,6 +720,7 @@ WchatAPI.prototype.createWebsocket = function(params){
 
     websocket.onopen = function(e){
         debug.log('WebSocket opened: ', e);
+        this.emit('websocket/opened', {time: Date.now()});
         websocketTry = 1;
         if(!moduleInit) {
 			this.init();
@@ -728,6 +729,7 @@ WchatAPI.prototype.createWebsocket = function(params){
     websocket.onmessage = this.onWebsocketMessage.bind(this);
     websocket.onerror = this.onError;
     websocket.onclose = function(e) {
+    	this.emit('websocket/closed', {time: Date.now()});
     	setTimeout(function(){
     	    websocketTry++;
     	    this.createWebsocket(params);

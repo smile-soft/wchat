@@ -62,7 +62,7 @@
                 "new_chat": "Почати новий чат",
     			"PLACEHOLDERS": {
     				"email": "Ваша електронна адреса",
-					"comment": "Залиште своє повідомлення для адміністратора тут ..."
+					"comment": "Вкажіть, будь-ласка, що саме нам необхідно покращити?"
     			}
     		},
     		"AUDIO_CALL": {
@@ -209,7 +209,7 @@
                 "new_chat": "Начать новый чат",
     			"PLACEHOLDERS": {
     				"email": "Ваш электронный адрес",
-    				"comment": "Оставьте свое сообщение для администратора здесь..."
+    				"comment": "Укажите, пожалуйста, что именно нам необходимо улучшить?"
     			}
     		},
     		"AUDIO_CALL": {
@@ -356,7 +356,7 @@
                 "new_chat": "Start new chat",
 				"PLACEHOLDERS": {
 					"email": "Your email",
-					"comment": "Please, leave your message to the supervisor here..."
+					"comment": "Please indicate what we need to improve?"
 				}
 			},
 			"AUDIO_CALL": {

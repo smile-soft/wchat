@@ -1019,12 +1019,20 @@ function onChatClose(){
 function onCloseChatFormChange(e) {
 	var form = e.currentTarget;
 	var el = e.target;
-	// if(el.name === 'rating') {
-	// 	_.forEach(form.rating, function(rateEl) {
-	// 		if(parseInt(rateEl.value, 10) < parseInt(el.value, 10)) rateEl.parentNode.classList.add('active');
-	// 		else rateEl.parentNode.classList.remove('active');
-	// 	})
-	// }
+	var hiddenClass = defaults.prefix + '-hidden';
+
+	if(el.name === 'rating') {
+		if(el.value !== '5') {
+			form.text.classList.remove(hiddenClass);
+			form.email.classList.remove(hiddenClass);
+		}
+	} else if(el.name === 'sendDialog') {
+		if(el.checked) {
+			form.email.classList.remove(hiddenClass);	
+		} else {
+			if(form.rating.value === '0') form.email.classList.add(hiddenClass);	
+		}
+	}
 
 }
 

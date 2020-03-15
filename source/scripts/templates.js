@@ -683,15 +683,17 @@ __e( defaults.prefix ) +
 __e( panels.CLOSE_CHAT.close_chat_header ) +
 '</p>\n\t\t\t\t\t<label class="' +
 __e( defaults.prefix ) +
-'-agent-rating-label">' +
+'-agent-rating-label"><strong>' +
 __e( panels.CLOSE_CHAT.rate_agent_label ) +
-'</label>\n\t\t\t\t\t<div class="' +
+'</strong></label>\n\t\t\t\t\t<div class="' +
 __e( defaults.prefix ) +
 '-agent-rating" id="' +
 __e( defaults.prefix ) +
 '-agent-rating">\n\t\t\t\t\t\t<input type="radio" name="rating" value=\'0\' id="' +
 __e( defaults.prefix ) +
-'-rating-0" checked>\n\t\t\t\t\t\t<label class="hidden" for="' +
+'-rating-0" checked>\n\t\t\t\t\t\t<label class="' +
+__e( defaults.prefix ) +
+'-hidden" for="' +
 __e( defaults.prefix ) +
 '-rating-0"><i class="' +
 __e( defaults.prefix ) +
@@ -711,9 +713,13 @@ __e( i ) +
 __e( defaults.prefix ) +
 '-icon-star"></i></label>\t\n\t\t\t\t\t\t';
  } ;
-__p += '\n\t\t\t\t\t</div>\n\t\t\t\t\t<textarea placeholder="' +
+__p += '\n\t\t\t\t\t</div>\n\t\t\t\t\t<textarea class="' +
+__e( defaults.prefix ) +
+'-hidden" placeholder="' +
 __e( panels.CLOSE_CHAT.PLACEHOLDERS.comment ) +
-'" name="text" maxlength="1500"></textarea>\n\t\t\t\t\t<input type="email" name="email" placeholder="' +
+'" name="text" maxlength="1500"></textarea>\n\t\t\t\t\t<input class="' +
+__e( defaults.prefix ) +
+'-hidden" type="email" name="email" placeholder="' +
 __e( panels.CLOSE_CHAT.PLACEHOLDERS.email ) +
 '">\n\t\t\t\t\t<br><br>\n\t\t\t\t\t<div class="' +
 __e( defaults.prefix ) +
@@ -731,9 +737,9 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-send-dialog-toggle"\n\t\t\t            ></label>\n\t\t\t\t\t</div>\n\t\t\t\t\t<label for="' +
 __e( defaults.prefix ) +
-'-send-dialog">' +
+'-send-dialog"><strong>' +
 __e( panels.CLOSE_CHAT.send_dialog_label ) +
-'</label>\n\t\t\t\t\t<!-- <input type="checkbox" name="sendDialog" id="' +
+'</strong></label>\n\t\t\t\t\t<!-- <input type="checkbox" name="sendDialog" id="' +
 __e( defaults.prefix ) +
 '-send-dialog" /> -->\n\t\t\t\t\t<hr>\n\n\t\t\t\t\t<!-- End chat and close widget button -->\n\t\t\t\t\t<button \n\t\t\t\t\t\ttype="submit" \n\t\t\t\t\t\tclass="' +
 __e( defaults.prefix ) +

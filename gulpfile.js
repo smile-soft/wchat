@@ -1,21 +1,12 @@
 var gulp = require('gulp');
-var vfs = require('vinyl-fs');
 var source = require('vinyl-source-stream');
 var sass = require('gulp-sass');
 var buffer = require('vinyl-buffer');
-var streamify = require('gulp-streamify');
 var uglify = require('gulp-uglify');
-var rename = require('gulp-rename');
-var copy = require('gulp-copy');
 var notify = require('gulp-notify');
-// var imagemin = require('gulp-imagemin');
 var template = require('gulp-lodash-template');
 var concat = require('gulp-concat');
 var browserify = require('browserify');
-var argv = require('yargs').argv;
-var gulpif = require('gulp-if');
-var del = require('del');
-var log = require('gulplog');
 var nameSpace = 'Wchat';
 
 var basePath = {
@@ -51,15 +42,7 @@ function bundle(cb) {
 	bundleStream
 	.pipe(source('main.js'))
 	.pipe(buffer())
-	// .pipe(source('wchat.js'))
-	// .pipe(gulp.dest(basePath.dest))
 	.pipe(uglify())
-	// .pipe(rename({
-	// 	suffix: '.min'
-	// }))
-	// .pipe(gulp.dest(basePath.dest))
-	// .pipe(vfs.symlink(basePath.dest))
-	// .pipe(gulp.src([basePath.dest+'main.js', srcAssets.scripts+'libs/jssip.min.js'], { passthrough: true }))
 	.pipe(gulp.src(srcAssets.scripts+'libs/jssip.min.js', { passthrough: true }))
 	.pipe(concat('wchat.min.js'))
 	.pipe(gulp.dest(basePath.dest))
@@ -76,14 +59,6 @@ function styles(cb) {
 
 	cb();
 }
-
-// function images(cb) {
-// 	gulp.src(srcAssets.images+'*')
-// 	.pipe(imagemin())
-// 	.pipe(gulp.dest(destAssets.images));
-
-// 	cb();
-// }
 
 function templates(cb) {
 	gulp.src(srcAssets.templates+'*.html')
@@ -122,26 +97,9 @@ function cp(cb) {
 	gulp.series(sounds, fonts);
 
 	cb();
-	// gulp.src(basePath.src+'loader.js')
-	// .pipe(gulp.dest(basePath.dest));
 }
 
 exports.bundle = bundle;
 exports.styles = styles;
 exports.cp = cp;
 exports.templates = templates;
-// exports.images = images;
-// exports.build = gulp.series(styles, images, templates, cp, bundle);
-
-// gulp.task('default', function() {
-// 	gulp.start('bundle');
-// });
-
-// gulp.task('test', function() {
-// 	return gulp.src(basePath.dest+'**/*')
-// 	.pipe(gulp.dest(basePath.test));
-// });
-
-// gulp.task('clean', function() {
-//     return del(['dist/css', 'dist/js', 'dist/img']);
-// });

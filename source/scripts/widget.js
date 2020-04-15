@@ -686,15 +686,12 @@ function requestChat(credentials){
 
 	api.chatRequest(credentials);
 
-	setTimeout(function() {
-		debug.log('requestChat: ', credentials.message, chatStarted);
-
-		if(message && !chatStarted) {
-			sendMessage({
-				message: credentials.message
-			});
-		}
-	}, 500);
+	if(message && !chatStarted) {
+		setTimeout(function() {
+			debug.log('requestChat: ', credentials.message, chatStarted);
+			sendMessage({ message: credentials.message });
+		}, 500);
+	}
 
 	startChat(api.session);
 	clearWgMessages();

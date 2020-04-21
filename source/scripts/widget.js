@@ -631,15 +631,18 @@ function isInteracted(){
 }
 
 function initChat(params){
+	var chatStarted = storage.getState('chat', 'session');
+	var credentials = storage.getState('credentials', 'session') || defaults.credentials;
+
 	showWidget();
 
-	debug.log('initChat', params, storage.getState('chat', 'cache'));
+	debug.log('initChat', params, defaults.intro, defaults.credentials, isOffline(), widgetState.timeoutSession);
 
 	// // if chat already started and widget was minimized - just show the widget
-	if(storage.getState('chat', 'cache')) return;
+	// if(storage.getState('chat', 'cache')) return;
 
 	if(isOffline()) {
-		switchPane('sendemail');
+		return switchPane('sendemail');
 	} else if(widgetState.timeoutSession) {
 		api.createSession()
 		api.once('session/init', function() {
@@ -647,17 +650,21 @@ function initChat(params){
 				initChat(params);
 			}
 		})
-	} else if(defaults.intro && defaults.intro.length) {
-		if(storage.getState('chat', 'session') || storage.getState('credentials', 'session')) {
-			requestChat(storage.getState('credentials', 'session') || {});
-		} else {
-			switchPane('credentials');
-		}
-	} else if(defaults.credentials) {
-		requestChat(defaults.credentials);
-	} else {
-		requestChat({ lang: api.session.lang, message: (params ? params.message : null) });
+		return;
 	}
+
+	if(chatStarted) {
+		requestChat(credentials || {});
+	} else {
+		if(credentials) {
+			requestChat(extend(credentials, { message: (params ? params.message : null) }));
+		} else if(defaults.intro && defaults.intro.length) {
+			switchPane('credentials');
+		} else {
+			requestChat({ lang: api.session.lang, message: (params ? params.message : null) });
+		}
+	}	
+	
 }
 
 function requestChat(credentials){
@@ -684,22 +691,28 @@ function requestChat(credentials){
 	// It will be removed on session timeout
 	storage.saveState('credentials', saveParams, 'session');
 
-	api.chatRequest(credentials);
+	if(message || chatStarted) {
+		
+		startChat(api.session);
 
-	if(message && !chatStarted) {
-		setTimeout(function() {
-			debug.log('requestChat: ', credentials.message, chatStarted);
-			sendMessage({ message: credentials.message });
-		}, 500);
+		if(message) {
+			setTimeout(function() {
+				debug.log('requestChat: ', credentials.message, chatStarted);
+				sendMessage({ message: credentials.message });
+			}, 500);
+		}
 	}
 
-	startChat(api.session);
-	clearWgMessages();
 	switchPane('messages');
+
+	debug.log('requestChat', credentials, saveParams, message, chatStarted);
 }
 
-function startChat(params){
-	var timeout = params.answerTimeout;
+function startChat(session){
+	var timeout = session.answerTimeout;
+	var credentials = storage.getState('credentials', 'session');
+
+	api.chatRequest(credentials);
 
 	storage.saveState('chat', true, 'session');
 	
@@ -709,6 +722,7 @@ function startChat(params){
 		widgetState.chatTimeout = setTimeout(onChatTimeout, timeout*1000);
 	}
 
+	clearWgMessages();
 	addWgState('chat');
 	setTimeout(function() {focusOnElement(document.getElementById("swc-message-text"))}, 1000);
 }

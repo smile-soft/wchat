@@ -1548,8 +1548,13 @@ function wgClickHandler(e){
 	if(handler === 'closeWidget') {
 		closeWidget();
 	} else if(handler === 'finish') {
-		if(defaults.isIpcc && storage.getState('chat', 'session')) {
-			switchPane('closechat');
+		if(defaults.isIpcc) {
+			if(storage.getState('chat', 'session')) {
+				switchPane('closechat');
+			} else {
+				closeWidget();
+				removeWgState('chat');
+			}
 		} else {
 			closeChat();
 			closeWidget();

@@ -115,6 +115,7 @@ var publicApi = {
 	openWidget: openWidget,
 	initChat: initChat,
 	initCall: initCall,
+	newMessage: newMessage,
 	getWidgetElement: getWidgetElement,
 	isWebrtcSupported: WebRTC.isSupported,
 	getWidgetState: function() {
@@ -270,8 +271,14 @@ function initSession() {
 	var webcallParams = getChannelParams('webcall');
 	var lang = defaults.lang || storage.getState('lang', 'session') || detectLanguage(frases);
 	var el = null;
+	var currSessionId = storage.getState('sid');
+	var newSessionId = api.session.sid;
 
-	storage.saveState('sid', api.session.sid);
+	if(currSessionId !== newSessionId) {
+		storage.saveState('sid', api.session.sid); // save new session id
+		storage.saveState('chat', false, 'session'); // refresh chat session
+	}
+
 	setStyles();
 
 	api.session.lang = lang
@@ -693,7 +700,9 @@ function requestChat(credentials){
 
 	if(message || chatStarted) {
 		
-		startChat(api.session);
+		setTimeout(function() {
+			startChat(api.session);
+		}, 100);
 
 		if(message) {
 			setTimeout(function() {
@@ -743,7 +752,7 @@ function sendMessage(params){
 }
 
 function newMessage(message){
-	debug.log('new messages arrived!', message);
+	// debug.log('new messages arrived!', message);
 
 	var str,
 		els = [],
@@ -772,7 +781,13 @@ function newMessage(message){
 		// text = parseMessage(message.content, message.file, message.entity);
 		text = parseMessage(message);
 
+		// debug.log('newMessage parsed message', text);
+
 		if(text.type === 'form') {
+
+			if(!text.content.name) {
+				text.content.name = helpers.stringToHash(message.content).toString();
+			}
 
 			compiled = compileTemplate('forms', {
 				defaults: defaults,
@@ -783,9 +798,14 @@ function newMessage(message){
 				_: _
 			});
 
+			debug.log('newMessage compiled message', compiled);
+
 			if(global[text.content.name]) closeForm({ formName: text.content.name });
 			messagesCont.insertAdjacentHTML('beforeend', '<li>'+compiled+'</li>');
 			messagesCont.scrollTop = messagesCont.scrollHeight;
+			if(text.content && text.content.quick_replies) {
+				registerForm(global[text.content.name]);
+			}
 		} else {
 			if(!message.content) return;
 			message.content = text.content;
@@ -820,6 +840,25 @@ function newMessage(message){
 
 	if(!windowFocused) widgetState.unreadMessages = true;
 
+}
+
+function registerForm(form) {
+	addEvent(form, 'click', onQuickReply);
+}
+
+function unregisterForm(form) {
+	removeEvent(form, 'click', onQuickReply);
+}
+
+function onQuickReply(e) {
+	debug.log('onQuickReply', e);
+	var target = e.target;
+	var form = _.findParent(target, 'form');
+	var val = target.getAttribute('data-value');
+	if(val) {
+		sendMessage({ message: val });
+		unregisterForm(form);
+	}
 }
 
 function onReadMessages() {
@@ -1764,7 +1803,8 @@ function wgSendFile(e){
 			if(frases.ERRORS[err]) alert(frases.ERRORS[err])
 			return debug.warn('File wasn\'t sent');
 		} else {
-			sendMessage({ message: result.filename, file: result.filedata });
+			// TODO: upgrade generateFileName function to allow sending multiple files 
+			sendMessage({ message: generateFileName(result.filename), file: result.filedata });
 		}
 	});
 }
@@ -2173,6 +2213,14 @@ function parseMessage(params){
 			}
 		});
 
+		if(!form) { // try to parse JSON
+			try {
+				form = JSON.parse(text);
+			} catch(error) {
+				form = null;
+			}
+		}
+
 		return {
 			type: form ? 'form' : 'text',
 			content: form ? form : text
@@ -2357,4 +2405,11 @@ function removeEvent(obj, evType, fn, opts) {
 
 function focusOnElement(el) {
 	return el.focus();
+}
+
+function generateFileName(string) {
+	var spl = string.split('.');
+    var ext = spl.length > 1 ? spl[spl.length-1] : '';
+	var filename = api.session.sid + '_' + Date.now();
+	return  ext ? [filename, '.', ext].join('') : filename;
 }

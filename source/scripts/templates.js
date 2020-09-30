@@ -109,11 +109,7 @@ __p += ' style="border-color:\'' +
 __e( defaults.styles.backgroundColor ) +
 '" ';
  } ;
-__p += '>\n\t\t<form id="' +
-__e( defaults.prefix ) +
-'-' +
-__e( form.name ) +
-'" name="' +
+__p += '>\n\t\t<form name="' +
 __e( form.name ) +
 '" ';
  if(form.autocomplete){ ;
@@ -125,49 +121,51 @@ __p += '\n\t\t\t\t<p style="margin: 10px 0">' +
 ((__t = ( frases.FORMS.DESCRIPTIONS[form.description] || form.description )) == null ? '' : __t) +
 '</p>\n\t\t\t';
  } ;
-__p += '\n\t\t\t';
- _.forEach(form.fields, function(item){ ;
+__p += '\n\n\t\t\t';
+ if(form.fields && form.fields.length) { ;
 __p += '\n\t\t\t\t';
+ _.forEach(form.fields, function(item){ ;
+__p += '\n\t\t\t\t\t';
  if(item.type === 'select') { ;
-__p += '\n\t\t\t\t\t<select name="' +
+__p += '\n\t\t\t\t\t\t<select name="' +
 __e( item.name ) +
-'">\n\t\t\t\t\t\t';
+'">\n\t\t\t\t\t\t\t';
  _.forEach(item.options, function(option) { ;
-__p += '\n\t\t\t\t\t\t\t<option value="' +
+__p += '\n\t\t\t\t\t\t\t\t<option value="' +
 __e( option.value ) +
 '" ';
  if(option.selected) { ;
 __p += ' selected ';
  } ;
-__p += ' >\n\t\t\t\t\t\t\t\t' +
+__p += ' >\n\t\t\t\t\t\t\t\t\t' +
 __e( frases.FORMS.PLACEHOLDERS[option.text] || option.text ) +
-'\n\t\t\t\t\t\t\t</option>\n\t\t\t\t\t\t';
+'\n\t\t\t\t\t\t\t\t</option>\n\t\t\t\t\t\t\t';
  }); ;
-__p += '\n\t\t\t\t\t</select>\n\t\t\t\t';
+__p += '\n\t\t\t\t\t\t</select>\n\t\t\t\t\t';
  } else if(item.type === 'textarea') { ;
-__p += '\n\t\t\t\t\t<textarea \n\t\t\t\t\t\tname="' +
+__p += '\n\t\t\t\t\t\t<textarea \n\t\t\t\t\t\t\tname="' +
 __e( item.name ) +
-'"\n\t\t\t\t\t\tplaceholder="' +
+'"\n\t\t\t\t\t\t\tplaceholder="' +
 ((__t = ( frases.FORMS.PLACEHOLDERS[item.placeholder] || frases.FORMS.PLACEHOLDERS[item.name] )) == null ? '' : __t) +
 ' ';
  if(item.required){ ;
 __p += '*';
  } ;
-__p += '"\n\t\t\t\t\t></textarea>\n\t\t\t\t';
+__p += '"\n\t\t\t\t\t\t></textarea>\n\t\t\t\t\t';
  } else { ;
-__p += '\n\t\t\t\t\t<input \n\t\t\t\t\t\ttype="' +
+__p += '\n\t\t\t\t\t\t<input \n\t\t\t\t\t\t\ttype="' +
 ((__t = ( item.type || 'text' )) == null ? '' : __t) +
-'"\n\t\t\t\t\t\tplaceholder="' +
+'"\n\t\t\t\t\t\t\tplaceholder="' +
 ((__t = ( frases.FORMS.PLACEHOLDERS[item.placeholder] || frases.FORMS.PLACEHOLDERS[item.name] )) == null ? '' : __t) +
 ' ';
  if(item.required){ ;
 __p += '*';
  } ;
-__p += '"\n\t\t\t\t\t\tname="' +
+__p += '"\n\t\t\t\t\t\t\tname="' +
 __e( item.name ) +
 '" ';
  if(item.value){ ;
-__p += '\n\t\t\t\t\t\tvalue="' +
+__p += '\n\t\t\t\t\t\t\tvalue="' +
 __e( credentials[item.value] ) +
 '" ';
  } ;
@@ -175,17 +173,17 @@ __p += ' ';
  if(item.required){ ;
 __p += 'required';
  } ;
-__p += '\n\t\t\t\t\t/>\n\t\t\t\t';
+__p += '\n\t\t\t\t\t\t/>\n\t\t\t\t\t';
  } ;
-__p += '\n\t\t\t';
- }); ;
-__p += '\n\t\t\t<button \n\t\t\t\ttype="submit"\n\t\t\t\tclass="' +
+__p += '\n\t\t\t\t';
+ }) ;
+__p += '\n\n\t\t\t\t<button \n\t\t\t\t\ttype="submit"\n\t\t\t\t\tclass="' +
 __e( defaults.prefix ) +
 '-button ' +
 __e( defaults.prefix ) +
 '-button-primary ' +
 __e( defaults.prefix ) +
-'-block"\n\t\t\t\tstyle="background-color: ' +
+'-block"\n\t\t\t\t\tstyle="background-color: ' +
 __e( defaults.styles.backgroundColor ) +
 '; color: ' +
 __e( defaults.styles.color ) +
@@ -193,7 +191,25 @@ __e( defaults.styles.color ) +
 __e( defaults.styles.backgroundColor ) +
 ';">' +
 __e( frases.FORMS.send ) +
-'</button>\n\t\t\t\n\t\t</form>\n\t</div>\n\t<span class="' +
+'</button>\n\t\t\t';
+ } ;
+__p += '\n\n\t\t\t';
+ if(form.quick_replies && form.quick_replies.length) { ;
+__p += '\n\t\t\t\t';
+ _.forEach(form.quick_replies, function(item){ ;
+__p += '\n\t\t\t\t\t<a\n\t\t\t\t\t\tdata-value="' +
+__e( item.value ) +
+'"\n\t\t\t\t\t\tclass="' +
+__e( defaults.prefix ) +
+'-button ' +
+__e( defaults.prefix ) +
+'-block">\n\t\t\t\t\t\t' +
+__e( item.label ) +
+'\n\t\t\t\t\t</a>\n\t\t\t\t';
+ }) ;
+__p += '\t\n\t\t\t';
+ } ;
+__p += '\n\t\t</form>\n\t</div>\n\t<span class="' +
 __e( defaults.prefix ) +
 '-message-time"> ' +
 __e( message.time ) +

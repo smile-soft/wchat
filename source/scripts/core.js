@@ -12,6 +12,7 @@ var pollTurns = 1;
 // var mainAddress = "main.ringotel.net/chatbot/WebChat/";
 // var publicUrl = "https://main.ringotel.net/public/";
 var websocketUrl = "";
+var websocketParams = {};
 var moduleInit = false;
 var sessionTimeout = null;
 var chatTimeout = null;
@@ -43,7 +44,8 @@ function WchatAPI(options, session){
 	}
 
 	if(!this.options.webcallOnly) {
-		this.createWebsocket({ server: websocketUrl, wsProtocol: 'json.api.smile-soft.com' });
+		websocketParams = { server: websocketUrl, wsProtocol: 'json.api.smile-soft.com' };
+		this.createWebsocket(websocketParams);
 		this.on('session/create', this.onSessionCreate.bind(this));
 
 	} else {
@@ -61,6 +63,16 @@ function WchatAPI(options, session){
 
 	return this;
 
+}
+
+WchatAPI.prototype.onClose = function(){
+	debug.log('onClose isPageHidden', this.isPageHidden());
+	this.emit('websocket/closed', {time: Date.now()});
+
+	if(!this.isPageHidden()) {
+		this.reconnectWebsocket();
+	}
+		
 }
 
 WchatAPI.prototype.onError = function(err){
@@ -88,6 +100,23 @@ WchatAPI.prototype.sendData = function(data){
 	if(this.websocket.readyState !== 1) return debug.log('socket is not opened', data);
 	if(this.websocket) this.websocket.send(JSON.stringify(data));
 };
+
+WchatAPI.prototype.isPageHidden = function() {
+	// var hidden, visibilityChange; 
+	// if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support 
+	//   hidden = "hidden";
+	//   visibilityChange = "visibilitychange";
+	// } else if (typeof document.msHidden !== "undefined") {
+	//   hidden = "msHidden";
+	//   visibilityChange = "msvisibilitychange";
+	// } else if (typeof document.webkitHidden !== "undefined") {
+	//   hidden = "webkitHidden";
+	//   visibilityChange = "webkitvisibilitychange";
+	// }
+
+	// return document[hidden];
+	return document.hasFocus() === false;
+}
 
 /**
  * Websocket messages handler
@@ -174,13 +203,24 @@ WchatAPI.prototype.onWebsocketMessage = function(e){
 // };
 
 WchatAPI.prototype.init = function(){
+	var visibilityChange; 
+	if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support 
+	  visibilityChange = "visibilitychange";
+	} else if (typeof document.msHidden !== "undefined") {
+	  visibilityChange = "msvisibilitychange";
+	} else if (typeof document.webkitHidden !== "undefined") {
+	  visibilityChange = "webkitvisibilitychange";
+	}
+
+	if(moduleInit) return;
+
 	moduleInit = true;
 
 	var entity = this.session.entity || "",
 		sid = this.session.sid,
 		strIndex = url.href.indexOf('chatSessionId');
 
-	this.session.sid = sid;
+	// this.session.sid = sid;
 	this.session.entity = entity;
 
 	// debug.log('initModule: ', this.session, entity, sid);
@@ -207,6 +247,8 @@ WchatAPI.prototype.init = function(){
 	}
 	// storage.saveState('entity', entity, 'session');
 
+	// document.addEventListener(visibilityChange, this.onVisibilityChange.bind(this), false);
+	window.addEventListener('focus', this.onVisibilityChange.bind(this), false);
 };
 
 /**
@@ -722,19 +764,12 @@ WchatAPI.prototype.createWebsocket = function(params){
         debug.log('WebSocket opened: ', e);
         this.emit('websocket/opened', {time: Date.now()});
         websocketTry = 1;
-        if(!moduleInit) {
-			this.init();
-        }
+		this.init();
+
     }.bind(this);
     websocket.onmessage = this.onWebsocketMessage.bind(this);
     websocket.onerror = this.onError;
-    websocket.onclose = function(e) {
-    	this.emit('websocket/closed', {time: Date.now()});
-    	setTimeout(function(){
-    	    websocketTry++;
-    	    this.createWebsocket(params);
-    	}.bind(this), generateInterval(websocketTry));
-    }.bind(this)
+    websocket.onclose = this.onClose.bind(this);
 
     global.onbeforeunload = function() {
         websocket.onclose = function () {}; // disable onclose handler first
@@ -743,6 +778,23 @@ WchatAPI.prototype.createWebsocket = function(params){
 
     this.websocket = websocket;
 
+}
+
+WchatAPI.prototype.reconnectWebsocket = function() {
+	debug.log('reconnectWebsocket');
+	setTimeout(function(){
+	    websocketTry++;
+	    this.createWebsocket(websocketParams);
+	}.bind(this), generateInterval(websocketTry));
+}
+
+WchatAPI.prototype.onVisibilityChange = function() {
+	
+	debug.log('onVisibilityChange readyState', this.websocket.readyState);
+
+	if(!this.isPageHidden() && this.websocket.readyState > 1) {
+		this.reconnectWebsocket();
+	}
 }
 
 // WchatAPI.prototype.onWebsocketClose = function(e) {

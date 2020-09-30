@@ -940,6 +940,7 @@
       border: none;
       box-shadow: 0 0 5px 0px rgba(0, 0, 0, 0.15);
       cursor: pointer;
+      background-color: transparent;
       -webkit-transition: all 0.2s ease-out;
       -moz-transition: all 0.2s ease-out;
       -ms-transition: all 0.2s ease-out;
@@ -982,6 +983,12 @@
         display: none !important; }
       .swc-wg-panes .swc-wg-pane form .swc-agent-rating input:not(:checked) + label:hover {
         color: #f7e89e; }
+  .swc-wg-panes .swc-wg-pane .swc-message form button,
+  .swc-wg-panes .swc-wg-pane .swc-message form .swc-button,
+  .swc-wg-panes .swc-wg-pane .swc-message form a.swc-button {
+    font-size: 12px;
+    text-align: center;
+    text-transform: none; }
 
 .swc-no-scroll {
   overflow: hidden; }

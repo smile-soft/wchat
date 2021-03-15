@@ -45,12 +45,18 @@ window.WchatSettings = {
         inSeconds: 1
     },
     channels:[
+    	{
+            type: "webchat",
+            btnText: "Почати чат на сайті"
+        },
         {
             type: "telegram",
-            link: "tg://resolve?domain=CloutalkBot"
+            btnText: "Почати чат у Telegram",
+            link: "https://t.me/CloutalkBot"
         },
         {
             type: "viber",
+            btnText: "Почати чат у Viber",
             link: "viber://pa?chatURI=cloutalk"
         },
         {
@@ -91,7 +97,15 @@ var defaults = {
 	introMessage: "", // message that asks user for introduction
 	lang: '', // widget language
 	langFromUrl: true, // detect widget language from current url
-	listeners: [], // list the events to subscribe for
+	listeners: [
+		{
+		    name: 'chat/start',
+		    handler: function () {}
+	  	}, {
+		    name: 'chat/close',
+		    handler: function () {}
+		}
+	], // list the events to subscribe for, learn more about events below
 	maxFileSize: 100, // maximum filesize to upload (MB), if 0 - no restrictions
 	offer: false, // greet users on the web page
 	path: '/ipcc/webchat/', // absolute path to the wchat folder
@@ -109,8 +123,18 @@ var defaults = {
 	stylesPath: '', // absolute path to the css flie
 	themeColor: "",
 	title: '',
+	translations: {
+		"uk.PANELS.CLOSE_CHAT.PLACEHOLDERS.comment": "Вкажіть, будь-ласка, що саме нам необхідно покращити?",
+        "uk.PANELS.INTRO.PLACEHOLDERS.uname": "Вкажіть, будь ласка, Ваше ім'я",
+        "uk.PANELS.INTRO.PLACEHOLDERS.message": "Напишіть, будь ласка, Ваше запитання",
+        "uk.PANELS.CALLBACK.PLACEHOLDERS.phone": "+38(ХХХ)-ХХХ-ХХ-ХХ",
+        "uk.ERRORS.email": "Для отримання зворотного зв'язку, вкажіть, будь ласка, електронну адресу."
+	},
 	translationsPath: '', // absolute path to the translations.json flie
 	webrtcEnabled: false,
+	whenOffline: {
+		showMessage: "Шановний клієнте, на жаль, Ви звернулись в неробочий час. Фахівці працюють для Вас в будні дні з 7:30 до 20:30, у суботу та неділю з 9:00 до 17:00. Будемо очікувати на Ваші запитання в робочий час."
+	},
 	widget: true, // whether or not to add widget to the webpage
 	widgetWindowName: 'wchat',
 	widgetWindowOptions: 'left=10,top=10,width=350,height=550,resizable'

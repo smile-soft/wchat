@@ -321,6 +321,41 @@
 		</div>
 		<!-- ***** Offline pane ends ***** -->
 
+		<!-- ***** Offline Message pane ***** -->
+		<div  class="<%- defaults.prefix %>-wg-pane" data-<%- defaults.prefix %>-pane="offline-message">
+			
+			<!-- Messages container -->
+			<ul 
+				id="<%- defaults.prefix %>-messages-cont" 
+				class="<%- defaults.prefix %>-messages-cont" 
+				style="
+					<% if(defaults.styles.height) { %>
+						height: <%- defaults.styles.height %>;
+					<% } %>">
+				
+				<li>
+					<div class="<%- defaults.prefix %>-message">
+						<span class="<%- defaults.prefix %>-message-from"></span>
+						<div class="<%- defaults.prefix %>-message-content"
+							style="border-color:<%= defaults.styles.backgroundColor %>">
+							<p style="margin: 0"><%= defaults.whenOffline.showMessage %></p>
+						</div>
+					</div>
+				</li>
+			</ul>
+
+			<div class="<%- defaults.prefix %>-write-cont">
+				
+				<!-- Close widget button -->
+				<div class="<%- defaults.prefix %>-action-btns">
+					<a href="#" class="<%- defaults.prefix %>-end-dialog-btn" data-<%- defaults.prefix %>-handler="closeWidget"><%- panels.OFFLINE.close %></a>
+				</div>
+
+			</div>
+
+		</div>
+		<!-- ***** Offline Message pane ends ***** -->
+
 		<!-- ***** Close chat pane ***** -->
 		<div 
 			class="<%- defaults.prefix %>-wg-pane" 

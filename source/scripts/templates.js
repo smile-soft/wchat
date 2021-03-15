@@ -687,7 +687,41 @@ __e( defaults.prefix ) +
 __e( defaults.prefix ) +
 '-handler="closeWidget">' +
 __e( panels.OFFLINE.close ) +
-'</a>\n\t\t\t\t</form>\n\t\t\t</div>\n\t\t</div>\n\t\t<!-- ***** Offline pane ends ***** -->\n\n\t\t<!-- ***** Close chat pane ***** -->\n\t\t<div \n\t\t\tclass="' +
+'</a>\n\t\t\t\t</form>\n\t\t\t</div>\n\t\t</div>\n\t\t<!-- ***** Offline pane ends ***** -->\n\n\t\t<!-- ***** Offline Message pane ***** -->\n\t\t<div  class="' +
+__e( defaults.prefix ) +
+'-wg-pane" data-' +
+__e( defaults.prefix ) +
+'-pane="offline-message">\n\t\t\t\n\t\t\t<!-- Messages container -->\n\t\t\t<ul \n\t\t\t\tid="' +
+__e( defaults.prefix ) +
+'-messages-cont" \n\t\t\t\tclass="' +
+__e( defaults.prefix ) +
+'-messages-cont" \n\t\t\t\tstyle="\n\t\t\t\t\t';
+ if(defaults.styles.height) { ;
+__p += '\n\t\t\t\t\t\theight: ' +
+__e( defaults.styles.height ) +
+';\n\t\t\t\t\t';
+ } ;
+__p += '">\n\t\t\t\t\n\t\t\t\t<li>\n\t\t\t\t\t<div class="' +
+__e( defaults.prefix ) +
+'-message">\n\t\t\t\t\t\t<span class="' +
+__e( defaults.prefix ) +
+'-message-from"></span>\n\t\t\t\t\t\t<div class="' +
+__e( defaults.prefix ) +
+'-message-content"\n\t\t\t\t\t\t\tstyle="border-color:' +
+((__t = ( defaults.styles.backgroundColor )) == null ? '' : __t) +
+'">\n\t\t\t\t\t\t\t<p style="margin: 0">' +
+((__t = ( defaults.whenOffline.showMessage )) == null ? '' : __t) +
+'</p>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</li>\n\t\t\t</ul>\n\n\t\t\t<div class="' +
+__e( defaults.prefix ) +
+'-write-cont">\n\t\t\t\t\n\t\t\t\t<!-- Close widget button -->\n\t\t\t\t<div class="' +
+__e( defaults.prefix ) +
+'-action-btns">\n\t\t\t\t\t<a href="#" class="' +
+__e( defaults.prefix ) +
+'-end-dialog-btn" data-' +
+__e( defaults.prefix ) +
+'-handler="closeWidget">' +
+__e( panels.OFFLINE.close ) +
+'</a>\n\t\t\t\t</div>\n\n\t\t\t</div>\n\n\t\t</div>\n\t\t<!-- ***** Offline Message pane ends ***** -->\n\n\t\t<!-- ***** Close chat pane ***** -->\n\t\t<div \n\t\t\tclass="' +
 __e( defaults.prefix ) +
 '-wg-pane" \n\t\t\tdata-' +
 __e( defaults.prefix ) +

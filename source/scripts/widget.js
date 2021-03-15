@@ -47,6 +47,10 @@ var defaults = {
 	listeners: [], // list the events to subscribe for
 	maxFileSize: 100, // maximum filesize to upload (MB), if 0 - no restrictions
 	offer: false, // greet users on the web page
+	whenOffline: {
+		hideButton: false,
+		showMessage: ""
+	},
 	path: '/ipcc/webchat/', // absolute path to the wchat folder
 	phonePattern: /^\+?\d{10,12}$/,
 	position: 'right', // button position on the page
@@ -279,8 +283,6 @@ function initSession() {
 		storage.saveState('chat', false, 'session'); // refresh chat session
 	}
 
-	setStyles();
-
 	api.session.lang = lang
 	frases = frases[lang];
 	defaults.isIpcc = (api.session.langs !== undefined || api.session.categories !== undefined);
@@ -399,6 +401,8 @@ function initSession() {
 
 	// Enabling audio module
 	audio.init(defaults.clientPath+'sounds/');
+
+	setStyles();
 
 	// If page loaded and "widget" property is set - load widget
 	if(defaults.widget && !widgetState.initiated && isBrowserSupported()) {
@@ -1709,7 +1713,11 @@ function initWidgetState(e){
 	if(chatInProgress || callInProgress){
 		showWidget();
 	} else if(isOffline()){
-		switchPane('sendemail');
+		if(defaults.whenOffline.showMessage) {
+			switchPane('offline-message');
+		} else {
+			switchPane('sendemail');
+		}
 		showWidget();
 	} else if(defaults.webrtcEnabled){
 		// if call is in progress - just show the widget
@@ -1837,7 +1845,11 @@ function changeWgState(params){
 	if(params.state === 'offline') {
 		if(storage.getState('chat', 'session') === true) closeChat();
 		removeWgState('online');
-		switchPane('sendemail');
+		if(defaults.whenOffline.showMessage) {
+			switchPane('offline-message');
+		} else {
+			switchPane('sendemail');
+		}
 	} else if(params.state === 'online') {
 		removeWgState('offline');
 		

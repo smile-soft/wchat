@@ -75,7 +75,7 @@ window.WchatSettings = {
    b.async=1;b.src=l+"wchat.min.js";o.parentNode.insertBefore(b,o)}
 })(window,document,'script','https://cdn.smile-soft.com/wchat/v1/','Wchat','WchatSettings');
 ````
-#### Default settings
+#### Available settings with example values
 ```js
 var defaults = {
 	allowedFileExtensions: [], // Allowed file types for uploading. No restriction if empty array provided. Ex: ['txt', 'gif', 'png', 'jpeg', 'pdf']
